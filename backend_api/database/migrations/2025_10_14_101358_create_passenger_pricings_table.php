@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('midtrans_order_id')->nullable();
             $table->string('midtrans_payment_type')->nullable();
             $table->string('midtrans_bank')->nullable();
-            $table->string('midtrans_va_number')->nullable();
+            $table->string('midtrans_code')->nullable();
             $table->string('midtrans_transaction_status')->nullable();
             $table->json('midtrans_raw_response')->nullable();
 

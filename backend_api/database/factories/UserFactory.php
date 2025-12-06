@@ -28,20 +28,11 @@ class UserFactory extends Factory
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
-            'user_type' => 'customer', // default
+            'user_type' => fake()->randomElement(['customer', 'driver']),
             'banned' => 0,
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    // public function unverified(): static
-    // {
-    //     return $this->state(fn (array $attributes) => [
-    //         'email_verified_at' => null,
-    //     ]);
-    // }
     public function customer()
     {
         return $this->state(fn () => ['user_type' => 'customer']);

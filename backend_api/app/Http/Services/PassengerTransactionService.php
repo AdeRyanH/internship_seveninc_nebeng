@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Http\Repositories\PassengerTransactionRepository;
+use App\Models\PaymentMethod;
 
 class PassengerTransactionService
 {
@@ -77,9 +78,11 @@ class PassengerTransactionService
         // 1️⃣ Simpan transaksi dulu (status masih Pending)
         $transaction = $this->transactionRepository->create($data);
 
+        // ambil payment method
+        $paymentMethod = PaymentMethod::find($data['payment_method_id']);
+
         // 2️⃣ Siapkan payload Midtrans /charge
         $payload = [
-            "payment_type" => "bank_transfer",
             "transaction_details" => [
                 "order_id"      => $transaction->transaction_code,
                 "gross_amount"  => $transaction->total_amount,
@@ -89,10 +92,53 @@ class PassengerTransactionService
                 "email"      => $transaction->customer->user->email ?? "email@example.com",
                 "phone"      => $transaction->customer->telephone,
             ],
-            "bank_transfer" => [
-                "bank" => "bni"  // sementara fix dulu, nanti jika mau dynamic bisa berdasarkan payment_method_id
-            ]
+
         ];
+
+        switch ($paymentMethod->code) {
+
+    // VA — BNI, BRI, BCA, Permata
+    case 'bni':
+    case 'bri':
+    case 'bca':
+    case 'permata':
+        $payload['payment_type'] = 'bank_transfer';
+        $payload['bank_transfer'] = [
+            'bank' => $paymentMethod->code
+        ];
+        break;
+
+    // QRIS
+    case 'qris':
+        $payload['payment_type'] = 'qris';
+        break;
+
+     case 'gopay':
+        $payload['payment_type'] = 'gopay';
+        $payload['gopay'] = [
+            'enable_callback' => true,
+            'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
+        ];
+        break;
+
+    case 'shopeepay':
+        $payload['payment_type'] = 'shopeepay';
+        $payload['shopeepay'] = [
+            'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
+        ];
+        break;
+
+    case 'ovo':
+        $payload['payment_type'] = 'ovo';
+        $payload['ovo'] = [
+            'phone_number' => $transaction->customer->telephone
+        ];
+        break;
+
+    default:
+        throw new Exception("Unsupported payment method code: {$paymentMethod->code}");
+}
+
 
         // 3️⃣ Kirim ke Midtrans
         $serverKey = config('midtrans.server_key');
@@ -100,15 +146,73 @@ class PassengerTransactionService
 
         $response = Http::withBasicAuth($serverKey, "")
             ->withHeaders(["Content-Type" => "application/json"])
-            ->post($apiUrl, $payload)
-            ->json();
+            ->post($apiUrl, $payload);
+
+        if (!$response->successful()){
+            $transaction->update(['payment_response_raw' => $response->body()]);
+            throw new Exception("Failed to create midtrans transaction");
+        }
+
+        $responseJson = $response->json();
+
+        $transaction->update([
+            'payment_response_raw' => $response->body()
+        ]);
+
 
         // 4️⃣ Ambil data dari respon Midtrans
-        $vaNumber = $response['va_numbers'][0]['va_number'] ?? null;
-        $paymentType = $response['payment_type'] ?? null;
-        $midtransTransactionId = $response['transaction_id'] ?? null;
-        $orderId = $response['order_id'] ?? null;
-        $expiredAt = $response['expiry_time'] ?? null;
+        $vaNumber = null;
+    $deeplink = null;
+    $qrString = null;
+
+    $paymentType = $responseJson['payment_type'] ?? null;
+    $midtransTransactionId = $responseJson['transaction_id'] ?? null;
+    $orderId = $responseJson['order_id'] ?? null;
+    $expiredAt = $responseJson['expiry'] ?? null;
+
+    // =============================
+    // VA Number
+    // =============================
+    if (!empty($responseJson['va_numbers'])) {
+        $vaNumber = $responseJson['va_numbers'][0]['va_number'] ?? null;
+    } elseif (!empty($responseJson['permata_va_number'])) {
+        $vaNumber = $responseJson['permata_va_number'];
+    }
+
+    // =============================
+    // Actions Handler
+    // =============================
+    if (!empty($responseJson['actions'])) {
+        foreach ($responseJson['actions'] as $act) {
+
+        $name = strtolower($act['name'] ?? '');
+        $url = $act['url'] ?? null;
+
+        if (!$url) continue;
+
+        // =============================
+        // 1️⃣ Ambil Deeplink E-wallet
+        // =============================
+        if (
+            str_contains($name, 'deeplink') ||      // deeplink-redirect
+            str_contains($name, 'app')              // gopay-app-redirect (jika muncul)
+        ) {
+            // Ambil hanya sekali — jangan ditimpa
+            if (!$deeplink) {
+                $deeplink = $url;
+            }
+        }
+
+
+        // =============================
+        // 2️⃣ Ambil QR Code URL
+        // =============================
+        if (str_contains($name, 'qr')) {
+            $qrString = $url;
+        }
+    }
+}
+// dd($deeplink);
 
         // 5️⃣ Update ke DB
         $transaction->update([
@@ -116,8 +220,11 @@ class PassengerTransactionService
             'midtrans_transaction_id' => $midtransTransactionId,
             'payment_type'            => $paymentType,
             'va_number'               => $vaNumber,
+            'ewallet_deeplink'        => $deeplink,
+            'qr_string'               => $qrString,
             'payment_expired_at'      => $expiredAt,
-            'payment_response_raw'    => $response,
+            'payment_response_raw'    => json_encode($responseJson),
+            'payment_method_id'       => $paymentMethod->id,
         ]);
 
         // 6️⃣ Return sama seperti sebelumnya (ada VA & raw_response)
@@ -129,7 +236,7 @@ class PassengerTransactionService
     }
 
     public function generateCode($bookingCode){
-        $cleanCode = str_replace(['','_'], '-', strtoupper($bookingCode));
+        $cleanCode = str_replace([' ','_'], '-', strtoupper($bookingCode));
         $today = now()->format('Ymd');
         $countToday = PassengerTransaction::whereDate('created_at', now()->toDateString())->count()+1;
 

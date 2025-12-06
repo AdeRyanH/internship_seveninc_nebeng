@@ -17,7 +17,7 @@ class PaymentMethodRepository
     public function getAll()
     {
         return $this->model
-            ->orderBy('bank_name', 'ASC')
+            ->orderBy('created_at', 'ASC')
             ->get();
     }
 

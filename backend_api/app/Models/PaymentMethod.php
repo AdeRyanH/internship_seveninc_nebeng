@@ -17,9 +17,11 @@ class PaymentMethod extends Model
      * Kolom yang bisa diisi mass-assignment.
      */
     protected $fillable = [
-        'bank_name',
-        'account_name',
-        'account_number',
+        'name',
+        'method',
+        'code',
+        'icon',
+        'is_active',
     ];
 
     /**

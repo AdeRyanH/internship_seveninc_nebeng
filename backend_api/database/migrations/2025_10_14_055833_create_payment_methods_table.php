@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
 
             // Nama bank, contoh: BCA, BNI, Mandiri, dll
-            $table->string('bank_name');
-
+            $table->string('name');
+            $table->string('method');
+            $table->string('code');
+            $table->string('icon')->nullable();
             // Nama pemilik rekening
-            $table->string('account_name');
-
-            // Nomor rekening / virtual account
-            $table->string('account_number');
+            $table->boolean('is_active')->default(true);
 
             $table->timestamps();
         });

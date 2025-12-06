@@ -26,6 +26,7 @@ use App\Http\Controllers\DriverCommissionController;
 use App\Http\Controllers\DriverWithdrawalController;
 use App\Http\Controllers\GoodsRideBookingController;
 use App\Http\Controllers\GoodsTransactionController;
+use App\Http\Controllers\MidtransWebHookController;
 use App\Http\Controllers\PassengerPricingController;
 use App\Http\Controllers\PassengerRideBookingController;
 use App\Http\Controllers\PassengerTransactionController;
@@ -36,6 +37,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/administrator', [AdministratorController::class, 'store']);
 
 Route::middleware('auth:api')->group(function() {
+
+    // [MIDTRANS WEBHOOK]
+    Route::post('/midtrans/webhook', [MidtransWebHookController::class, 'hanlde']);
 
     // [PRIVATE ROUTE]
     Route::post('/logout', [AuthController::class, 'logout']);

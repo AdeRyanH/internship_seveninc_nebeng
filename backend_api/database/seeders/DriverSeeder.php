@@ -97,12 +97,12 @@ class DriverSeeder extends Seeder
                     'driver_license_rejected_reason' => null,
 
                     // SKCK (Police Clearance)
-                    'Police_clearance_certificate_number'   => 'SKCK' . rand(10000, 99999),
-                    'Police_clearance_certificate_fullname' => $data['full_name'],
-                    'Police_clearance_certificate_expired'  => Carbon::now()->addYears(rand(1, 3)),
-                    'Police_clearance_certificate_img'      => null,
-                    'Police_clearance_verified'             => rand(0, 1),
-                    'Police_clearance_rejected_reason'      => null,
+                    'police_clearance_certificate_number'   => 'SKCK' . rand(10000, 99999),
+                    'police_clearance_certificate_fullname' => $data['full_name'],
+                    'police_clearance_certificate_expired'  => Carbon::now()->addYears(rand(1, 3)),
+                    'police_clearance_certificate_img'      => null,
+                    'police_clearance_verified'             => rand(0, 1),
+                    'police_clearance_rejected_reason'      => null,
                 ]
             );
         }
