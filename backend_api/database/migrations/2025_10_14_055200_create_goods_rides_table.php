@@ -27,7 +27,7 @@ return new class extends Migration
             $table->enum('transport_type', ['sendiri', 'umum']);
 
             // Subtipe terminal publik (Terminal Bis / Stasiun Kereta / Bandara / Pelabuhan)
-            $table->enum('public_terminal_subtype', ['terminal bis', 'stasiun kereta', 'bandara', 'pelabuhan']);
+            $table->enum('public_terminal_subtype', ['terminal_bis', 'stasiun_kereta', 'bandara', 'pelabuhan']);
 
             // Terminal keberangkatan dan tujuan
             $table->foreignId('departure_terminal_id')
@@ -59,8 +59,8 @@ return new class extends Migration
             $table->integer('commission_percentage')->default(0);
 
             // Status perjalanan
-            $table->enum('ride_status', ['Pending', 'Dalam Perjalanan', 'Selesai', 'Dibatalkan'])
-                  ->default('Pending');
+            $table->enum('ride_status', ['pending', 'dalam_perjalanan', 'selesai', 'dibatalkan'])
+                  ->default('pending');
 
             $table->timestamps();
         });

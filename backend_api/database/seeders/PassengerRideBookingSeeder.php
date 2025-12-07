@@ -25,7 +25,7 @@ class PassengerRideBookingSeeder extends Seeder
             return;
         }
 
-        $statuses = ['Pending', 'Diterima', 'Ditolak'];
+        $statuses = ['pending', 'diterima', 'ditolak'];
 
         foreach ($rides as $ride) {
             // Maksimal 3 booking per ride
@@ -40,7 +40,7 @@ class PassengerRideBookingSeeder extends Seeder
                 $status = $statuses[array_rand($statuses)];
 
                 // Jika ditolak → reject_status = "proses"
-                $rejectStatus = $status === 'Ditolak' ? 'proses' : null;
+                $rejectStatus = $status === 'ditolak' ? 'proses' : null;
 
                 // Generate nomor booking
                 $today = Carbon::today()->format('Ymd');
@@ -58,7 +58,7 @@ class PassengerRideBookingSeeder extends Seeder
                 ]);
 
                 // Jika booking diterima, tambahkan seats_reserved di ride
-                if ($status === 'Diterima') {
+                if ($status === 'diterima') {
                     $ride->increment('seats_reserved', $seatsReserved);
                 }
             }

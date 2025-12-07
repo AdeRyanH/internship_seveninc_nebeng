@@ -50,7 +50,7 @@ class GoodsTransactionService
             'total_amount'          => 'required|numeric|min:0',
             'payment_method_id'     => 'required|exists:payment_methods,id',
             'payment_proof_img'     => 'nullable|string|max:255',
-            'payment_status'        => 'required|string|in:Pending,Diterima,Ditolak,Credited',
+            'payment_status'        => 'required|string|in:pending,diterima,ditolak,credited',
             'credit_used'           => 'nullable|integer|min:0',
             'transaction_date'      => 'nullable|date',
         ]);
@@ -71,7 +71,7 @@ class GoodsTransactionService
 
         // Default status
         $data['transaction_code'] = $transaction_code;
-        $data['payment_status'] = $data['payment_status'] ?? 'Pending';
+        $data['payment_status'] = $data['payment_status'] ?? 'pending';
         $data['transaction_date'] = $data['transaction_date'] ?? now();
 
         return $this->repository->create($data);
@@ -88,7 +88,7 @@ class GoodsTransactionService
     public function updateTransaction($id, array $data)
     {
         $validator = Validator::make($data, [
-            'payment_status'   => 'sometimes|string|in:Pending,Diterima,Ditolak,Credited',
+            'payment_status'   => 'sometimes|string|in:pending,diterima,ditolak,credited',
             'payment_proof_img'=> 'nullable|string|max:255',
             'credit_used'      => 'nullable|integer|min:0',
         ]);

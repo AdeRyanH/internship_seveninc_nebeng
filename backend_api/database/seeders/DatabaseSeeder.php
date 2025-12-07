@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 100 Customer
-        Customer::factory(100)->create();
+        // // 100 Customer
+        // Customer::factory(100)->create();
 
-        // 100 Driver
-        Driver::factory(100)->create();
+        // // 100 Driver
+        // Driver::factory(100)->create();
 
         $this->call([
             // AuthSeeder::class,

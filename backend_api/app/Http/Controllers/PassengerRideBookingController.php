@@ -77,7 +77,7 @@ class PassengerRideBookingController extends Controller
     // PATCH /api/passenger-ride-bookings/{id}/status
     public function updateStatus(Request $request, $id)
     {
-        $request->validate(['status' => 'required|string|in:Pending,Diterima,Ditolak']);
+        $request->validate(['status' => 'required|string|in:pending,diterima,ditolak']);
         $booking = $this->bookingService->updateStatus($id, $request->status);
         return response()->json(['message' => 'Status updated successfully', 'data' => $booking], 200);
     }

@@ -67,9 +67,9 @@ class DriverController extends Controller
 
     public function verify(Request $request, $id){
         $validated = $request->validate([
-            'type' => 'required|in:id_card,driver_license,police_clearance',
-            'status' => 'required',
-            'reason' => 'nullable|string|max:255'
+            'type'      => 'required|in:id_card,driver_license,police_clearance',
+            'status'    => 'required',
+            'reason'    => 'nullable|string|max:255'
         ]);
 
         return $this->driverService->verifyDocument(

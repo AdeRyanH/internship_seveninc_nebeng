@@ -58,7 +58,7 @@ class PassengerRideSeeder extends Seeder
         // }
 
         // $this->command->info('✅ PassengerRideSeeder berhasil dijalankan!');
-         $drivers   = Driver::all();
+        $drivers   = Driver::all();
         $terminals = Terminal::all();
 
         if ($drivers->isEmpty() || $terminals->count() < 2) {
@@ -66,8 +66,8 @@ class PassengerRideSeeder extends Seeder
             return;
         }
 
-        $vehicleTypes = ['Motor', 'Mobil'];
-        $statuses = ['Pending', 'Dalam Perjalanan', 'Selesai', 'Dibatalkan'];
+        $vehicleTypes = ['motor', 'mobil'];
+        $statuses = ['pending', 'dalam_perjalanan', 'selesai', 'dibatalkan'];
 
         foreach ($drivers as $driver) {
             $rideCount = rand(2, 4);

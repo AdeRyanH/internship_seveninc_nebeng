@@ -36,7 +36,7 @@ class PassengerPricing extends Model
 
     // Label kendaraaan
     public function getVehicleAttribute():string {
-        return $this->vehicle_type === 'Mobil' ? 'Mobil' : 'Motor';
+        return $this->vehicle_type === 'mobil' ? 'mobil' : 'motor';
     }
 
     // total harga setelah komisi (harga bersih untuk driver)

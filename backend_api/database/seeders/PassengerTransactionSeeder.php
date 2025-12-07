@@ -27,7 +27,7 @@ class PassengerTransactionSeeder extends Seeder
             return;
         }
 
-        $statuses = ['Pending', 'Diterima', 'Ditolak', 'Credited'];
+        $statuses = ['pending', 'diterima', 'ditolak', 'credited'];
 
         foreach ($bookings as $booking) {
             // Ambil customer dari booking atau random

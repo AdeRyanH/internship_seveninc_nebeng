@@ -77,14 +77,16 @@ class PassengerTransactionController extends Controller
     public function store(Request $request)
     {
         try {
-            $transaction = $this->transactionService->createTransaction($request->all());
+            $data = $request->all();
+            unset($data['payment_status']); // HARD RULE
 
-            return response()->json([
-                'data' => $transaction
-            ], 201);
+            // $transaction = $this->transactionService->createTransaction($request->all());
+            $transaction = $this->transactionService->createTransaction($data);
+
+            return response()->json(data: ['data' => $transaction], status: 201);
 
         } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+            return response()->json(data: ['errors' => $e->errors()], status: 422);
         }
     }
 
@@ -102,7 +104,7 @@ class PassengerTransactionController extends Controller
     // PATCH /api/passenger-transactions/{id}/status
     public function updateStatus(Request $request, $id)
     {
-        $request->validate(['status' => 'required|string|in:Pending,Diterima,Ditolak,Credited']);
+        $request->validate(['status' => 'required|string|in:pending,diterima,ditolak,credited']);
         $transaction = $this->transactionService->updateStatus($id, $request->status);
         return response()->json(['message' => 'Status updated successfully', 'data' => $transaction], 200);
     }

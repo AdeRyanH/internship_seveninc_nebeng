@@ -41,11 +41,11 @@ class RatingService
     public function createRating(array $data)
     {
         $validator = Validator::make($data, [
-            'driver_id' => 'required|exists:drivers,id',
-            'customer_id' => 'required|exists:customers,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'feedback' => 'nullable|string|max:500',
-            'created_at' => 'nullable|date',
+            'driver_id'     => 'required|exists:drivers,id',
+            'customer_id'   => 'required|exists:customers,id',
+            'rating'        => 'required|integer|min:1|max:5',
+            'feedback'      => 'nullable|string|max:500',
+            'created_at'    => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -61,8 +61,8 @@ class RatingService
             'rating' => $rating,
             'driver' => [
                 'id' => $driver->id,
-                'average_rating' => $driver->average_rating,
-                'rating_count' => $driver->rating_count,
+                'average_rating'    => $driver->average_rating,
+                'rating_count'      => $driver->rating_count,
             ],
         ];
         });
@@ -73,8 +73,8 @@ class RatingService
     public function updateRating($id, array $data)
     {
         $validator = Validator::make($data, [
-            'rating' => 'sometimes|required|integer|min:1|max:5',
-            'feedback' => 'nullable|string|max:500',
+            'rating'    => 'sometimes|required|integer|min:1|max:5',
+            'feedback'  => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {

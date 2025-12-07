@@ -22,10 +22,10 @@ class AuthController extends Controller
     public function register(Request $request){
         try {
             $valiated = $request->validate([
-                'name' => 'required|string|max:255',
-                'username' => 'required|string|max:255|unique:users',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
+                'name'      => 'required|string|max:255',
+                'username'  => 'required|string|max:255|unique:users',
+                'email'     => 'required|string|email|max:255|unique:users',
+                'password'  => 'required|string|min:8|confirmed',
                 // 'role' => 'required|in:admin,superadmin,customer,driver,terminal',
                 'user_type' => 'required|in:admin,superadmin,customer,driver,terminal,finance',
             ]);

@@ -31,9 +31,9 @@ class PaymentMethodService
     public function createMethod(array $data)
     {
         $validator = Validator::make($data, [
-            'bank_name' => 'required|string|max:100',
-            'account_name' => 'required|string|max:100',
-            'account_number' => 'required|string|max:50|unique:payment_methods,account_number',
+            'bank_name'     => 'required|string|max:100',
+            'account_name'  => 'required|string|max:100',
+            'account_number'=> 'required|string|max:50|unique:payment_methods,account_number',
         ]);
 
         if ($validator->fails()) {
@@ -47,9 +47,9 @@ class PaymentMethodService
     public function updateMethod($id, array $data)
     {
         $validator = Validator::make($data, [
-            'bank_name' => 'sometimes|string|max:100',
-            'account_name' => 'sometimes|string|max:100',
-            'account_number' => 'sometimes|string|max:50|unique:payment_methods,account_number,' . $id,
+            'bank_name'     => 'sometimes|string|max:100',
+            'account_name'  => 'sometimes|string|max:100',
+            'account_number'=> 'sometimes|string|max:50|unique:payment_methods,account_number,' . $id,
         ]);
 
         if ($validator->fails()) {

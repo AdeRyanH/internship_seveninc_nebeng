@@ -18,7 +18,7 @@ return new class extends Migration
             // Enum sesuai diagram terminal_types dan public_terminal_subtypes
             $table->enum('terminal_type', ['public', 'private']);
 
-            $table->enum('public_terminal_subtype', ['terminal bis', 'stasiun kereta', 'bandara', 'pelabuhan'])
+            $table->enum('public_terminal_subtype', ['terminal_bis', 'stasiun_kereta', 'bandara', 'pelabuhan'])
                   ->nullable();
 
             // Foreign keys ke lokasi administratif

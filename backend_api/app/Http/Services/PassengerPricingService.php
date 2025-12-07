@@ -29,11 +29,11 @@ class PassengerPricingService
     public function create(array $data)
     {
         $validator = Validator::make($data, [
-            'vehicle_type' => 'required|in:motor,mobil',
+            'vehicle_type'          => 'required|in:motor,mobil',
             'departure_terminal_id' => 'required|exists:terminals,id',
-            'arrival_terminal_id' => 'required|exists:terminals,id|different:departure_terminal_id',
-            'price_per_seat' => 'required|integer|min:1000',
-            'commision_percentage' => 'required|integer|min:0|max:100',
+            'arrival_terminal_id'   => 'required|exists:terminals,id|different:departure_terminal_id',
+            'price_per_seat'        => 'required|integer|min:1000',
+            'commision_percentage'  => 'required|integer|min:0|max:100',
         ]);
 
         if ($validator->fails()) throw new ValidationException($validator);
@@ -46,11 +46,11 @@ class PassengerPricingService
         if (!$pricing) throw ValidationException::withMessages(['pricing' => 'Pricing not found']);
 
         $validator = Validator::make($data, [
-            'vehicle_type' => 'sometimes|in:motor,mobil',
+            'vehicle_type'          => 'sometimes|in:motor,mobil',
             'departure_terminal_id' => 'sometimes|exists:terminals,id',
-            'arrival_terminal_id' => 'sometimes|exists:terminals,id|different:departure_terminal_id',
-            'price_per_seat' => 'sometimes|integer|min:1000',
-            'commision_percentage' => 'sometimes|integer|min:0|max:100',
+            'arrival_terminal_id'   => 'sometimes|exists:terminals,id|different:departure_terminal_id',
+            'price_per_seat'        => 'sometimes|integer|min:1000',
+            'commision_percentage'  => 'sometimes|integer|min:0|max:100',
         ]);
 
         if ($validator->fails()) throw new ValidationException($validator);

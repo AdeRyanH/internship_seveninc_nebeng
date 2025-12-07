@@ -16,45 +16,36 @@ class PaymentMethodSeeder extends Seeder
         //
         $methods = [
             [
-                'bank_name'      => 'Bank BCA',
-                'account_name'   => 'PT Nebeng Indonesia',
-                'account_number' => '1234567890',
+                'bank_name'      => 'QRIS',
+                'account_name'   => 'MIDTRANS_QRIS',
+                'account_number' => 'MIDTRANS_NO_NUMBER',
             ],
             [
-                'bank_name'      => 'Bank BRI',
-                'account_name'   => 'CV Mitra Transportasi',
-                'account_number' => '0023445566',
+                'bank_name'      => 'BRI',
+                'account_name'   => 'MIDTRANS_BRI',
+                'account_number' => 'MIDTRANS_NO_NUMBER',
             ],
             [
-                'bank_name'      => 'Bank Mandiri',
-                'account_name'   => 'PT Layanan Digital Nusantara',
-                'account_number' => '9876543210',
-            ],
-            [
-                'bank_name'      => 'GoPay',
-                'account_name'   => 'Nebeng Digital Wallet',
-                'account_number' => '081234567890',
-            ],
-            [
-                'bank_name'      => 'OVO',
-                'account_name'   => 'Nebeng OVO Official',
-                'account_number' => '081298765432',
+                'bank_name'      => 'BCA',
+                'account_name'   => 'MIDTRANS_BCA',
+                'account_number' => 'MIDTRANS_NO_NUMBER',
             ],
             [
                 'bank_name'      => 'DANA',
-                'account_name'   => 'Nebeng Cashless',
-                'account_number' => '081223344556',
-            ],
-            [
-                'bank_name'      => 'ShopeePay',
-                'account_name'   => 'Nebeng Shopee Wallet',
-                'account_number' => '081377889900',
-            ],
+                'account_name'   => 'MIDTRANS_DANA',
+                'account_number' => 'MIDTRANS_NO_NUMBER',
+            ]
         ];
 
+        // foreach ($methods as $method) {
+        //     PaymentMethod::updateOrCreate(
+        //         ['account_number' => $method['account_number']],
+        //         $method
+        //     );
+        // }
         foreach ($methods as $method) {
             PaymentMethod::updateOrCreate(
-                ['account_number' => $method['account_number']],
+                ['bank_name' => $method['bank_name']], // ✅ UNIQUE KEY
                 $method
             );
         }

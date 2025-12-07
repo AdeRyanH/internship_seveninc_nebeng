@@ -10,7 +10,19 @@ class DriverFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory()->driver(),
+            // 'user_id' => User::factory()->driver(),
+
+            // 'full_name' => fake()->name(),
+            // 'telephone' => fake()->phoneNumber(),
+            // 'full_address' => fake()->address(),
+            // 'profile_img' => null,
+
+            // 'balance' => fake()->numberBetween(0, 500000),
+            // 'credit_score' => fake()->numberBetween(60, 100),
+            // 'total_rating' => fake()->numberBetween(10, 100),
+            // 'rating_count' => fake()->numberBetween(5, 50),
+            // 'average_rating' => fake()->randomFloat(2, 3, 5),
+            'user_id' => null, // diisi di Seeder
 
             'full_name' => fake()->name(),
             'telephone' => fake()->phoneNumber(),

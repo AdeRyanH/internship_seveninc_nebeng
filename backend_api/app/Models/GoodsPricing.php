@@ -36,7 +36,7 @@ class GoodsPricing extends Model
 
     // Label transportasi umum / sendiri
     public function getFormattedLabelAttribute():string {
-        return $this->transport_type === 'Umum' ? 'Umum' : 'Sendiri';
+        return $this->transport_type === 'umum' ? 'umum' : 'sendiri';
     }
 
     // Harga bersih yang diterima driver (setelah komisi sistem)

@@ -70,10 +70,10 @@ class GoodsTransaction extends Model
         'transaction_date' => 'datetime',
     ];
 
-    public const STATUS_PENDING = 'Pending';
-    public const STATUS_ACCEPTED = 'Diterima';
-    public const STATUS_REJECTED = 'Ditolak';
-    public const STATUS_CREDITED = 'Credited';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_ACCEPTED = 'diterima';
+    public const STATUS_REJECTED = 'ditolak';
+    public const STATUS_CREDITED = 'credited';
 
     /**
      * ========================
