@@ -53,14 +53,11 @@ import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.n
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorPaymentMethodDetailScreen(
-    onBack: () -> Unit = {},
-    onPay: () -> Unit = {},
-    orderNumber: String = "FR-2345678997543234",
-    paymentMethod: PassengerRideMotorPaymentMethodModel = PassengerRideMotorPaymentMethodModel(
-        name = "BRI Virtual Account",
-        icon = R.drawable.qris
-    ),
-    totalAmount: String = "Rp 50.000,00"
+    onBack: () -> Unit,
+    onPay: () -> Unit,
+    orderNumber: String,
+    paymentMethod: PassengerRideMotorPaymentMethodModel,
+    totalAmount: String
 ) {
     var showHowToPay by remember { mutableStateOf(false) }
     var termsChecked by remember { mutableStateOf(false) }

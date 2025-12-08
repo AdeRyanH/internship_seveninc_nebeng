@@ -9,6 +9,7 @@ import javax.inject.Inject
 import com.example.nebeng.core.common.Result
 import com.example.nebeng.core.utils.BookingStatus
 import com.example.nebeng.core.utils.PaymentStatus
+import com.example.nebeng.core.utils.VehicleType
 import com.example.nebeng.feature_a_homepage.domain.mapper.*
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
@@ -48,6 +49,9 @@ class NebengMotorBookingInteractor @Inject constructor(
         customerId: Int
     ): Result<BookingSession> {
         return try {
+            // Initial set vehicleType as a MOTOR
+            val setVehicleMotor = VehicleType.MOTOR
+
             val customerResult      = useCases.getByIdCustomer(token, customerId).last()
             val ridesResult         = useCases.getAllPassengerRide(token).last()
             val terminalsResult     = useCases.getAllTerminal(token).last()
@@ -88,11 +92,12 @@ class NebengMotorBookingInteractor @Inject constructor(
 
             Result.Success(
                 BookingSession(
-                    customer             = customer,
-                    listPassengerRides   = rides,
-                    listTerminals        = terminals,           // ← terisi kalau endpoint terminal sukses
-                    listPaymentMethods   = paymentMethods,
-                    listPassengerPricing = pricings
+                    customer                = customer,
+                    listPassengerRides      = rides,
+                    listTerminals           = terminals,           // ← terisi kalau endpoint terminal sukses
+                    listPaymentMethods      = paymentMethods,
+                    listPassengerPricing    = pricings,
+                    vehicleType             = setVehicleMotor       // wajib
                 )
             )
 
@@ -149,6 +154,11 @@ class NebengMotorBookingInteractor @Inject constructor(
         // 1. Save selected ride
         var updated = session.copy(selectedRide = ride)
 
+        session.listPassengerPricing.forEach {
+            Log.d("PRICING_DEBUG", "id=${it.id} dep=${it.departureTerminalId} arr=${it.arrivalTerminalId} vehicle=${it.vehicleType}")
+        }
+
+
         // 2. Cari terminal departure & arrival dari session.listTerminals
         val departureTerminal = session.listTerminals
             .find { it.id == ride.departureTerminalId }
@@ -168,14 +178,20 @@ class NebengMotorBookingInteractor @Inject constructor(
         // 3. Cari passengerPricing berdasarkan terminal dep-arr
         val pricing = session.listPassengerPricing.find {
             it.departureTerminalId == ride.departureTerminalId &&
-                    it.arrivalTerminalId == ride.arrivalTerminalId
+                    it.arrivalTerminalId == ride.arrivalTerminalId &&
+                    it.vehicleType == session.vehicleType   // 🔒 KUNCI
         }
 
         Log.d("UI_PAGE3", "Pricing ditemukan: id=${pricing?.id} | price=${pricing?.pricePerSeat}")
 
+        if (pricing == null) {
+            Log.e("PRICING", "❌ Pricing not found for ${session.vehicleType}")
+            return
+        }
+
         updated = updated.copy(
             selectedPricing = pricing,
-            totalPrice = pricing?.pricePerSeat ?: 0
+            totalPrice = pricing.pricePerSeat
         )
 
         Log.d("UI_PAGE3", "TotalPrice diset menjadi ${updated.totalPrice}")
@@ -212,10 +228,30 @@ class NebengMotorBookingInteractor @Inject constructor(
         onUpdated: (BookingSession) -> Unit,
         onError: (String) -> Unit
     ) {
+        Log.d("UI_PAGE5", "=== CONFIRM BOOKING STARTED ===")
+        Log.d("UI_PAGE5", "Selected Ride ID: ${session.selectedRide?.idPassengerRide}")
+        Log.d("UI_PAGE5", "Selected Pricing: ${session.selectedPricing?.id}")
+        Log.d("UI_PAGE5", "Total Price: ${session.totalPrice}")
+        Log.d("UI_PAGE5", "Customer ID: ${session.customer?.idCustomer}")
+
         // Validasi
-        val ride = session.selectedRide ?: return onError("Ride belum dipilih")
-        val customer = session.customer ?: return onError("Customer null (invalid session)")
-        val pricing = session.selectedPricing ?: return onError("Pricing belum dipilih")
+        val ride = session.selectedRide
+        if (ride == null) {
+            Log.e("UI_PAGE5", "Gagal confirmBooking → ride null")
+            return onError("Ride belum dipilih")
+        }
+
+        val customer = session.customer
+        if (customer == null) {
+            Log.e("UI_PAGE5", "Gagal confirmBooking → customer null")
+            return onError("Customer tidak ditemukan")
+        }
+
+        val pricing = session.selectedPricing
+//        if (pricing == null) {
+//            Log.e("UI_PAGE5", "Gagal confirmBooking → pricing null")
+//            return onError("Pricing belum dipilih")
+//        }
 
         // Request body booking
         val reqBooking = CreatePassengerRideBookingRequest(
@@ -223,17 +259,35 @@ class NebengMotorBookingInteractor @Inject constructor(
             totalPrice = session.totalPrice,
             customerId = customer.idCustomer,
             seatsReserved = 1,
-            status = "Pending"
+            status = PaymentStatus.PENDING.value
+//            status = "pending"
         )
+
+        Log.d("UI_PAGE5", "Send API CreatePassengerRideBookingRequest:")
+        Log.d("UI_PAGE5", " → passengerRideId = ${reqBooking.passengerRideId}")
+        Log.d("UI_PAGE5", " → customerId = ${reqBooking.customerId}")
+        Log.d("UI_PAGE5", " → seatsReserved = ${reqBooking.seatsReserved}")
+        Log.d("UI_PAGE5", " → totalPrice = ${reqBooking.totalPrice}")
+        Log.d("UI_PAGE5", " → status = ${reqBooking.status}")
 
         // Panggil API
         useCases.createPassengerRideBooking(token, reqBooking).collect { result ->
             when (result) {
-                is Result.Loading -> {}
-                is Result.Error -> onError(result.message ?: "Gagal membuat booking")
+                is Result.Loading -> {
+                    Log.d("UI_PAGE5", "Booking API: Loading...")
+                }
+                is Result.Error -> {
+                    Log.e("UI_PAGE5", "Booking API Error: ${result.message}")
+                    onError(result.message ?: "Gagal membuat booking")
+                }
                 is Result.Success -> {
+                    Log.d("UI_PAGE5", "Booking API Success! Mapping response...")
+
                     val bookingSummary = result.data
                     val booking = bookingSummary.toPassengerRideBookingCustomer()
+
+                    Log.d("UI_PAGE5", "Booking created with ID = ${booking.idBooking}")
+                    Log.d("UI_PAGE5", "Booking status = ${booking.bookingStatus}")
 
                     val updated = session.copy(
                         booking = booking,
@@ -273,18 +327,36 @@ class NebengMotorBookingInteractor @Inject constructor(
             customerId = customer.idCustomer,
             totalAmount = session.totalPrice,
             paymentMethodId = payment.idPaymentMethod,
-            paymentStatus = "Pending",     // BENAR, backend nanti overwrite setelah Midtrans settle
+            paymentStatus = PaymentStatus.PENDING.value,     // BENAR, backend nanti overwrite setelah Midtrans settle
             creditUsed = 0,
             transactionDate = "",
             paymentProofImg = ""                 // fix
         )
 
+        Log.d("UI_PAGE5", "Send API CreatePassengerTransactionRequest:")
+        Log.d("UI_PAGE5", " → bookingId        = ${request.passengerRideBookingId}")
+        Log.d("UI_PAGE5", " → customerId       = ${request.customerId}")
+        Log.d("UI_PAGE5", " → totalAmount      = ${request.totalAmount}")
+        Log.d("UI_PAGE5", " → paymentMethodId  = ${request.paymentMethodId}")
+        Log.d("UI_PAGE5", " → paymentStatus    = ${request.paymentStatus}")
+        Log.d("UI_PAGE5", " → creditUsed       = ${request.creditUsed}")
+        Log.d("UI_PAGE5", " → transactionDate  = '${request.transactionDate}'")
+        Log.d("UI_PAGE5", " → paymentProofImg  = '${request.paymentProofImg}'")
+
         useCases.createPassengerTransaction(token, request).collect { result ->
             when (result) {
-                is Result.Loading -> {}
-                is Result.Error -> onError(result.message ?: "Gagal membuat transaksi")
+                is Result.Loading -> {
+                    Log.d("UI_PAGE5", "Transaction API: Loading...")
+                }
+                is Result.Error -> {
+                    Log.e("UI_PAGE5", "Transaction API Error: ${result.message}")
+                    onError(result.message ?: "Gagal membuat transaksi")
+                }
+
                 is Result.Success -> {
+                    Log.d("UI_PAGE5", "Transaction API Success! Mapping response...")
                     val trx = result.data.toPassengerTransactionCustomer()
+                    Log.d("UI_PAGE5", "Transaction created with ID = ${trx.idPassengerTransaction}")
 
                     val updated = session.copy(
                         transaction = trx,

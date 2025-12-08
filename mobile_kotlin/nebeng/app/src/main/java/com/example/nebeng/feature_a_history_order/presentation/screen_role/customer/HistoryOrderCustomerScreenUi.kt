@@ -2239,6 +2239,7 @@ private fun HistoryItemCard(
                             VehicleType.MOTOR -> Icons.Default.TwoWheeler
                             VehicleType.BARANG -> Icons.Default.LocalShipping
                             VehicleType.BARANG_TRANSPORTASI_UMUM -> Icons.Default.LocalShipping
+                            VehicleType.UNKNOWN -> TODO()
                         },
                         contentDescription = null,
                         tint = NebengBlue,

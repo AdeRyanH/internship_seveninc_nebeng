@@ -21,6 +21,7 @@ import com.example.nebeng.feature_passenger_pricing.data.repository.PassengerPri
 import com.example.nebeng.feature_passenger_ride.data.repository.PassengerRideRepository
 import com.example.nebeng.feature_passenger_ride_booking.data.repository.PassengerRideBookingRepository
 import com.example.nebeng.feature_passenger_transaction.data.repository.updated.PassengerTransactionUpdatedRepository
+import com.example.nebeng.feature_passenger_transaction.data.repository.updatedv2.PassengerTransactionUpdatedV2Repository
 import com.example.nebeng.feature_payment_method.data.repository.PaymentMethodRepository
 import com.example.nebeng.feature_terminal.data.repository.TerminalRepository
 import dagger.Module
@@ -41,7 +42,7 @@ object HomepageModule {
         terminalRepository: TerminalRepository,
         customerRepository: CustomerRepository,
         driverRepository: DriverRepository,
-        passengerTransactionUpdatedRepository: PassengerTransactionUpdatedRepository,
+        passengerTransactionUpdatedRepository: PassengerTransactionUpdatedV2Repository,
         passengerPricingRepository: PassengerPricingRepository
     ): NebengMotorUseCases {
         return NebengMotorUseCases(

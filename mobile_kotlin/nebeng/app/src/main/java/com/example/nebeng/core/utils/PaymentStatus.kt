@@ -1,10 +1,10 @@
 package com.example.nebeng.core.utils
 
 enum class PaymentStatus(val value: String) {
-    PENDING("Pending"),
-    DITERIMA("Diterima"),
-    DITOLAK("Ditolak"),
-    CREDITED("Credited");
+    PENDING("pending"),
+    DITERIMA("diterima"),
+    DITOLAK("ditolak"),
+    CREDITED("credited");
 
     companion object {
         fun fromString(value: String): PaymentStatus =

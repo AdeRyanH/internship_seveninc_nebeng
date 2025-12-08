@@ -17,7 +17,7 @@ import com.example.nebeng.feature_driver.domain.model.DriverSummary
 import com.example.nebeng.feature_passenger_pricing.domain.model.PassengerPricingSummary
 import com.example.nebeng.feature_passenger_ride.domain.model.PassengerRideSummary
 import com.example.nebeng.feature_passenger_ride_booking.domain.model.feature_a_history_order.PassengerRideBookingSummary
-import com.example.nebeng.feature_passenger_transaction.domain.model.updated.PassengerTransaction
+import com.example.nebeng.feature_passenger_transaction.domain.model.updatedv2.PassengerTransaction
 import com.example.nebeng.feature_payment_method.domain.model.PaymentMethodSummary
 import com.example.nebeng.feature_terminal.domain.model.TerminalSummary
 
@@ -63,20 +63,20 @@ fun PassengerTransaction.toPassengerTransactionCustomer(): PassengerTransactionC
         idPassengerTransaction  = id,
         transactionDate         = transactionDate,
         paymentStatus           = PaymentStatus.fromString(paymentStatus),
-        transactionCode = transactionCode,
-        midtransTransactionId = midtransTransactionId,
-        createdAt = createdAt,
-        paymentProofImg = paymentProofImg,
-        creditUsed = creditUsed,
-        paymentMethodId = paymentMethodId,
-        paymentType = paymentType,
-        updatedAt = updatedAt,
-        totalAmount = totalAmount,
-        midtransOrderId = midtransOrderId,
-        paymentExpiredAt = paymentExpiredAt,
-        passengerRideBookingId = passengerRideBookingId,
-        vaNumber = vaNumber,
-        customerId = customerId,
+        transactionCode         = transactionCode,
+        midtransTransactionId   = midtransTransactionId,
+        createdAt               = createdAt,
+        paymentProofImg         = paymentProofImg,
+        creditUsed              = creditUsed,
+        paymentMethodId         = paymentMethodId,
+        paymentType             = paymentType,
+        updatedAt               = updatedAt,
+        totalAmount             = totalAmount,
+        midtransOrderId         = midtransOrderId,
+        paymentExpiredAt        = paymentExpiredAt,
+        passengerRideBookingId  = passengerRideBookingId,
+        vaNumber                = vaNumber,
+        customerId              = customerId,
     )
 }
 

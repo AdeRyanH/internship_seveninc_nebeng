@@ -365,17 +365,19 @@ fun BannerSlider(
 @Composable
 fun PreviewHomepageCustomerScreenUi() {
     MaterialTheme {
-//        HomepageCustomerScreenUi(
-//            state = HomepageUiState(
-//                currentUser = HomepageUser(
-//                    customerId  = 1,
-//                    name = "Nadya Amalya",
-//                    username = "nadya",
+        HomepageCustomerScreenUi(
+            state = HomepageUiState(
+                currentUser = HomepageUser(
+                    userId = 1,
+                    customerId  = 1,
+                    userType = "customer",
+                    name = "Nadya Amalya",
+                    username = "nadya",
 //                    email = "nadya@mail.com",
-//                    user_type = "customer"
-//                ),
-//                points = 120
-//            )
-//        )
+                    token = ""
+                ),
+                points = 120
+            )
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor
 
+import com.example.nebeng.core.utils.VehicleType
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.CustomerCurrentCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerPricingCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideBookingCustomer
@@ -7,8 +8,6 @@ import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerTransactionCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
-//import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalArrivalCustomer
-//import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalDepartureCustomer
 import java.time.LocalDate
 
 data class BookingSession(
@@ -34,6 +33,7 @@ data class BookingSession(
     // PROGRESS (USER CHOICES)
     // =========================
     val selectedRide:   PassengerRideCustomer? = null,
+    val vehicleType: VehicleType = VehicleType.UNKNOWN,
 
 //    val selectedDepartureTerminal: TerminalDepartureCustomer? = null,
 //    val selectedArrivalTerminal:   TerminalArrivalCustomer? = null,

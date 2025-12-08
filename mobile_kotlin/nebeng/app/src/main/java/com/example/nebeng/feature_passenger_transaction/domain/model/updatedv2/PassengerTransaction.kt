@@ -1,14 +1,11 @@
-package com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer
+package com.example.nebeng.feature_passenger_transaction.domain.model.updatedv2
 
-import com.example.nebeng.core.utils.PaymentStatus
-
-data class PassengerTransactionCustomer(
-    // Tabel Passenger Transaction
-    val idPassengerTransaction: Int,
+data class PassengerTransaction(
+    val id: Int,
     val transactionDate: String,
     val transactionCode: String,
     val midtransTransactionId: String,
-    val paymentStatus: PaymentStatus,
+    val paymentStatus: String,
     val createdAt: String,
     val paymentProofImg: String?,
     val creditUsed: Int,

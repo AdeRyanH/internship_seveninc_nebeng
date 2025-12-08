@@ -13,12 +13,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.nebeng.R
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
 import com.example.nebeng.feature_a_homepage.presentation.HomepageViewModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.HomepageCustomerScreenUi
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.NebengMotorBookingViewModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.PassengerRideMotorScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_02.PassengerRideMotorScheduleScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_03.PassengerRideMotorScheduleDetailScreen
+import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_04.PassengerRideMotorPaymentMethodModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_04.PassengerRideMotorPaymentMethodScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_05.PassengerRideMotorPaymentMethodDetailScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_06.PassengerRideMotorPaymentStatusScreen
@@ -423,18 +426,94 @@ fun HomepageNavHost(
 
         // PAGE 04
         composable(NEBENG_MOTOR_PAYMENT_METHOD) {
+            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+
+            // ===== MEDIUM LOG =====
+            Log.d("UI_PAGE4", "=== MASUK PAGE 4 ===")
+            Log.d("UI_PAGE4", "Available Payment Methods = ${session.listPaymentMethods.size}")
+            session.listPaymentMethods.forEach {
+                Log.d("UI_PAGE4", "Method: ${it.idPaymentMethod} | ${it.bankName}")
+            }
+
             PassengerRideMotorPaymentMethodScreen (
+                paymentMethods = session.listPaymentMethods,
+
                 onBack = { navController.popBackStack() },
-                onNext = { navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) }
+
+                onSelect = { method ->
+                    Log.d("UI_PAGE4", "User pilih payment: ${method.bankName}")
+                    bookingViewModel.selectPaymentMethod(method)
+                },
+
+                onNext = {
+                    val selected = session.selectedPaymentMethod
+                    Log.d("UI_PAGE4", "Next clicked → selected=${selected?.bankName}")
+
+                    if (selected != null) {
+                        navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL)
+                    } else {
+                        Log.e("UI_PAGE4", "❌ Payment method belum dipilih")
+                    }
+                }
             )
         }
 
         // PAGE 05
+        // PAGE 05 — PAYMENT METHOD DETAIL (EXECUTION POINT)
         composable(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) {
+
+            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val loading = bookingViewModel.loading.collectAsStateWithLifecycle().value
+            val error   = bookingViewModel.error.collectAsStateWithLifecycle().value
+
+            // ---------- MEDIUM LOG ----------
+            Log.d("UI_PAGE5", "=== MASUK PAGE 5 ===")
+            Log.d("UI_PAGE5", "RideId       = ${session.selectedRide?.idPassengerRide}")
+            Log.d("UI_PAGE5", "CustomerId   = ${session.customer?.idCustomer}")
+            Log.d("UI_PAGE5", "PaymentId    = ${session.selectedPaymentMethod?.idPaymentMethod}")
+            Log.d("UI_PAGE5", "TotalPrice   = ${session.totalPrice}")
+
             PassengerRideMotorPaymentMethodDetailScreen(
                 onBack = { navController.popBackStack() },
-                onPay = { navController.navigate(NEBENG_MOTOR_PAYMENT_STATUS) }
+
+                onPay = {
+                    Log.d("UI_PAGE5", "💥 USER CLICK PAY → confirmBooking()")
+                    bookingViewModel.confirmBooking()
+                },
+
+                orderNumber = "FR-${session.selectedRide?.idPassengerRide ?: "-"}",
+
+                paymentMethod = PassengerRideMotorPaymentMethodModel(
+                    name = session.selectedPaymentMethod?.bankName ?: "Unknown",
+                    icon = R.drawable.qris
+                ),
+
+                totalAmount = "Rp ${session.totalPrice}"
             )
+
+            // ---------- NAVIGASI SETELAH STATE BERUBAH ----------
+            LaunchedEffect(session.step) {
+                when (session.step) {
+
+                    BookingStep.WAITING_PAYMENT -> {
+                        Log.d("UI_PAGE5", "➡️ Booking & Transaction created → WAITING_PAYMENT")
+                        navController.navigate(NEBENG_MOTOR_PAYMENT_STATUS) {
+                            popUpTo(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) { inclusive = true }
+                        }
+                    }
+
+                    BookingStep.FAILED -> {
+                        Log.e("UI_PAGE5", "❌ Booking failed: $error")
+                    }
+
+                    else -> Unit
+                }
+            }
+
+            // ----- Optional: Loading Overlay -----
+            if (loading) {
+                Log.d("UI_PAGE5", "⏳ Loading confirmBooking()")
+            }
         }
 
         // PAGE 06
