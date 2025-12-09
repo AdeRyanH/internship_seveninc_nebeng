@@ -347,11 +347,14 @@ fun HomepageNavHost(
 
         // PAGE 08
         composable(NEBENG_MOTOR_PAYMENT_SUCCESS) {
+            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+
             LaunchedEffect(Unit) {
                 bookingViewModel.startObserveRideProgress()
             }
 
             PassengerRideMotorPaymentSuccessScreen(
+                session = session,
                 onBack = { navController.popBackStack() },
                 onNext = {
                     navController.navigate(NEBENG_MOTOR_ON_THE_WAY) {

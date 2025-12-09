@@ -89,17 +89,6 @@ fun PassengerRideMotorOnTheWayScreen(
         }
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
-//            AndroidView(
-//                factory = { context ->
-//                    MapView(context).apply {
-//                        setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
-//                        controller.setZoom(16.0)
-//                        controller.setCenter(org.osmdroid.util.GeoPoint(-7.801194, 110.364917))
-//                        setMultiTouchControls(true)   // ⬅️ FIX zoom in / zoom out
-//                    }
-//                },
-//                modifier = Modifier.fillMaxSize()
-//            )
             val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
 
             AndroidView(

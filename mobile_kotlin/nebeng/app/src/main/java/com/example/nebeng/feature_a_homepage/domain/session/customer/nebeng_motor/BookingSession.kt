@@ -35,8 +35,6 @@ data class BookingSession(
     val selectedRide:   PassengerRideCustomer? = null,
     val vehicleType: VehicleType = VehicleType.UNKNOWN,
 
-//    val selectedDepartureTerminal: TerminalDepartureCustomer? = null,
-//    val selectedArrivalTerminal:   TerminalArrivalCustomer? = null,
     // ⬇️ sebelumnya: TerminalDepartureCustomer? / TerminalArrivalCustomer?
     val selectedDepartureTerminal: TerminalCustomer? = null,
     val selectedArrivalTerminal:   TerminalCustomer? = null,
