@@ -24,244 +24,11 @@ import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.n
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_04.PassengerRideMotorPaymentMethodModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_04.PassengerRideMotorPaymentMethodScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_05.PassengerRideMotorPaymentMethodDetailScreen
+import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_06.PassengerRideMotorPaymentStatusContainer
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_06.PassengerRideMotorPaymentStatusScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_07.PassengerRideMotorPaymentWaitingScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_08.PassengerRideMotorPaymentSuccessScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_09.PassengerRideMotorOnTheWayScreen
-
-//const val NEBENG_MOTOR                      = "nebeng_motor"
-//const val NEBENG_MOTOR_RIDE_SCHEDULE        = "nebeng_motor_ride_schedule"
-//const val NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL = "nebeng_motor_ride_schedule_detail"
-//const val NEBENG_MOTOR_PAYMENT_METHOD       = "nebeng_motor_payment_method"
-//const val NEBENG_MOTOR_PAYMENT_METHOD_DETAIL= "nebeng_motor_payment_method_detail"
-//const val NEBENG_MOTOR_PAYMENT_STATUS       = "nebeng_motor_payment_status"
-//const val NEBENG_MOTOR_PAYMENT_WAITING      = "nebeng_motor_payment_waiting"
-//const val NEBENG_MOTOR_PAYMENT_SUCCESS      = "nebeng_motor_payment_success"
-//const val NEBENG_MOTOR_ON_THE_WAY           = "nebeng_motor_on_the_way"
-//
-//const val ROUTE_PASSENGER_MOTOR_MAP = "passenger_motor_map"
-//const val ROUTE_PASSENGER_MOBIL = "passenger_mobil"
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun HomepageNavHost(
-//    navController: NavHostController = rememberNavController(),
-//    userType: String,
-//    viewModel: HomepageViewModel,
-//    onRouteChanged: (String) -> Unit
-//) {
-//    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-//
-//    val startDestination = if (userType.equals("driver", ignoreCase = true)) {
-//        "homepage_driver"
-//    } else {
-//        "homepage_customer"
-//    }
-//
-//    // ⬇️ Listener untuk mendeteksi pergantian composable route
-//    LaunchedEffect(navController) {
-//        navController.addOnDestinationChangedListener { _, destination, _ ->
-//            destination.route?.let { route ->
-//                onRouteChanged(route)   // ⬅️ kirim ke Fragment
-//            }
-//        }
-//    }
-//
-//    NavHost(
-//        navController = navController,
-//        startDestination = startDestination
-//    ) {
-//        composable("homepage_customer") {
-//            HomepageCustomerScreenUi(
-//                state = uiState,
-//                onMenuMotorClick = {
-//                    navController.navigate(NEBENG_MOTOR)
-//                },
-//                onMenuOpenMapClick = {
-//                    navController.navigate(ROUTE_PASSENGER_MOTOR_MAP)  // 🔥 open map screen
-//                }
-//            )
-//        }
-//
-//        // PAGE 01
-////        composable(NEBENG_MOTOR) {
-////            PassengerRideMotorScreen(
-////                onBack = { navController.popBackStack() },
-////                onNext = { navController.navigate(NEBENG_MOTOR_RIDE_SCHEDULE) }
-////            )
-////        }
-//        // PAGE 01 — Nebeng Motor
-//        composable(NEBENG_MOTOR) {
-//
-//            // Ambil ViewModel sekali untuk semua page dalam flow ini
-//            val bookingViewModel: NebengMotorBookingViewModel = hiltViewModel()
-//
-//            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
-//            val loading = bookingViewModel.loading.collectAsStateWithLifecycle().value
-//            val error = bookingViewModel.error.collectAsStateWithLifecycle().value
-//
-//            // load initial ketika pertama kali masuk
-//            LaunchedEffect(Unit) {
-//                val customer = uiState.currentUser ?: run {
-//                    Log.e("NEBENG_MOTOR", "❌ currentUser = null → auth belum tersimpan di datastore")
-//                    return@LaunchedEffect
-//                }
-//
-//                Log.d(
-//                    "NEBENG_MOTOR",
-//                    """
-//                    🚀 START CALLED
-//                    ---------------------------
-//                    userId       = ${customer.userId}
-//                    customerId   = ${customer.customerId}
-//                    name         = ${customer.name}
-//                    username     = ${customer.username}
-//                    token prefix = ${customer.token.take(15)}...
-//                    ---------------------------
-//                    """.trimIndent()
-//                )
-//
-//                bookingViewModel.start(
-//                    token = customer.token,
-//                    customerId = customer.customerId
-//                )
-//            }
-//
-//
-//            PassengerRideMotorScreen(
-//                session = session,
-//                loading = loading,
-//                error = error,
-//                terminals = session.listTerminals,
-//                onBack = { navController.popBackStack() },
-//
-//                onSelectStartLocation = { bookingViewModel.setStartLocation(it) },
-//                onSelectEndLocation = { bookingViewModel.setEndLocation(it) },
-//                onSelectDate = { bookingViewModel.setDepartureDate(it) },
-//
-//                onNext = { navController.navigate(NEBENG_MOTOR_RIDE_SCHEDULE) }
-//            )
-//        }
-//
-//
-//        // PAGE 02
-////        composable(NEBENG_MOTOR_RIDE_SCHEDULE) {
-////            PassengerRideMotorScheduleScreen(
-////                onBack = { navController.popBackStack() },
-////                onDetailClick = { navController.navigate(NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL) }
-////            )
-////        }
-//        composable(NEBENG_MOTOR_RIDE_SCHEDULE) {
-//            val bookingViewModel: NebengMotorBookingViewModel = hiltViewModel()
-//            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
-//
-//            Log.d("FILTER", "📄 PAGE02 masuk. filteredRides = ${session.filteredPassengerRides.size}")
-//
-//
-//            Log.d("FILTER_UI PAGE 2", "Page02 → filteredRide size=${session.filteredPassengerRides.size}")
-//            session.filteredPassengerRides.forEach {
-//                Log.d("FILTER_UI", "UI Ride ${it.idPassengerRide} dep=${it.departureTerminalId} arr=${it.arrivalTerminalId}")
-//            }
-//
-//            PassengerRideMotorScheduleScreen(
-//                session = session,
-//                rides = session.filteredPassengerRides,
-//                onBack = { navController.popBackStack() },
-//                onDetailClick = { rideId ->
-//                    navController.navigate(NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL)
-//                }
-//            )
-//        }
-//
-//        // PAGE 03
-//        composable(NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL) {
-//            PassengerRideMotorScheduleDetailScreen(
-//                onBack = { navController.popBackStack() },
-//                onPay = { navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD) }
-//            )
-//        }
-//
-//        // PAGE 04
-//        composable(NEBENG_MOTOR_PAYMENT_METHOD) {
-//            PassengerRideMotorPaymentMethodScreen (
-//                onBack = { navController.popBackStack() },
-//                onNext = { navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) }
-//            )
-//        }
-//
-//        // PAGE 05
-//        composable(NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) {
-//            PassengerRideMotorPaymentMethodDetailScreen(
-//                onBack = { navController.popBackStack() },
-//                onPay = { navController.navigate(NEBENG_MOTOR_PAYMENT_STATUS) }
-//            )
-//        }
-//
-//        // PAGE 06
-//        composable(NEBENG_MOTOR_PAYMENT_STATUS) {
-//            PassengerRideMotorPaymentStatusScreen(
-//                onBack = { navController.popBackStack() },
-//                onCheckStatus = { navController.navigate(NEBENG_MOTOR_PAYMENT_WAITING) }
-//            )
-//        }
-//
-//        // PAGE 07
-//        composable(NEBENG_MOTOR_PAYMENT_WAITING) {
-//            PassengerRideMotorPaymentWaitingScreen(
-//                onBack = { navController.popBackStack() },
-//                onCheckStatus = { navController.navigate(NEBENG_MOTOR_PAYMENT_SUCCESS) }
-//            )
-//        }
-//
-//        // PAGE 08
-//        composable(NEBENG_MOTOR_PAYMENT_SUCCESS) {
-//            PassengerRideMotorPaymentSuccessScreen(
-//                onBack = { navController.popBackStack() },
-//                onNext = { navController.navigate(NEBENG_MOTOR_ON_THE_WAY) }
-//            )
-//        }
-//
-//        // PAGE 09
-//        composable(NEBENG_MOTOR_ON_THE_WAY) {
-//            PassengerRideMotorOnTheWayScreen(
-//                onBack = { navController.popBackStack() },
-//                onCancelOrder = { navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD) }
-//            )
-//        }
-//
-//        // PAGE 10
-//
-//
-//        // 🔥 ROUTE MAP WAJIB ADA
-//        composable(ROUTE_PASSENGER_MOTOR_MAP) {
-//            PassengerRideMotorOnTheWayScreen()
-//        }
-//
-////        composable(ROUTE_PASSENGER_MOBIL) {
-////            PassengerRideMotorScreen(
-////                onBack = { navController.popBackStack() },
-////                onNext = { /* nanti lanjut ke page_02 */ }
-////            )
-////        }
-//
-//        composable("homepage_driver") {
-////            HomepageDriverScreenUi(
-////                state = uiState,
-////                onVerifyClicked = {
-////                    // navigasi ke halaman verifikasi dokumen
-////                    navController.navigate("verify_documents")
-////                }
-////            )
-//        }
-//
-//        // Placeholder halaman verifikasi dokumen (nanti diganti actual screen)
-//        composable("verify_documents") {
-//            Text("Halaman Verifikasi Dokumen (coming soon)")
-//        }
-//    }
-//}
-
 
 const val NEBENG_MOTOR                      = "nebeng_motor"
 const val NEBENG_MOTOR_RIDE_SCHEDULE        = "nebeng_motor_ride_schedule"
@@ -269,14 +36,14 @@ const val NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL = "nebeng_motor_ride_schedule_detail
 const val NEBENG_MOTOR_PAYMENT_METHOD       = "nebeng_motor_payment_method"
 const val NEBENG_MOTOR_PAYMENT_METHOD_DETAIL= "nebeng_motor_payment_method_detail"
 const val NEBENG_MOTOR_PAYMENT_STATUS       = "nebeng_motor_payment_status"
-const val NEBENG_MOTOR_PAYMENT_WAITING      = "nebeng_motor_payment_waiting"
+//const val NEBENG_MOTOR_PAYMENT_WAITING      = "nebeng_motor_payment_waiting"
 const val NEBENG_MOTOR_PAYMENT_SUCCESS      = "nebeng_motor_payment_success"
 const val NEBENG_MOTOR_ON_THE_WAY           = "nebeng_motor_on_the_way"
 
 const val ROUTE_PASSENGER_MOTOR_MAP = "passenger_motor_map"
 const val ROUTE_PASSENGER_MOBIL = "passenger_mobil"
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomepageNavHost(
@@ -516,27 +283,81 @@ fun HomepageNavHost(
             }
         }
 
-        // PAGE 06
+        // PAGE 06 & PAGE 07 (IT JUST SAME BUT DIFFERENT UI MODE)
         composable(NEBENG_MOTOR_PAYMENT_STATUS) {
-            PassengerRideMotorPaymentStatusScreen(
-                onBack = { navController.popBackStack() },
-                onCheckStatus = { navController.navigate(NEBENG_MOTOR_PAYMENT_WAITING) }
+            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+
+            /**
+             * ✅ START POLLING
+             * Dipicu HANYA saat masuk WAITING_PAYMENT
+             */
+            LaunchedEffect(session.step) {
+                if (session.step == BookingStep.WAITING_PAYMENT) {
+                    bookingViewModel.startMonitorTransaction()
+                }
+            }
+
+            /**
+             * ✅ AUTO NAV KE SUCCESS
+             * Reaksi murni terhadap state machine
+             */
+            LaunchedEffect(session.step) {
+                when (session.step) {
+                    BookingStep.PAYMENT_CONFIRMED -> {
+                        Log.d(
+                            "PAGE 6 & 7 POOLING",
+                            "NAV → PAYMENT_CONFIRMED"
+                        )
+
+                        navController.navigate(NEBENG_MOTOR_PAYMENT_SUCCESS) {
+                            popUpTo(NEBENG_MOTOR_PAYMENT_STATUS) { inclusive = true }
+                        }
+                    }
+
+                    BookingStep.FAILED -> {
+                        // nanti bisa diarahkan ke halaman gagal
+                        Log.e(
+                            "PAGE 6 & 7 POOLING",
+                            "NAV → FAILED | paymentStatus=${session.transaction?.paymentStatus}"
+                        )
+                    }
+
+//                    else -> Unit
+                    else -> {
+                        Log.d(
+                            "PAGE 6 & 7 POOLING",
+                            "NAV idle step=${session.step}"
+                        )
+                    }
+                }
+            }
+
+            PassengerRideMotorPaymentStatusContainer(
+                session = session,
+                onBack = {
+                    // optional: konfirmasi keluar
+                    navController.popBackStack()
+                },
+                onSwitchMode = { mode ->
+                    bookingViewModel.setPaymentUiMode(mode)
+                }
             )
         }
 
-        // PAGE 07
-        composable(NEBENG_MOTOR_PAYMENT_WAITING) {
-            PassengerRideMotorPaymentWaitingScreen(
-                onBack = { navController.popBackStack() },
-                onCheckStatus = { navController.navigate(NEBENG_MOTOR_PAYMENT_SUCCESS) }
-            )
-        }
 
         // PAGE 08
         composable(NEBENG_MOTOR_PAYMENT_SUCCESS) {
+            LaunchedEffect(Unit) {
+                bookingViewModel.startObserveRideProgress()
+            }
+
             PassengerRideMotorPaymentSuccessScreen(
                 onBack = { navController.popBackStack() },
-                onNext = { navController.navigate(NEBENG_MOTOR_ON_THE_WAY) }
+                onNext = {
+                    navController.navigate(NEBENG_MOTOR_ON_THE_WAY) {
+                        popUpTo(NEBENG_MOTOR_PAYMENT_SUCCESS) { inclusive = true }
+                    }
+                }
             )
         }
 

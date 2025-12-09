@@ -19,6 +19,7 @@ import com.example.nebeng.feature_passenger_ride_booking.data.remote.model.reque
 import com.example.nebeng.feature_passenger_transaction.data.remote.model.request.CreatePassengerTransactionRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.last
+import java.time.Instant
 import java.time.OffsetDateTime
 
 class NebengMotorBookingInteractor @Inject constructor(
@@ -370,97 +371,115 @@ class NebengMotorBookingInteractor @Inject constructor(
     }
 
     /**
-     * Polling status transaksi ke backend sampai berubah menjadi SUCCESS / FAILED / EXPIRED
-     *
-     * @param maxAttempts 20 attempts × 3 detik ≈ 60 detik monitoring
+     * Polling status transaksi BERBASIS paymentExpiredAt
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun monitorTransactionStatus(
         token: String,
         session: BookingSession,
         onUpdate: (BookingSession) -> Unit,
-        maxAttempts: Int = 20
+        pollIntervalMillis: Long = 20_000L,
+        initialDelayMillis: Long = 5_000L
     ) {
-        if (maxAttempts <= 0) return
+        var trx = session.transaction ?: return
 
-        val trx = session.transaction ?: run {
-            onUpdate(session.copy(step = BookingStep.FAILED))
-            return
-        }
+        Log.d(
+            "PAGE 6 & 7 POOLING",
+            "BEGIN POLLING trxId=${trx.idPassengerTransaction} expiredAt=${trx.paymentExpiredAt}"
+        )
 
-        val transactionId = trx.idPassengerTransaction
+        delay(initialDelayMillis)
 
-        useCases.getByIdPassengerTransaction(token, transactionId).collect { result ->
-            when (result) {
+        while (true) {
 
-                is Result.Loading -> {
-                    // tidak perlu update session saat loading
+            // ⛔ STOP JIKA EXPIRED
+            trx.paymentExpiredAt
+                ?.let { Instant.parse(it) }
+                ?.takeIf { Instant.now().isAfter(it) }
+                ?.let {
+                    Log.d("PAGE 6 & 7 POOLING", "STOP POLLING → expired")
+                    onUpdate(session.copy(step = BookingStep.FAILED))
+                    return
                 }
 
-                is Result.Error -> {
-                    // gagal fetch status → dianggap gagal proses
-                    onUpdate(
-                        session.copy(
-                            step = BookingStep.FAILED
-                        )
-                    )
-                    return@collect
-                }
+            Log.d(
+                "PAGE 6 & 7 POOLING",
+                "POLL → fetch transaction trxId=${trx.idPassengerTransaction}"
+            )
 
-                is Result.Success -> {
-                    val latest = result.data.toPassengerTransactionCustomer()
-                    val paymentStatus = latest.paymentStatus
+            var shouldStop = false
 
-                    when (paymentStatus) {
+            useCases
+                .getByIdPassengerTransaction(token, trx.idPassengerTransaction)
+                .collect { result ->
 
-                        PaymentStatus.PENDING -> {
-                            // belum berubah → masih tunggu
-                            onUpdate(
-                                session.copy(
-                                    transaction = latest,
-                                    step = BookingStep.WAITING_PAYMENT
-                                )
-                            )
-                            delay(3000)
-                            monitorTransactionStatus(token, session.copy(transaction = latest), onUpdate, maxAttempts - 1)
-                        }
+                    when (result) {
 
-                        PaymentStatus.DITERIMA,
-                        PaymentStatus.CREDITED -> {
-                            // pembayaran sukses
-                            onUpdate(
-                                session.copy(
-                                    transaction = latest,
-                                    step = BookingStep.PAYMENT_CONFIRMED
-                                )
+                        is Result.Loading -> Unit
+
+                        is Result.Error -> {
+                            Log.e(
+                                "PAGE 6 & 7 POOLING",
+                                "API ERROR → ${result.message}"
                             )
                         }
 
-                        PaymentStatus.DITOLAK -> {
-                            // pembayaran ditolak
-                            onUpdate(
-                                session.copy(
-                                    transaction = latest,
-                                    step = BookingStep.FAILED
-                                )
-                            )
-                        }
+                        is Result.Success -> {
+                            val latest =
+                                result.data.toPassengerTransactionCustomer()
 
-                        else -> {
-                            // unknown state
-                            onUpdate(
-                                session.copy(
-                                    transaction = latest,
-                                    step = BookingStep.FAILED
-                                )
+                            trx = latest
+
+                            Log.d(
+                                "PAGE 6 & 7 POOLING",
+                                "API GET trxId=${trx.idPassengerTransaction} paymentStatus=${trx.paymentStatus}"
                             )
+
+                            when (trx.paymentStatus) {
+
+                                PaymentStatus.PENDING -> {
+                                    onUpdate(
+                                        session.copy(
+                                            transaction = trx,
+                                            step = BookingStep.WAITING_PAYMENT
+                                        )
+                                    )
+                                }
+
+                                PaymentStatus.DITERIMA,
+                                PaymentStatus.CREDITED -> {
+                                    onUpdate(
+                                        session.copy(
+                                            transaction = trx,
+                                            step = BookingStep.PAYMENT_CONFIRMED
+                                        )
+                                    )
+                                    shouldStop = true
+                                }
+
+                                PaymentStatus.DITOLAK,
+                                PaymentStatus.EXPIRED -> {
+                                    onUpdate(
+                                        session.copy(
+                                            transaction = trx,
+                                            step = BookingStep.FAILED
+                                        )
+                                    )
+                                    shouldStop = true
+                                }
+                            }
                         }
                     }
                 }
-            }
+
+            if (shouldStop) return
+
+            delay(pollIntervalMillis)
         }
     }
 
     /**
+     * YANG INI MASIH BELUM DIGUNAKAN TAPI HARUSNYA ADA KETIKA TELAH MELAKUKAN PEMBAYARAN & SELESAI POOLING DAN KETIKA DIREJECT DRIVER MAKA SEMUA PEMABAYARAN DIKEMBALIKAN
      * polling sampai driver accept
      */
     suspend fun observeRideProgress(

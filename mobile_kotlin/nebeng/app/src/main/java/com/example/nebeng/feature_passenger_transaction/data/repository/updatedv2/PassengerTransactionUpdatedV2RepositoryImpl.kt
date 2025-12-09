@@ -11,6 +11,7 @@ import javax.inject.Inject
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.collections.map
+import kotlin.coroutines.cancellation.CancellationException
 
 class PassengerTransactionUpdatedV2RepositoryImpl @Inject constructor(
     private val api: PassengerTransactionUpdatedV2Api
@@ -31,7 +32,7 @@ class PassengerTransactionUpdatedV2RepositoryImpl @Inject constructor(
     override suspend fun getPassengerTransactionById(token: String, id: Int): Flow<Result<PassengerTransaction>> = flow {
         emit(Result.Loading)
         try {
-            val response = api.getPassengerTransactionById(token, id)
+            val response = api.getPassengerTransactionById("Bearer $token", id)
 //            val mapped = PassengerTransactionMapper.fromByIdDto(response.data)
             val mapped = response.data.toPassengerTransactionUpdatedV2()
             emit(Result.Success(mapped))
@@ -97,6 +98,8 @@ class PassengerTransactionUpdatedV2RepositoryImpl @Inject constructor(
 //            val mapped = PassengerTransactionMapper.fromPatchStatusDto(response.data)
             val mapped = response.data.toPassengerTransactionUpdatedV2()
             emit(Result.Success(mapped))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             emit(Result.Error(handleError(e)))
         }

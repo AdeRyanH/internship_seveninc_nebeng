@@ -13,26 +13,5 @@ data class PassengerRideBookingCustomer(
     val bookingCode: String?,
     val totalPrice: Int,
     val bookingStatus: BookingStatus,
-    val seatsReservedBooking: Int,
-//
-//    val idCustomer: Int,
-//    val customerName: String,
-//    val customerTelephone : String ,
-//
-//    val idPassengerRide: Int,
-//    val driverId: Int,
-//    val departureTerminalId: Int,
-//    val arrivalTerminalId: Int,
-//    val rideStatus: RideStatus,
-//    val seatsReservedRide: Int,
-//    val departureTime: String,
-//    val pricePerSeat: String,
-//    val vehicleType: VehicleType,
-//    val driverIdRide: Int,
-//
-//    val idDepartureTerminal: Int,
-//    val idArrivalTerminal: Int,
-//
-//    val idDriver: Int,
-//    val fullNameDriver: String,
+    val seatsReservedBooking: Int
 )

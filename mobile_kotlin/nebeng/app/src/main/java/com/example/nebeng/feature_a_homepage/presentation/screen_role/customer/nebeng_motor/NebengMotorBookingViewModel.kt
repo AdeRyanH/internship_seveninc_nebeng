@@ -16,7 +16,10 @@ import com.example.nebeng.feature_a_homepage.domain.interactor.customer.nebeng_m
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.PaymentUiMode
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
@@ -37,6 +40,10 @@ class NebengMotorBookingViewModel @Inject constructor(
 
     private var token: String = ""
     private var customerId: Int = -1
+
+    private var monitorTransactionJob: Job? = null
+
+    private var isMonitoringTransaction = false
 
     fun loadTerminalsIfNeeded() {
         if (session.value.listTerminals.isNotEmpty()) return  // sudah pernah load
@@ -121,13 +128,15 @@ class NebengMotorBookingViewModel @Inject constructor(
     /** 📌 user klik tombol “Bayar / Book” */
     fun confirmBooking() {
         viewModelScope.launch {
-            Log.d("UI_PAGE5", "User menekan tombol KONFIRMASI PEMBAYARAN")
-            Log.d("UI_PAGE5", "Session sebelum create booking:")
-            Log.d("UI_PAGE5", "customerId=${_session.value.customer?.idCustomer}")
-            Log.d("UI_PAGE5", "rideId=${_session.value.selectedRide?.idPassengerRide}")
-            Log.d("UI_PAGE5", "pricingId=${_session.value.selectedPricing?.id}")
-            Log.d("UI_PAGE5", "paymentMethodId=${_session.value.selectedPaymentMethod?.idPaymentMethod}")
-            Log.d("UI_PAGE5", "totalPrice=${_session.value.totalPrice}")
+//            Log.d("UI_PAGE5", "User menekan tombol KONFIRMASI PEMBAYARAN")
+//            Log.d("UI_PAGE5", "Session sebelum create booking:")
+//            Log.d("UI_PAGE5", "customerId=${_session.value.customer?.idCustomer}")
+//            Log.d("UI_PAGE5", "rideId=${_session.value.selectedRide?.idPassengerRide}")
+//            Log.d("UI_PAGE5", "pricingId=${_session.value.selectedPricing?.id}")
+//            Log.d("UI_PAGE5", "paymentMethodId=${_session.value.selectedPaymentMethod?.idPaymentMethod}")
+//            Log.d("UI_PAGE5", "totalPrice=${_session.value.totalPrice}")
+
+            Log.d("PAGE 6 & 7 POOLING", "USER CLICK PAY → confirmBooking()")
 
             _loading.value = true
 
@@ -136,19 +145,24 @@ class NebengMotorBookingViewModel @Inject constructor(
                 session = _session.value,
                 useCases = interactor.useCases, // karena interactor memerlukan useCases
                 onUpdated = { updated ->
+                    Log.d(
+                        "PAGE 6 & 7 POOLING",
+                        "BOOKING UPDATED | step=${updated.step} " +
+                                "trxId=${updated.transaction?.idPassengerTransaction}"
+                    )
+
 //                    Log.d("UI_PAGE5", "Booking berhasil → bookingId=${updated.booking?.idBooking}")
-//                    Log.d("UI_PAGE5", "Transaction berhasil → transactionId=${updated.transaction?.idPassengerTransaction}")
-                    Log.d("UI_PAGE5", "Booking berhasil → bookingId=${updated.booking?.idBooking}")
-                    if (updated.transaction != null) {
-                        Log.d("UI_PAGE5", "Transaction berhasil → transactionId=${updated.transaction?.idPassengerTransaction}")
-                    } else {
-                        Log.d("UI_PAGE5", "Transaction belum terbentuk (masih proses / gagal).")
-                    }
+//                    if (updated.transaction != null) {
+//                        Log.d("UI_PAGE5", "Transaction berhasil → transactionId=${updated.transaction?.idPassengerTransaction}")
+//                    } else {
+//                        Log.d("UI_PAGE5", "Transaction belum terbentuk (masih proses / gagal).")
+//                    }
 
                     _session.value = updated
                 },
                 onError = { message ->
-                    Log.e("UI_PAGE5", "Gagal melakukan booking: $message")
+                    Log.e("PAGE 6 & 7 POOLING", "BOOKING ERROR = $message")
+//                    Log.e("UI_PAGE5", "Gagal melakukan booking: $message")
                     _error.value = message
                 }
             )
@@ -158,12 +172,57 @@ class NebengMotorBookingViewModel @Inject constructor(
     }
 
     /** 📌 mulai polling pembayaran */
+    @RequiresApi(Build.VERSION_CODES.O)
     fun startMonitorTransaction() {
+        Log.d(
+            "PAGE 6 & 7 POOLING",
+            "START monitor | step=${_session.value.step} " +
+                    "trxId=${_session.value.transaction?.idPassengerTransaction}"
+        )
+
+
+        if (isMonitoringTransaction) {
+            Log.d("PAGE 6 & 7 POOLING", "⏭️ Monitor already running, skip")
+            return
+        }
+
+        val currentSession = _session.value
+        val trxId = currentSession.transaction?.idPassengerTransaction
+
+        if (trxId == null) {
+            Log.e("PAGE 6 & 7 POOLING", "❌ trxId NULL → cannot start monitor")
+            return
+        }
+
+        Log.d("VM_MONITOR", "✅ Start monitorTransaction trxId=$trxId")
+        isMonitoringTransaction = true
+
         viewModelScope.launch {
             interactor.monitorTransactionStatus(
                 token = token,
-                session = _session.value,
-                onUpdate = { updated -> _session.value = updated }
+                session = currentSession,
+                onUpdate = { updated ->
+                    _session.value = updated
+
+                    Log.d(
+                        "PAGE 6 & 7 POOLING",
+                        "MONITOR UPDATE | step=${updated.step} " +
+                                "paymentStatus=${updated.transaction?.paymentStatus}"
+                    )
+
+                    // 🔥 STOP GUARD JIKA STATUS FINAL
+                    if (
+                        updated.step == BookingStep.PAYMENT_CONFIRMED ||
+                        updated.step == BookingStep.FAILED
+                    ) {
+                        Log.d("VM_MONITOR", "🛑 Monitor selesai, release guard")
+                        Log.d(
+                            "PAGE 6 & 7 POOLING",
+                            "STOP MONITOR | finalStep=${updated.step}"
+                        )
+                        isMonitoringTransaction = false
+                    }
+                }
             )
         }
     }
@@ -182,9 +241,14 @@ class NebengMotorBookingViewModel @Inject constructor(
 
     /** 📌 reset setelah selesai (berhasil / gagal) */
     fun reset() {
+        monitorTransactionJob?.cancel()
+        monitorTransactionJob = null
+
         _session.value = BookingSession()
         _error.value = null
         _loading.value = false
+
+        isMonitoringTransaction = false
     }
 
 
@@ -235,5 +299,12 @@ class NebengMotorBookingViewModel @Inject constructor(
             Log.d("SELECT_ARR", "User pilih arrival id=${ui.rawTerminal?.id} name=${ui.rawTerminal?.name}")
             ui.rawTerminal?.let { setArrival(it)
         }
+    }
+
+    /**
+     * PAYMENT PAGE MODE (PAGE 6 & 7) -> as a unity
+     */
+    fun setPaymentUiMode(mode: PaymentUiMode) {
+        _session.update { it.copy(paymentUiMode = mode) }
     }
 }

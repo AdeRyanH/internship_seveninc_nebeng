@@ -4,7 +4,8 @@ enum class PaymentStatus(val value: String) {
     PENDING("pending"),
     DITERIMA("diterima"),
     DITOLAK("ditolak"),
-    CREDITED("credited");
+    CREDITED("credited"),
+    EXPIRED("expired");
 
     companion object {
         fun fromString(value: String): PaymentStatus =

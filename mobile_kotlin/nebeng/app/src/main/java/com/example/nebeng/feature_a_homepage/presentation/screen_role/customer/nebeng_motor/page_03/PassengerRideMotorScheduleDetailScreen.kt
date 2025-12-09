@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -79,9 +81,6 @@ fun PassengerRideMotorScheduleDetailScreen(
         return
     }
 
-//    val odt = OffsetDateTime.parse(ride.departureTime)
-//    val dateText = odt.toLocalDate().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-//    val timeText = odt.toLocalDate().format(DateTimeFormatter.ofPattern("HH:mm"))
     val odt = OffsetDateTime.parse(ride.departureTime)
     val dateText = odt.toLocalDate().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
     val timeText = odt.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
@@ -116,111 +115,119 @@ fun PassengerRideMotorScheduleDetailScreen(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF0F3D82))
         )
 
-        Spacer(Modifier.height(12.dp))
-
-        // =============== NO PESANAN ==================
-        Row(
+        // ================= SCROLLABLE CONTENT =================
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp) // ✅ penting agar button tidak nabrak
         ) {
-            Text("No Pesanan:", fontWeight = FontWeight.SemiBold)
-            Text(bookingIdText, fontWeight = FontWeight.SemiBold)
-        }
+            Spacer(Modifier.height(12.dp))
 
-        Spacer(Modifier.height(16.dp))
+            // =============== NO PESANAN ==================
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("No Pesanan:", fontWeight = FontWeight.SemiBold)
+                Text(bookingIdText, fontWeight = FontWeight.SemiBold)
+            }
 
-        // =============== CARD DETAIL PERJALANAN ==================
+            Spacer(Modifier.height(16.dp))
+
+            // =============== CARD DETAIL PERJALANAN ==================
 //        OrderDetailCard()
-        OrderDetailCard(
-            dateText = dateText,
-            timeText = timeText,
-            dep = dep,
-            arr = arr,
-            totalPrice = session.totalPrice
-        )
+            OrderDetailCard(
+                dateText = dateText,
+                timeText = timeText,
+                dep = dep,
+                arr = arr,
+                totalPrice = session.totalPrice
+            )
 
-        Spacer(Modifier.height(26.dp))
+            Spacer(Modifier.height(26.dp))
 
-        // =============== LABEL PENUMPANG ==================
-        Text(
-            text = "Penumpang",
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            modifier = Modifier.padding(start = 20.dp)
-        )
+            // =============== LABEL PENUMPANG ==================
+            Text(
+                text = "Penumpang",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
-        // =============== CARD PENUMPANG ==================
+            // =============== CARD PENUMPANG ==================
 //        PassengerInfoCard()
-        PassengerInfoCard(
-            customerName = customer.customerName,
-            customerTelephone = customer.customerTelephone
-        )
+            PassengerInfoCard(
+                customerName = customer.customerName,
+                customerTelephone = customer.customerTelephone
+            )
 
-        Spacer(Modifier.height(26.dp))
+            Spacer(Modifier.height(26.dp))
 
-        // =============== CARD TOTAL PEMBAYARAN ==================
+            // =============== CARD TOTAL PEMBAYARAN ==================
 //        TotalPaymentCard()
-        TotalPaymentCard(totalPrice = session.totalPrice)
+            TotalPaymentCard(totalPrice = session.totalPrice)
 
-        Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(18.dp))
 
 
-        // =============== CHECKBOX SYARAT & KETENTUAN ==================
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = isAgreeChecked,
-                onCheckedChange = { isAgreeChecked = it }
-            )
-            Text(
-                buildAnnotatedString {
-                    append("Saya telah membaca dan setuju terhadap Syarat ")
-                    pushStyle(
-                        SpanStyle(
-                            color = Color(0xFF0F3D82),
-                            fontWeight = FontWeight.SemiBold
+            // =============== CHECKBOX SYARAT & KETENTUAN ==================
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = isAgreeChecked,
+                    onCheckedChange = { isAgreeChecked = it }
+                )
+                Text(
+                    buildAnnotatedString {
+                        append("Saya telah membaca dan setuju terhadap Syarat ")
+                        pushStyle(
+                            SpanStyle(
+                                color = Color(0xFF0F3D82),
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
-                    )
-                    append("dan ketentuan pembelian tiket")
-                    pop()
-                },
-                fontSize = 13.sp,
-                modifier = Modifier.padding(start = 4.dp)
-            )
+                        append("dan ketentuan pembelian tiket")
+                        pop()
+                    },
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            // =============== BUTTON BAYAR ==================
+            Button(
+                onClick = { if (isAgreeChecked) onPay() },
+                enabled = isAgreeChecked,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0F3D82),
+                    disabledContainerColor = Color(0xFF9BB1D4)
+                )
+            ) {
+                Text(
+                    text = "Lanjutkan Pembayaran",
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 6.dp)
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
         }
-
-        Spacer(Modifier.height(20.dp))
-
-        // =============== BUTTON BAYAR ==================
-        Button(
-            onClick = { if (isAgreeChecked) onPay() },
-            enabled = isAgreeChecked,
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF0F3D82),
-                disabledContainerColor = Color(0xFF9BB1D4)
-            )
-        ) {
-            Text(
-                text = "Lanjutkan Pembayaran",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 6.dp)
-            )
-        }
-
-        Spacer(Modifier.height(20.dp))
     }
 }
 

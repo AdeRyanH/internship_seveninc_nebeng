@@ -1,51 +1,65 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_06
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
+import com.example.nebeng.core.utils.BookingStatus
+import com.example.nebeng.core.utils.PaymentStatus
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.RideStatus
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.core.utils.VehicleType
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideBookingCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerTransactionCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
 import kotlinx.coroutines.delay
+import java.time.Duration
 
+//import kotlin.time.Duration
+
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorPaymentStatusScreen(
-    onBack: () -> Unit = {},
-    onCheckStatus: () -> Unit = {}
+    transaction: PassengerTransactionCustomer,
+    booking: PassengerRideBookingCustomer,
+    ride: PassengerRideCustomer?,
+    departure: TerminalCustomer?,
+    arrival: TerminalCustomer?,
+    remainingTime: Duration,
+    onBack: () -> Unit,
+    onCheckStatus: () -> Unit
 ) {
     // ------- Dummy Timer 00:59:50 -------
-    var hours by remember { mutableStateOf(0) }
-    var minutes by remember { mutableStateOf(59) }
-    var seconds by remember { mutableStateOf(50) }
+    val hours = remainingTime.toHours().toInt()
+    val minutes = remainingTime.toMinutesPart()
+    val seconds = remainingTime.toSecondsPart()
 
-    LaunchedEffect(true) {
-        while (hours + minutes + seconds > 0) {
-            delay(1000)
-            if (seconds > 0) seconds--
-            else {
-                seconds = 59
-                if (minutes > 0) minutes--
-                else {
-                    minutes = 59
-                    if (hours > 0) hours--
-                }
-            }
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -77,50 +91,64 @@ fun PassengerRideMotorPaymentStatusScreen(
             )
         )
 
-        Spacer(Modifier.height(22.dp))
-
-        // ========== BOX TIMER ==========
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            Text("Sisa waktu pembayaran :", fontSize = 14.sp, color = Color.Black)
-
-            Spacer(Modifier.height(14.dp))
-
-            TimerBox(hours, minutes, seconds)
-
-            Spacer(Modifier.height(14.dp))
-
-            Text("Batas Akhir Pembayaran", fontWeight = FontWeight.Medium, color = Color.Gray)
-            Text(
-                "Kamis, 2 September 2024 14:50",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-        }
-
-        Spacer(Modifier.height(26.dp))
-
-        // ========== CARD VIRTUAL ACCOUNT ==========
-        VaPaymentCard()
-
-        Spacer(Modifier.height(22.dp))
-
-        // ========== CARD DETAIL RUTE ==========
-        RideInfoCard()
-
-        Spacer(Modifier.weight(1f))
-
-        // ========== BUTTON ==========
-        Button(
-            onClick = onCheckStatus,
+        // ================= SCROLLABLE CONTENT =================
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .height(54.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFF0F3D82))
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp), // ✅ penting agar button tidak nabrak
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Cek Status Pembayaran", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(22.dp))
+
+            // ========== BOX TIMER ==========
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text("Sisa waktu pembayaran :", fontSize = 14.sp, color = Color.Black)
+
+                Spacer(Modifier.height(14.dp))
+
+                TimerBox(hours, minutes, seconds)
+
+                Spacer(Modifier.height(14.dp))
+
+                Text("Batas Akhir Pembayaran", fontWeight = FontWeight.Medium, color = Color.Gray)
+                Text(
+                    text = transaction.paymentExpiredAt,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+            }
+
+            Spacer(Modifier.height(26.dp))
+
+            // ========== CARD VIRTUAL ACCOUNT ==========
+            VaPaymentCard(transaction)
+
+            Spacer(Modifier.height(22.dp))
+
+            // ========== CARD DETAIL RUTE ==========
+            RideInfoCard(
+                ride = ride,
+                departure = departure,
+                arrival = arrival,
+                booking = booking
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            // ========== BUTTON ==========
+            Button(
+                onClick = onCheckStatus,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .height(54.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFF0F3D82))
+            ) {
+                Text("Cek Status Pembayaran", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            }
         }
     }
 }
@@ -179,7 +207,12 @@ private fun TimeBox(value: Int) {
 }
 
 @Composable
-private fun VaPaymentCard() {
+private fun VaPaymentCard(
+    transaction: PassengerTransactionCustomer
+) {
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -194,7 +227,7 @@ private fun VaPaymentCard() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("BRI Virtual Account", fontWeight = FontWeight.Medium)
+                Text(transaction.paymentType, fontWeight = FontWeight.Medium)
                 Icon(
                     painter = painterResource(id = R.drawable.qris),
                     contentDescription = null,
@@ -206,7 +239,7 @@ private fun VaPaymentCard() {
             Spacer(Modifier.height(14.dp))
 
             Text(
-                text = "9088 8085 5812 6739 33",
+                text = transaction.vaNumber,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
@@ -216,7 +249,13 @@ private fun VaPaymentCard() {
             Spacer(Modifier.height(16.dp))
 
             Button(
-                onClick = {},
+                onClick = {
+                    clipboardManager.setText(
+                        AnnotatedString(transaction.vaNumber)
+                    )
+
+                    Toast.makeText(context, "Nomor VA disalin", Toast.LENGTH_SHORT).show()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(42.dp),
@@ -237,7 +276,12 @@ private fun VaPaymentCard() {
 }
 
 @Composable
-private fun RideInfoCard() {
+private fun RideInfoCard(
+    ride: PassengerRideCustomer?,
+    departure: TerminalCustomer?,
+    arrival: TerminalCustomer?,
+    booking: PassengerRideBookingCustomer?
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -247,10 +291,15 @@ private fun RideInfoCard() {
         shape = RoundedCornerShape(14.dp)
     ) {
         Column(Modifier.padding(18.dp)) {
-            Text("04 Januari 2025 | 13.45 - 18.45", fontWeight = FontWeight.Medium)
+            Text(ride?.departureTime ?: "-", fontWeight = FontWeight.Medium)
             Spacer(Modifier.height(18.dp))
 
-            RouteRow()
+            RouteRow(
+                departureName = departure?.name ?: "-",
+                departureAddress = departure?.terminalFullAddress ?: "-",
+                arrivalName = arrival?.name ?: "-",
+                arrivalAddress = arrival?.terminalFullAddress ?: "-"
+            )
 
             Spacer(Modifier.height(18.dp))
 
@@ -260,14 +309,19 @@ private fun RideInfoCard() {
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("No Pemesanan:", fontWeight = FontWeight.Medium)
-                Text("FR-2345678997543234", fontWeight = FontWeight.Bold)
+                Text(booking?.bookingCode ?: "-", fontWeight = FontWeight.Bold)
             }
         }
     }
 }
 
 @Composable
-private fun RouteRow() {
+private fun RouteRow(
+    departureName: String,
+    departureAddress: String,
+    arrivalName: String,
+    arrivalAddress: String
+) {
     Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
         Column(
             modifier = Modifier
@@ -290,17 +344,96 @@ private fun RouteRow() {
         Spacer(Modifier.width(10.dp))
 
         Column {
-            Text("Yogyakarta", fontWeight = FontWeight.Bold)
-            Text("Patehan, Kecamatan Kraton, Kota Yogyakarta, Daerah Istimewa", fontSize = 13.sp, color = Color.Gray)
+            Text(departureName, fontWeight = FontWeight.Bold)
+            Text(departureAddress, fontSize = 13.sp, color = Color.Gray)
             Spacer(Modifier.height(10.dp))
-            Text("Purwokerto", fontWeight = FontWeight.Bold)
-            Text("Alun-alun Purwokerto", fontSize = 13.sp, color = Color.Gray)
+            Text(arrivalName, fontWeight = FontWeight.Bold)
+            Text(arrivalAddress, fontSize = 13.sp, color = Color.Gray)
         }
     }
 }
-
+@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewPassengerRideMotorPaymentStatusScreen() {
-    PassengerRideMotorPaymentStatusScreen()
+
+    val transaction = PassengerTransactionCustomer(
+        idPassengerTransaction = 1,
+        transactionDate = "2025-01-04T06:30:00Z",
+        transactionCode = "TX-P-20250104-0001",
+        midtransTransactionId = "mid-001",
+        paymentStatus = PaymentStatus.PENDING,
+        createdAt = "",
+        paymentProofImg = null,
+        creditUsed = 0,
+        paymentMethodId = 2,
+        paymentType = "bank_transfer",
+        updatedAt = "",
+        totalAmount = 28000,
+        midtransOrderId = "ORD-001",
+        paymentExpiredAt = "2025-01-05T06:30:00Z",
+        passengerRideBookingId = 10,
+        vaNumber = "178827357436699373",
+        customerId = 1
+    )
+
+    val booking = PassengerRideBookingCustomer(
+        idBooking = 10,
+        passengerRideId = 1,
+        customerId = 1,
+        createdAtBooking = "2025-01-01",
+        bookingCode = "P-20250104-0001",
+        totalPrice = 28000,
+        bookingStatus = BookingStatus.PENDING,
+        seatsReservedBooking = 1
+    )
+
+    val ride = PassengerRideCustomer(
+        idPassengerRide = 1,
+        driverId = 1,
+        departureTerminalId = 1,
+        arrivalTerminalId = 2,
+        rideStatus = RideStatus.PENDING,
+        seatsReservedRide = 1,
+        seatsAvailableRide = 3,
+        departureTime = "04 Januari 2025 | 13.45",
+        pricePerSeat = "28000",
+        vehicleType = VehicleType.MOTOR,
+        driverIdRide = 1
+    )
+
+    val departure = TerminalCustomer(
+        id = 1,
+        name = "Yogyakarta",
+        terminalFullAddress = "Patehan, Kecamatan Kraton, Kota Yogyakarta",
+        terminalRegencyId = 1,
+        terminalLongitude = 0.0,
+        terminalLatitude = 0.0,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
+        regencyName = "Yogyakarta"
+    )
+
+    val arrival = TerminalCustomer(
+        id = 2,
+        name = "Purwokerto",
+        terminalFullAddress = "Alun-alun Purwokerto",
+        terminalRegencyId = 2,
+        terminalLongitude = 0.0,
+        terminalLatitude = 0.0,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
+        regencyName = "Banyumas"
+    )
+
+    PassengerRideMotorPaymentStatusScreen(
+        transaction = transaction,
+        booking = booking,
+        ride = ride,
+        departure = departure,
+        arrival = arrival,
+        remainingTime = Duration.ofMinutes(58),
+        onBack = {},
+        onCheckStatus = {}
+    )
 }
