@@ -6,6 +6,7 @@ use App\Http\Controllers\RideController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\RegencyController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\CustomerController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\CustomerAdminController;
 use App\Http\Controllers\PassengerRideController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CreditScoreLogController;
+use App\Http\Controllers\DriverLocationController;
 use App\Http\Controllers\DriverCommissionController;
 use App\Http\Controllers\DriverWithdrawalController;
 use App\Http\Controllers\GoodsRideBookingController;
@@ -29,7 +31,6 @@ use App\Http\Controllers\GoodsTransactionController;
 use App\Http\Controllers\PassengerPricingController;
 use App\Http\Controllers\PassengerRideBookingController;
 use App\Http\Controllers\PassengerTransactionController;
-use App\Http\Controllers\RefundController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -269,6 +270,22 @@ Route::middleware('auth:api')->group(function() {
         Route::delete('/{id}', [PassengerPricingController::class, 'destroy']);
     });
 
+    // ######################################################################################
+    // ######################################################################################
+    // ######################################################################################
+    // ######################################################################################
+    // ######################################################################################
+
+    // [ REALTIME DRIVER LOCATION ]
+    Route::prefix('rides')->group(function () {
+        Route::post('{ride_id}/location', [DriverLocationController::class, 'store']);
+        Route::get('{ride_id}/location', [DriverLocationController::class, 'show']);
+    });
+
+    Route::prefix('goods-rides')->group(function () {
+        Route::post('{ride_id}/location', [DriverLocationController::class, 'store']);
+        Route::get('{ride_id}/location', [DriverLocationController::class, 'show']);
+    });
 
     // ######################################################################################
     // ######################################################################################
