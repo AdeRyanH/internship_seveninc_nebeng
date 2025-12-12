@@ -23,12 +23,13 @@ use App\Http\Controllers\CustomerAdminController;
 use App\Http\Controllers\PassengerRideController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CreditScoreLogController;
-use App\Http\Controllers\DriverLocationController;
 use App\Http\Controllers\DriverCommissionController;
 use App\Http\Controllers\DriverWithdrawalController;
 use App\Http\Controllers\GoodsRideBookingController;
 use App\Http\Controllers\GoodsTransactionController;
 use App\Http\Controllers\PassengerPricingController;
+use App\Http\Controllers\DriverLocationGoodController;
+use App\Http\Controllers\DriverLocationRideController;
 use App\Http\Controllers\PassengerRideBookingController;
 use App\Http\Controllers\PassengerTransactionController;
 
@@ -277,14 +278,14 @@ Route::middleware('auth:api')->group(function() {
     // ######################################################################################
 
     // [ REALTIME DRIVER LOCATION ]
-    Route::prefix('rides')->group(function () {
-        Route::post('{ride_id}/location', [DriverLocationController::class, 'store']);
-        Route::get('{ride_id}/location', [DriverLocationController::class, 'show']);
+    Route::prefix('location-rides')->group(function () {
+        Route::post('/{ride_id}/location', [DriverLocationRideController::class, 'store']);
+        Route::get('/{ride_id}/location', [DriverLocationRideController::class, 'show']);
     });
 
-    Route::prefix('goods-rides')->group(function () {
-        Route::post('{ride_id}/location', [DriverLocationController::class, 'store']);
-        Route::get('{ride_id}/location', [DriverLocationController::class, 'show']);
+    Route::prefix('location-goods')->group(function () {
+        Route::post('/{ride_id}/location', [DriverLocationGoodController::class, 'store']);
+        Route::get('/{ride_id}/location', [DriverLocationGoodController::class, 'show']);
     });
 
     // ######################################################################################
