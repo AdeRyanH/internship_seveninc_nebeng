@@ -19,7 +19,7 @@ class DriverLocationGoodController extends Controller
     /**
      * DRIVER — SEND REALTIME LOCATION
      */
-    public function store(Request $request, int $ride_id)
+    public function store(Request $request, int $good_id)
     {
         $request->validate([
             'latitude'  => 'required|numeric',
@@ -28,32 +28,36 @@ class DriverLocationGoodController extends Controller
 
         $user = Auth::user();
 
-        if ($user->user_type !== 'driver' || !$user->driver) {
+        if ($user->user_type !== 'driver' || ! $user->driver) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only driver can update location'
             ], 403);
         }
 
-        $location = $this->service->updateLocation(
-            rideId: $ride_id,
+        $result = $this->service->updateLocation(
+            goodId: $good_id,
             driverId: $user->driver->id,
             latitude: $request->latitude,
             longitude: $request->longitude
         );
 
-        return response()->json([
-            'success' => true,
-            'data'    => $location
-        ]);
+        return response()->json(
+            [
+                'success' => $result['success'],
+                'message' => $result['message'] ?? null,
+                'data'    => $result['data'] ?? null,
+            ],
+            $result['code']
+        );
     }
 
     /**
      * CUSTOMER — FETCH DRIVER LOCATION
      */
-    public function show(int $ride_id)
+    public function show(int $good_id)
     {
-        $location = $this->service->getActiveLocation($ride_id);
+        $location = $this->service->getActiveLocation($good_id);
 
         if (!$location) {
             return response()->json([

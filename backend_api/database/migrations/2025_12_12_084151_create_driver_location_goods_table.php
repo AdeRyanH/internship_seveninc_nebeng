@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('driver_location_goods', function (Blueprint $table) {
             $table->id();
 
-            // 1 ride = 1 active location state
-            $table->unsignedBigInteger('ride_id')->unique();
+            // 1 good = 1 active location state
+            $table->unsignedBigInteger('good_id')->unique();
             $table->unsignedBigInteger('driver_id');
 
             $table->decimal('latitude', 10, 7);

@@ -284,8 +284,8 @@ Route::middleware('auth:api')->group(function() {
     });
 
     Route::prefix('location-goods')->group(function () {
-        Route::post('/{ride_id}/location', [DriverLocationGoodController::class, 'store']);
-        Route::get('/{ride_id}/location', [DriverLocationGoodController::class, 'show']);
+        Route::post('/{good_id}/location', [DriverLocationGoodController::class, 'store']);
+        Route::get('/{good_id}/location', [DriverLocationGoodController::class, 'show']);
     });
 
     // ######################################################################################

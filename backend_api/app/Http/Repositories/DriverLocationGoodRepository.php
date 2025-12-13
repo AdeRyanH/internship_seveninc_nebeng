@@ -6,41 +6,65 @@ use App\Models\DriverLocationGood;
 
 class DriverLocationGoodRepository
 {
-    protected $model;
+    // protected $model;
 
+    // /**
+    //  * Inject DriverLocation model instance.
+    //  */
+    // public function __construct(DriverLocationGood $model)
+    // {
+    //     $this->model = $model;
+    // }
+
+    // /**
+    //  * Find active location by good ID.
+    //  */
+    // public function findByGood(int $goodId): ?DriverLocationGood
+    // {
+    //     return $this->model
+    //         ->where('good_id', $goodId)
+    //         ->first();
+    // }
+
+    // /**
+    //  * Update or create location record.
+    //  */
+    // public function updateOrCreate(array $where, array $data): DriverLocationGood
+    // {
+    //     return $this->model->updateOrCreate($where, $data);
+    // }
+
+    // /**
+    //  * Deactivate tracking for good.
+    //  */
+    // public function deactivate(int $goodId): void
+    // {
+    //     $this->model
+    //         ->where('good_id', $goodId)
+    //         ->update(['is_active' => false]);
+    // }
     /**
-     * Inject DriverLocation model instance.
+     * Find location by good ID.
      */
-    public function __construct(DriverLocationGood $model)
+    public function findByGood(int $goodId): ?DriverLocationGood
     {
-        $this->model = $model;
+        return DriverLocationGood::where('good_id', $goodId)->first();
     }
 
     /**
-     * Find active location by ride ID.
-     */
-    public function findByRide(int $rideId): ?DriverLocationGood
-    {
-        return $this->model
-            ->where('ride_id', $rideId)
-            ->first();
-    }
-
-    /**
-     * Update or create location record.
+     * Update or create location (STATELESS).
      */
     public function updateOrCreate(array $where, array $data): DriverLocationGood
     {
-        return $this->model->updateOrCreate($where, $data);
+        return DriverLocationGood::updateOrCreate($where, $data);
     }
 
     /**
-     * Deactivate tracking for ride.
+     * Deactivate tracking.
      */
-    public function deactivate(int $rideId): void
+    public function deactivate(int $goodId): void
     {
-        $this->model
-            ->where('ride_id', $rideId)
+        DriverLocationGood::where('good_id', $goodId)
             ->update(['is_active' => false]);
     }
 }

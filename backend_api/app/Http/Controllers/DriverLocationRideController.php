@@ -28,25 +28,30 @@ class DriverLocationRideController extends Controller
 
         $user = Auth::user();
 
-        if ($user->user_type !== 'driver' || !$user->driver) {
+        if ($user->user_type !== 'driver' || ! $user->driver) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only driver can update location'
             ], 403);
         }
 
-        $location = $this->service->updateLocation(
+        $result = $this->service->updateLocation(
             rideId: $ride_id,
             driverId: $user->driver->id,
             latitude: $request->latitude,
             longitude: $request->longitude
         );
 
-        return response()->json([
-            'success' => true,
-            'data'    => $location
-        ]);
+        return response()->json(
+            [
+                'success' => $result['success'],
+                'message' => $result['message'] ?? null,
+                'data'    => $result['data'] ?? null,
+            ],
+            $result['code']
+        );
     }
+
 
     /**
      * CUSTOMER — FETCH DRIVER LOCATION

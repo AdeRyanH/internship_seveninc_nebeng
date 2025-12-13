@@ -8,7 +8,7 @@ class DriverLocationGood extends Model
 {
     //
     protected $fillable = [
-        'ride_id',
+        'good_id',
         'driver_id',
         'latitude',
         'longitude',
