@@ -366,17 +366,19 @@ fun HomepageNavHost(
 
         // PAGE 09
         composable(NEBENG_MOTOR_ON_THE_WAY) {
+            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
             PassengerRideMotorOnTheWayScreen(
+                session = session,
                 onBack = { navController.popBackStack() },
                 onCancelOrder = { navController.navigate(NEBENG_MOTOR_PAYMENT_METHOD) }
             )
         }
 
         // 🔥 ROUTE MAP WAJIB ADA
-        composable(ROUTE_PASSENGER_MOTOR_MAP) {
-            // sementara pakai screen on the way
-            PassengerRideMotorOnTheWayScreen()
-        }
+//        composable(ROUTE_PASSENGER_MOTOR_MAP) {
+//            // sementara pakai screen on the way
+//            PassengerRideMotorOnTheWayScreen()
+//        }
 
         // ==== DRIVER FLOW (masih draft) ====
         composable("homepage_driver") {

@@ -2,6 +2,7 @@ package com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_mot
 
 import com.example.nebeng.core.utils.VehicleType
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.CustomerCurrentCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.DriverCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerPricingCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideBookingCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
@@ -22,7 +23,6 @@ data class BookingSession(
     val filteredPassengerRides: List<PassengerRideCustomer> = emptyList(),
     val listPassengerRides: List<PassengerRideCustomer> = emptyList(),
 
-//    val listTerminals: List<TerminalDepartureCustomer> = emptyList(), // mapping arrival/departure via aggregator
     // ⬇️ sebelumnya: List<TerminalDepartureCustomer>
     val listTerminals: List<TerminalCustomer> = emptyList(),
 
@@ -34,6 +34,8 @@ data class BookingSession(
     // =========================
     val selectedRide:   PassengerRideCustomer? = null,
     val vehicleType: VehicleType = VehicleType.UNKNOWN,
+
+    val selectedDriver: DriverCustomer? = null,
 
     // ⬇️ sebelumnya: TerminalDepartureCustomer? / TerminalArrivalCustomer?
     val selectedDepartureTerminal: TerminalCustomer? = null,

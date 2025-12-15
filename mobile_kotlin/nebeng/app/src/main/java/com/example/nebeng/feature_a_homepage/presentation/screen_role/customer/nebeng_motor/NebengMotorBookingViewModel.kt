@@ -128,13 +128,13 @@ class NebengMotorBookingViewModel @Inject constructor(
     /** 📌 user klik tombol “Bayar / Book” */
     fun confirmBooking() {
         viewModelScope.launch {
-//            Log.d("UI_PAGE5", "User menekan tombol KONFIRMASI PEMBAYARAN")
-//            Log.d("UI_PAGE5", "Session sebelum create booking:")
-//            Log.d("UI_PAGE5", "customerId=${_session.value.customer?.idCustomer}")
-//            Log.d("UI_PAGE5", "rideId=${_session.value.selectedRide?.idPassengerRide}")
-//            Log.d("UI_PAGE5", "pricingId=${_session.value.selectedPricing?.id}")
-//            Log.d("UI_PAGE5", "paymentMethodId=${_session.value.selectedPaymentMethod?.idPaymentMethod}")
-//            Log.d("UI_PAGE5", "totalPrice=${_session.value.totalPrice}")
+            Log.d("UI_PAGE5", "User menekan tombol KONFIRMASI PEMBAYARAN")
+            Log.d("UI_PAGE5", "Session sebelum create booking:")
+            Log.d("UI_PAGE5", "customerId=${_session.value.customer?.idCustomer}")
+            Log.d("UI_PAGE5", "rideId=${_session.value.selectedRide?.idPassengerRide}")
+            Log.d("UI_PAGE5", "pricingId=${_session.value.selectedPricing?.id}")
+            Log.d("UI_PAGE5", "paymentMethodId=${_session.value.selectedPaymentMethod?.idPaymentMethod}")
+            Log.d("UI_PAGE5", "totalPrice=${_session.value.totalPrice}")
 
             Log.d("PAGE 6 & 7 POOLING", "USER CLICK PAY → confirmBooking()")
 
@@ -151,18 +151,18 @@ class NebengMotorBookingViewModel @Inject constructor(
                                 "trxId=${updated.transaction?.idPassengerTransaction}"
                     )
 
-//                    Log.d("UI_PAGE5", "Booking berhasil → bookingId=${updated.booking?.idBooking}")
-//                    if (updated.transaction != null) {
-//                        Log.d("UI_PAGE5", "Transaction berhasil → transactionId=${updated.transaction?.idPassengerTransaction}")
-//                    } else {
-//                        Log.d("UI_PAGE5", "Transaction belum terbentuk (masih proses / gagal).")
-//                    }
+                    Log.d("UI_PAGE5", "Booking berhasil → bookingId=${updated.booking?.idBooking}")
+                    if (updated.transaction != null) {
+                        Log.d("UI_PAGE5", "Transaction berhasil → transactionId=${updated.transaction?.idPassengerTransaction}")
+                    } else {
+                        Log.d("UI_PAGE5", "Transaction belum terbentuk (masih proses / gagal).")
+                    }
 
                     _session.value = updated
                 },
                 onError = { message ->
                     Log.e("PAGE 6 & 7 POOLING", "BOOKING ERROR = $message")
-//                    Log.e("UI_PAGE5", "Gagal melakukan booking: $message")
+                    Log.e("UI_PAGE5", "Gagal melakukan booking: $message")
                     _error.value = message
                 }
             )

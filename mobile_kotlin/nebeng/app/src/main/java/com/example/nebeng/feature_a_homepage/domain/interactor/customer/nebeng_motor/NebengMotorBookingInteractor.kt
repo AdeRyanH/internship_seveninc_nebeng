@@ -144,7 +144,7 @@ class NebengMotorBookingInteractor @Inject constructor(
     /**
      * user pilih jadwal (belum booking)
      */
-    fun selectRide(
+    suspend fun selectRide(
         token: String,
         session: BookingSession,
         ride: PassengerRideCustomer,
@@ -169,11 +169,25 @@ class NebengMotorBookingInteractor @Inject constructor(
             .find { it.id == ride.arrivalTerminalId }
             ?: TerminalCustomer.empty()
 
+        // 2.5. Cari driver dari passenger ride
+        val driverResult = useCases.getByIdDriver(token, ride.driverId).last()
+
+        val driver = when(driverResult) {
+            is Result.Success -> driverResult.data.toDriverCustomer()
+            else -> null
+        }
+
         Log.d("UI_PAGE3", "Cari terminal dep=${departureTerminal.name}, arr=${arrivalTerminal.name}")
 
+        Log.d(
+            "UI_PAGE3",
+            "Driver resolved: id=${driver?.idDriver} name=${driver?.fullNameDriver}"
+        )
+
         updated = updated.copy(
-            selectedDepartureTerminal = departureTerminal,
-            selectedArrivalTerminal = arrivalTerminal
+            selectedDepartureTerminal   = departureTerminal,
+            selectedArrivalTerminal     = arrivalTerminal,
+            selectedDriver              = driver
         )
 
         // 3. Cari passengerPricing berdasarkan terminal dep-arr
@@ -192,7 +206,7 @@ class NebengMotorBookingInteractor @Inject constructor(
 
         updated = updated.copy(
             selectedPricing = pricing,
-            totalPrice = pricing.pricePerSeat
+            totalPrice      = pricing.pricePerSeat
         )
 
         Log.d("UI_PAGE3", "TotalPrice diset menjadi ${updated.totalPrice}")
@@ -212,8 +226,8 @@ class NebengMotorBookingInteractor @Inject constructor(
         onUpdated: (BookingSession) -> Unit
     ) {
         val updated = session.copy(
-            selectedPaymentMethod = paymentMethod,
-            step = BookingStep.CONFIRM_PRICE // tetap di halaman konfirmasi harga
+            selectedPaymentMethod   = paymentMethod,
+            step                    = BookingStep.CONFIRM_PRICE // tetap di halaman konfirmasi harga
         )
 
         onUpdated(updated)
@@ -257,11 +271,10 @@ class NebengMotorBookingInteractor @Inject constructor(
         // Request body booking
         val reqBooking = CreatePassengerRideBookingRequest(
             passengerRideId = ride.idPassengerRide,
-            totalPrice = session.totalPrice,
-            customerId = customer.idCustomer,
-            seatsReserved = 1,
-            status = PaymentStatus.PENDING.value
-//            status = "pending"
+            totalPrice      = session.totalPrice,
+            customerId      = customer.idCustomer,
+            seatsReserved   = 1,
+            status          = PaymentStatus.PENDING.value
         )
 
         Log.d("UI_PAGE5", "Send API CreatePassengerRideBookingRequest:")
@@ -298,11 +311,11 @@ class NebengMotorBookingInteractor @Inject constructor(
 
                     // lanjut otomatis → create transaction
                     createTransactionAfterBooking(
-                        token = token,
-                        session = updated,
-                        useCases = useCases,
-                        onUpdated = onUpdated,
-                        onError = onError
+                        token       = token,
+                        session     = updated,
+                        useCases    = useCases,
+                        onUpdated   = onUpdated,
+                        onError     = onError
                     )
                 }
             }
@@ -324,14 +337,14 @@ class NebengMotorBookingInteractor @Inject constructor(
         val payment = session.selectedPaymentMethod ?: return onError("Payment method tidak dipilih")
 
         val request = CreatePassengerTransactionRequest(
-            passengerRideBookingId = booking.idBooking,
-            customerId = customer.idCustomer,
-            totalAmount = session.totalPrice,
-            paymentMethodId = payment.idPaymentMethod,
-            paymentStatus = PaymentStatus.PENDING.value,     // BENAR, backend nanti overwrite setelah Midtrans settle
-            creditUsed = 0,
-            transactionDate = "",
-            paymentProofImg = ""                 // fix
+            passengerRideBookingId  = booking.idBooking,
+            customerId              = customer.idCustomer,
+            totalAmount             = session.totalPrice,
+            paymentMethodId         = payment.idPaymentMethod,
+            paymentStatus           = PaymentStatus.PENDING.value,     // BENAR, backend nanti overwrite setelah Midtrans settle
+            creditUsed              = 0,
+            transactionDate         = "",
+            paymentProofImg         = ""                 // fix
         )
 
         Log.d("UI_PAGE5", "Send API CreatePassengerTransactionRequest:")
@@ -361,7 +374,7 @@ class NebengMotorBookingInteractor @Inject constructor(
 
                     val updated = session.copy(
                         transaction = trx,
-                        step = BookingStep.WAITING_PAYMENT
+                        step        = BookingStep.WAITING_PAYMENT
                     )
 
                     onUpdated(updated)
@@ -394,7 +407,7 @@ class NebengMotorBookingInteractor @Inject constructor(
 
             // ⛔ STOP JIKA EXPIRED
             trx.paymentExpiredAt
-                ?.let { Instant.parse(it) }
+                .let { Instant.parse(it) }
                 ?.takeIf { Instant.now().isAfter(it) }
                 ?.let {
                     Log.d("PAGE 6 & 7 POOLING", "STOP POLLING → expired")
@@ -441,7 +454,7 @@ class NebengMotorBookingInteractor @Inject constructor(
                                     onUpdate(
                                         session.copy(
                                             transaction = trx,
-                                            step = BookingStep.WAITING_PAYMENT
+                                            step        = BookingStep.WAITING_PAYMENT
                                         )
                                     )
                                 }
@@ -451,7 +464,7 @@ class NebengMotorBookingInteractor @Inject constructor(
                                     onUpdate(
                                         session.copy(
                                             transaction = trx,
-                                            step = BookingStep.PAYMENT_CONFIRMED
+                                            step        = BookingStep.PAYMENT_CONFIRMED
                                         )
                                     )
                                     shouldStop = true
@@ -462,7 +475,7 @@ class NebengMotorBookingInteractor @Inject constructor(
                                     onUpdate(
                                         session.copy(
                                             transaction = trx,
-                                            step = BookingStep.FAILED
+                                            step        = BookingStep.FAILED
                                         )
                                     )
                                     shouldStop = true

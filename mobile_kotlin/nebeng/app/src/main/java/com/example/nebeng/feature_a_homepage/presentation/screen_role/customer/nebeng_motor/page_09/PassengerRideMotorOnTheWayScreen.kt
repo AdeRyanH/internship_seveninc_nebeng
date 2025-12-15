@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -38,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,11 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.example.nebeng.R
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -58,7 +54,7 @@ import org.osmdroid.views.overlay.Marker
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorOnTheWayScreen(
-//    onBack: () -> Unit = {}
+    session: BookingSession,
     onBack: () -> Unit = {},
     onCancelOrder: () -> Unit = {}
 ) {
@@ -67,7 +63,7 @@ fun PassengerRideMotorOnTheWayScreen(
     )
 
     BottomSheetScaffold(
-        sheetContent = { RouteDetailsBottomSheet(onCancelOrder) },
+        sheetContent = { RouteDetailsBottomSheet(session, onCancelOrder) },
         scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState),
         sheetContainerColor = Color.White,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -89,93 +85,87 @@ fun PassengerRideMotorOnTheWayScreen(
         }
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
-            val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
-
-            AndroidView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 56.dp),
-                factory = { context ->
-                    MapView(context).apply {
-                        setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
-                        controller.setZoom(15.0)
-                        controller.setCenter(GeoPoint(-7.801194, 110.364917))
-
-                        // =========================
-                        // Markers Initialization
-                        // =========================
-
-                        val departurePoint = GeoPoint(-7.801194, 110.364917)
-                        val arrivalPoint = GeoPoint(-7.804800, 110.365900)
-                        val driverPoint = GeoPoint(-7.802500, 110.365300)  // posisi awal driver
-
-                        val departureMarker = Marker(this).apply {
-                            position = departurePoint
-                            icon = ContextCompat.getDrawable(context, R.drawable.ic_pin_point)
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        }
-
-                        val arrivalMarker = Marker(this).apply {
-                            position = arrivalPoint
-                            icon = ContextCompat.getDrawable(context, R.drawable.ic_pin_point)
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        }
-
-                        val driverMarker = Marker(this).apply {
-                            position = driverPoint
-                            icon = ContextCompat.getDrawable(context, R.drawable.ic_pin_point)
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                        }
-
-                        overlays.add(departureMarker)
-                        overlays.add(arrivalMarker)
-                        overlays.add(driverMarker)
-
-                        invalidate()
-
-                        // ======================================================
-                        // 🔄 Update posisi driver secara realtime (tiap 3 detik)
-                        // ======================================================
-                        lifecycleScope?.launch {
-                            while (true) {
-                                delay(3000)
-
-                                // simulasi driver bergerak
-                                val newLat = driverMarker.position.latitude + 0.00030
-                                val newLon = driverMarker.position.longitude + 0.00010
-                                driverMarker.position = GeoPoint(newLat, newLon)
-
-                                invalidate()
-                            }
-                        }
-                    }
-                }
+            NebengMotorMap(
+                departure = session.selectedDepartureTerminal,
+                arrival = session.selectedArrivalTerminal
             )
         }
     }
 }
 
-
 @Composable
-private fun MapContent() {
+private fun NebengMotorMap(
+    departure: TerminalCustomer?,
+    arrival: TerminalCustomer?
+) {
     AndroidView(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 56.dp),
         factory = { context ->
             MapView(context).apply {
                 setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
-                controller.setZoom(16.0)
-                controller.setCenter(
-                    org.osmdroid.util.GeoPoint(-7.801194, 110.364917) // Yogyakarta contoh
-                )
+                controller.setZoom(15.0)
+
+                if (departure != null) {
+                    val depPoint = GeoPoint(
+                        departure.terminalLatitude,
+                        departure.terminalLongitude
+                    )
+
+                    controller.setCenter(depPoint)
+
+                    overlays.add(
+                        Marker(this).apply {
+                            position = depPoint
+                            icon = ContextCompat.getDrawable(
+                                context,
+                                R.drawable.ic_pin_point
+                            )
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        }
+                    )
+                }
+
+                if (arrival != null) {
+                    val arrPoint = GeoPoint(
+                        arrival.terminalLatitude,
+                        arrival.terminalLongitude
+                    )
+
+                    overlays.add(
+                        Marker(this).apply {
+                            position = arrPoint
+                            icon = ContextCompat.getDrawable(
+                                context,
+                                R.drawable.ic_pin_point
+                            )
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        }
+                    )
+                }
+
+                invalidate()
             }
-        },
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 56.dp)   // supaya tidak tertutup TopAppBar
+        }
     )
 }
 
+
 @Composable
-private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
+private fun RouteDetailsBottomSheet(
+//    onCancelOrder: () -> Unit
+    session: BookingSession,
+    onCancelOrder: () -> Unit
+) {
+    val booking = session.booking
+    val transaction = session.transaction
+    val departure = session.selectedDepartureTerminal
+    val arrival = session.selectedArrivalTerminal
+    val paymentMethod = session.selectedPaymentMethod
+    val ride = session.selectedRide
+    val driver = session.selectedDriver   // ✅ DATA DRIVER TIDAK BOLEH HILANG
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,7 +178,7 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("No Pesanan :", fontWeight = FontWeight.Medium)
-            Text("FR-2345678997543234", fontWeight = FontWeight.Bold)
+            Text(booking?.bookingCode ?: "-", fontWeight = FontWeight.Bold)
         }
 
         Spacer(Modifier.height(12.dp))
@@ -205,8 +195,8 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("Nmax - HITAM", fontWeight = FontWeight.Bold)
-                    Text("R 2424 MJ", color = Color.Gray, fontSize = 13.sp)
+                    Text("Jenis Kendaraan", fontWeight = FontWeight.Bold)
+                    Text(ride?.vehicleType.toString(), color = Color.Gray, fontSize = 13.sp)
                 }
                 Image(
                     painterResource(id = R.drawable.ic_motor),  // gambar placeholder
@@ -234,7 +224,7 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
                     modifier = Modifier.size(48.dp).clip(CircleShape)
                 )
                 Spacer(Modifier.width(12.dp))
-                Text("Jamal Driver", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                Text(  driver?.fullNameDriver ?: "-", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
                 Icon(painterResource(id = R.drawable.ic_motor), contentDescription = null)
                 Spacer(Modifier.width(12.dp))
                 Icon(painterResource(id = R.drawable.ic_motor), contentDescription = null)
@@ -243,12 +233,10 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
 
         Spacer(Modifier.height(16.dp))
 
-        // 🔹 Route
+        // 🔹 Route (DOMAIN-BASED)
         RouteRow(
-            startTitle = "Yogyakarta",
-            startDetail = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
-            endTitle = "Purwokerto",
-            endDetail = "Alun-alun Purwokerto"
+            departure = departure,
+            arrival = arrival
         )
 
         Spacer(Modifier.height(16.dp))
@@ -266,9 +254,9 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(painterResource(id = R.drawable.ic_person_grey_24), contentDescription = null, tint = Color(0xFF0F3D82))
                 Spacer(Modifier.width(6.dp))
-                Text("Tunai", fontWeight = FontWeight.Medium)
+                Text(paymentMethod?.bankName ?: "-", fontWeight = FontWeight.Medium)
             }
-            Text("Rp 120.000", fontWeight = FontWeight.Bold, color = Color(0xFF0F3D82))
+            Text(transaction?.totalAmount.toString(), fontWeight = FontWeight.Bold, color = Color(0xFF0F3D82))
         }
 
         // 🔹 Button
@@ -289,10 +277,8 @@ private fun RouteDetailsBottomSheet(onCancelOrder: () -> Unit) {
 
 @Composable
 private fun RouteRow(
-    startTitle: String,
-    startDetail: String,
-    endTitle: String,
-    endDetail: String
+    departure: TerminalCustomer?,
+    arrival: TerminalCustomer?
 ) {
     Row(
         modifier = Modifier
@@ -332,11 +318,11 @@ private fun RouteRow(
         Spacer(Modifier.width(14.dp))
 
         Column(Modifier.weight(1f)) {
-            Text(startTitle, fontWeight = FontWeight.Bold)
-            Text(startDetail, color = Color.Gray, fontSize = 13.sp)
+            Text(departure?.name ?: "-", fontWeight = FontWeight.Bold)
+            Text(departure?.terminalFullAddress ?: "-", color = Color.Gray, fontSize = 13.sp)
             Spacer(Modifier.height(10.dp))
-            Text(endTitle, fontWeight = FontWeight.Bold)
-            Text(endDetail, color = Color.Gray, fontSize = 13.sp)
+            Text(arrival?.name ?: "-", fontWeight = FontWeight.Bold)
+            Text(arrival?.terminalFullAddress ?: "-", color = Color.Gray, fontSize = 13.sp)
         }
     }
 }
@@ -344,6 +330,31 @@ private fun RouteRow(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewRouteRowCard() {
+
+    val previewDeparture = TerminalCustomer(
+        id = 1,
+        name = "Yogyakarta",
+        terminalFullAddress = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
+        terminalRegencyId = 3401,
+        terminalLongitude = 110.3647,
+        terminalLatitude = -7.8014,
+        publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+        regencyName = "Kota Yogyakarta"
+    )
+
+    val previewArrival = TerminalCustomer(
+        id = 2,
+        name = "Purwokerto",
+        terminalFullAddress = "Jl. Prof. Dr. Suharso No.8, Purwokerto",
+        terminalRegencyId = 3302,
+        terminalLongitude = 109.2396,
+        terminalLatitude = -7.4266,
+        publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+        regencyName = "Kab. Banyumas"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -357,14 +368,16 @@ private fun PreviewRouteRowCard() {
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(18.dp)) {
-                Text("04 Januari 2025 | 13.45 – 18.45", fontWeight = FontWeight.Medium)
+                Text(
+                    "04 Januari 2025 | 13.45 – 18.45",
+                    fontWeight = FontWeight.Medium
+                )
+
                 Spacer(Modifier.height(14.dp))
 
                 RouteRow(
-                    startTitle = "Yogyakarta · Pos 1",
-                    startDetail = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
-                    endTitle = "Purwokerto · Pos 2",
-                    endDetail = "Jl. Prof. Dr. Suharso No.8, Purwokerto Lor, Kec. Purwokerto Timur"
+                    departure = previewDeparture,
+                    arrival = previewArrival
                 )
 
                 Spacer(Modifier.height(14.dp))
@@ -376,15 +389,18 @@ private fun PreviewRouteRowCard() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("No Pemesanan:", fontWeight = FontWeight.Medium)
-                    Text("FR-2345678997543234", fontWeight = FontWeight.Bold)
+                    Text(
+                        "FR-2345678997543234",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PreviewRouteDetailsScreen() {
-    PassengerRideMotorOnTheWayScreen()
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//private fun PreviewRouteDetailsScreen() {
+//    PassengerRideMotorOnTheWayScreen()
+//}
