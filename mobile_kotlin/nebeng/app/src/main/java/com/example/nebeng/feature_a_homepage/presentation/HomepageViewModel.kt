@@ -78,20 +78,20 @@ class HomepageViewModel @Inject constructor(
             userPrefsRepo.currentUserFlow.collect { auth ->
                 val mapped = auth?.let {
                     HomepageUser(
-                        userId = it.userId,
-                        name = it.name,
-                        username = it.username,
-                        userType = it.userType.value,
-                        token = it.token,
-                        customerId = it.customerId ?: 0
+                        userId      = it.userId,
+                        name        = it.name,
+                        username    = it.username,
+                        userType    = it.userType.value,
+                        token       = it.token,
+                        customerId  = it.customerId ?: 0
                     )
                 }
 
                 _uiState.update { state ->
                     state.copy(
-                        isLoading = false,
+                        isLoading   = false,
                         currentUser = mapped,
-                        points = mapped?.userId?.times(10) ?: 0
+                        points      = mapped?.userId?.times(10) ?: 0
                     )
                 }
             }

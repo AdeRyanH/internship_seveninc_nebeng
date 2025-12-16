@@ -28,17 +28,31 @@ class MainActivity : AppCompatActivity() {
     private var hasSetupGraph = false
 
     // 🔥 Halaman yang bottom nav harus disembunyikan
+//    private val hideBottomNavRoutes = setOf(
+//        "nebeng_motor",
+//        "nebeng_motor_ride_schedule",
+//        "nebeng_motor_ride_schedule_detail",
+//        "nebeng_motor_payment_method",
+//        "nebeng_motor_payment_method_detail",
+//        "nebeng_motor_payment_status",
+//        "nebeng_motor_payment_waiting",
+//        "nebeng_motor_payment_success",
+//        "nebeng_motor_on_the_way",
+//        "passenger_motor_map"
+//    )
     private val hideBottomNavRoutes = setOf(
-        "nebeng_motor",
-        "nebeng_motor_ride_schedule",
-        "nebeng_motor_ride_schedule_detail",
-        "nebeng_motor_payment_method",
-        "nebeng_motor_payment_method_detail",
-        "nebeng_motor_payment_status",
-        "nebeng_motor_payment_waiting",
-        "nebeng_motor_payment_success",
-        "nebeng_motor_on_the_way",
-        "passenger_motor_map"
+        "customer/nebeng_motor",
+        "customer/nebeng_motor/ride_schedule",
+        "customer/nebeng_motor/ride_schedule_detail",
+        "customer/nebeng_motor/payment_method",
+        "customer/nebeng_motor/payment_method_detail",
+        "customer/nebeng_motor/payment_status",
+        "customer/nebeng_motor/payment_success",
+        "customer/nebeng_motor/on_the_way",
+        "passenger_motor_map",
+        "driver/nebeng_motor",
+        "driver/nebeng_motor/on_the_way",
+        "driver/nebeng_barang"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

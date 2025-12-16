@@ -12,8 +12,10 @@ import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerTransactionCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
 import com.example.nebeng.feature_customer.domain.model.CustomerSummary
 import com.example.nebeng.feature_driver.domain.model.DriverSummary
+import com.example.nebeng.feature_driver_location_good.domain.model.DriverLocationGoodSummary
 import com.example.nebeng.feature_passenger_pricing.domain.model.PassengerPricingSummary
 import com.example.nebeng.feature_passenger_ride.domain.model.PassengerRideSummary
 import com.example.nebeng.feature_passenger_ride_booking.domain.model.feature_a_history_order.PassengerRideBookingSummary
@@ -91,15 +93,15 @@ fun PaymentMethodSummary.toPaymentMethoCustomer(): PaymentMethodCustomer {
 
 fun TerminalSummary.toTerminalCustomer(): TerminalCustomer {
     return TerminalCustomer(
-        id = id,
-        name = name,
-        terminalFullAddress = fullAddress,
-        terminalRegencyId = regencyId,
-        terminalLongitude = longitude,
-        terminalLatitude = latitude,
-        publicTerminalSubtype = publicTerminalSubtype,
-        terminalType = terminalType,
-        regencyName = regencyName
+        id                      = id,
+        name                    = name,
+        terminalFullAddress     = fullAddress,
+        terminalRegencyId       = regencyId,
+        terminalLongitude       = longitude,
+        terminalLatitude        = latitude,
+        publicTerminalSubtype   = publicTerminalSubtype,
+        terminalType            = terminalType,
+        regencyName             = regencyName
     )
 }
 
@@ -124,3 +126,15 @@ fun PassengerPricingSummary.toPassengerPricingCustomer(): PassengerPricingCustom
         updatedAt           = updatedAt
     )
 }
+
+fun TerminalCustomer.toLocationUi(): LocationUiModel {
+    return LocationUiModel(
+        id          = id,
+        name        = name,
+        fullAddress = terminalFullAddress,
+        regency     = regencyName,
+        rawTerminal = this
+    )
+}
+//
+//fun DriverLocationGoodSummary
