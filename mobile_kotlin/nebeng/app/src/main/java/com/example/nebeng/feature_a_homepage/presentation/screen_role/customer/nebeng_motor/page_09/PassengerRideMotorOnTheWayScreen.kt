@@ -45,7 +45,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.example.nebeng.R
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -338,8 +340,8 @@ private fun PreviewRouteRowCard() {
         terminalRegencyId = 3401,
         terminalLongitude = 110.3647,
         terminalLatitude = -7.8014,
-        publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
-        terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
         regencyName = "Kota Yogyakarta"
     )
 
@@ -350,8 +352,8 @@ private fun PreviewRouteRowCard() {
         terminalRegencyId = 3302,
         terminalLongitude = 109.2396,
         terminalLatitude = -7.4266,
-        publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
-        terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
         regencyName = "Kab. Banyumas"
     )
 

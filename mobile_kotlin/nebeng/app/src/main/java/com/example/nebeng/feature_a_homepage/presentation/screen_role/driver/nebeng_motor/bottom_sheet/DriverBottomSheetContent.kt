@@ -32,11 +32,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
+import com.example.nebeng.feature_a_homepage.domain.session.driver.nebeng_motor.DriverRideState
 import com.example.nebeng.feature_a_homepage.domain.session.driver.nebeng_motor.DriverRideUiState
 
 @Composable
 fun DriverBottomSheetContent(
-    uiState: DriverRideUiState,
+    uiState: DriverRideState,
     onPrimaryAction: () -> Unit
 ) {
     Column(
@@ -172,12 +173,12 @@ private fun DestinationAddress() {
 
 @Composable
 private fun PrimaryActionButton(
-    uiState: DriverRideUiState,
+    uiState: DriverRideState,
     onClick: () -> Unit
 ) {
     val label = when (uiState) {
-        DriverRideUiState.NOT_STARTED -> "Menuju titik Tujuan"
-        DriverRideUiState.ON_THE_WAY  -> "Perjalanan Selesai"
+        DriverRideState.NOT_STARTED -> "Menuju titik Tujuan"
+        DriverRideState.ON_THE_WAY  -> "Perjalanan Selesai"
     }
 
     Button(

@@ -1,8 +1,6 @@
-package com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer
+package com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor
 
 import com.example.nebeng.core.utils.BookingStatus
-import com.example.nebeng.core.utils.RideStatus
-import com.example.nebeng.core.utils.VehicleType
 
 data class PassengerRideBookingCustomer(
     // Tabel Passenger Ride Booking

@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.nebeng.core.common.Result
-import com.example.nebeng.feature_a_homepage.domain.interactor.customer.nebeng_motor.NebengMotorBookingInteractor
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.interactor.customer.nebeng_motor.NebengMotorBookingCustomerInteractor
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.DriverTrackingSession
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.PaymentUiMode
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
 import kotlinx.coroutines.Job
@@ -26,7 +27,7 @@ import java.time.LocalDate
 
 @HiltViewModel
 class NebengMotorBookingViewModel @Inject constructor(
-    private val interactor: NebengMotorBookingInteractor
+    private val interactor: NebengMotorBookingCustomerInteractor
 ) : ViewModel() {
 
     private val _session = MutableStateFlow(BookingSession())
@@ -38,12 +39,17 @@ class NebengMotorBookingViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
+    private val _driverTracking = MutableStateFlow(DriverTrackingSession())
+    val driverTracking: StateFlow<DriverTrackingSession> = _driverTracking.asStateFlow()
+
     private var token: String = ""
     private var customerId: Int = -1
 
     private var monitorTransactionJob: Job? = null
 
     private var isMonitoringTransaction = false
+
+    private var trackingJob: Job? = null
 
     fun loadTerminalsIfNeeded() {
         if (session.value.listTerminals.isNotEmpty()) return  // sudah pernah load
@@ -306,5 +312,34 @@ class NebengMotorBookingViewModel @Inject constructor(
      */
     fun setPaymentUiMode(mode: PaymentUiMode) {
         _session.update { it.copy(paymentUiMode = mode) }
+    }
+
+    /**
+     * START POLLING
+     * REALTIME TRACKING DRIVER LOCATION OSM
+     */
+    fun startDriverTracking(rideId: Int) {
+        trackingJob?.cancel()
+
+        trackingJob = viewModelScope.launch {
+            interactor.startDriverLocationPolling(
+                token = token,
+                rideId = rideId,
+                initialState = _driverTracking.value,
+                onUpdate = {_driverTracking.value = it}
+            )
+        }
+    }
+
+    /**
+     * STOP REALTIME TRACKING DRIVER LOCATION OSM
+     */
+    fun stopDriverTracking() {
+        trackingJob?.cancel()
+        trackingJob = null
+
+        _driverTracking.update {
+            it.copy(isTracking = false)
+        }
     }
 }

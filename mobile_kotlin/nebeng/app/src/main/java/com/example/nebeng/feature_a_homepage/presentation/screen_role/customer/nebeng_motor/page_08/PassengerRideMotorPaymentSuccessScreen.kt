@@ -41,8 +41,12 @@ import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
 import com.example.nebeng.core.utils.BookingStatus
 import com.example.nebeng.core.utils.PaymentStatus
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerTransactionCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideBookingCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerTransactionCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
 import java.text.NumberFormat
 import java.util.Locale
@@ -302,7 +306,7 @@ private fun PreviewPassengerRideMotorPaymentSuccessScreen() {
         // =========================
         // PAYMENT METHOD (USER CHOICE)
         // =========================
-        selectedPaymentMethod = com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer(
+        selectedPaymentMethod = PaymentMethodCustomer(
             idPaymentMethod = 1,
             bankName = "QRIS",
             accountName = "PT Nebeng Indonesia",
@@ -335,7 +339,7 @@ private fun PreviewPassengerRideMotorPaymentSuccessScreen() {
         // =========================
         // BOOKING (RECEIPT)
         // =========================
-        booking = com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideBookingCustomer(
+        booking = PassengerRideBookingCustomer(
             idBooking = 1,
             passengerRideId = 1,
             customerId = 1,
@@ -356,8 +360,8 @@ private fun PreviewPassengerRideMotorPaymentSuccessScreen() {
             terminalRegencyId = 3401,
             terminalLongitude = 110.3647,
             terminalLatitude = -7.8014,
-            publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
-            terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
             regencyName = "Kota Yogyakarta"
         ),
 
@@ -368,8 +372,8 @@ private fun PreviewPassengerRideMotorPaymentSuccessScreen() {
             terminalRegencyId = 3302,
             terminalLongitude = 109.2396,
             terminalLatitude = -7.4266,
-            publicTerminalSubtype = com.example.nebeng.core.utils.PublicTerminalSubtype.TERMINAL_BIS,
-            terminalType = com.example.nebeng.core.utils.TerminalType.PUBLIC,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
             regencyName = "Kab. Banyumas"
         )
     )

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.example.nebeng.R
+import com.example.nebeng.feature_a_homepage.domain.session.driver.nebeng_motor.DriverRideState
 import com.example.nebeng.feature_a_homepage.domain.session.driver.nebeng_motor.DriverRideUiState
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.nebeng_motor.bottom_sheet.DriverBottomSheetContent
 import org.osmdroid.util.GeoPoint
@@ -47,7 +48,7 @@ import org.osmdroid.views.overlay.Marker
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverNebengMotorOnTheWayScreen(
-    initialState: DriverRideUiState = DriverRideUiState.NOT_STARTED,
+    initialState: DriverRideState = DriverRideState.NOT_STARTED,
     onBack: () -> Unit = {},
     onStartRide: () -> Unit = {},
     onFinishRide: () -> Unit = {}
@@ -90,13 +91,13 @@ fun DriverNebengMotorOnTheWayScreen(
                 uiState = uiState,
                 onPrimaryAction = {
                     when (uiState) {
-                        DriverRideUiState.NOT_STARTED -> {
+                        DriverRideState.NOT_STARTED -> {
                             // 🔥 nanti ini POST /driver/start-trip
                             onStartRide()
-                            uiState = DriverRideUiState.ON_THE_WAY
+                            uiState = DriverRideState.ON_THE_WAY
                         }
 
-                        DriverRideUiState.ON_THE_WAY -> {
+                        DriverRideState.ON_THE_WAY -> {
                             // 🔥 nanti ini POST /driver/finish-trip
                             onFinishRide()
                         }

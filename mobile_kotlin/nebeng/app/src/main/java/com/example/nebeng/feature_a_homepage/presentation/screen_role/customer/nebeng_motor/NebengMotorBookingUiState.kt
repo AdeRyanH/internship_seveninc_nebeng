@@ -1,9 +1,7 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor
 
-import com.example.nebeng.feature_a_homepage.domain.aggregator.customer.page_02.PassengerRideAggregator
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
-import com.example.nebeng.core.common.Result
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
 
 data class NebengMotorBookingUiState(
     val isLoading: Boolean = false,

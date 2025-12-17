@@ -3,11 +3,10 @@ package com.example.nebeng.feature_a_homepage.domain.aggregator.customer.page_02
 import com.example.nebeng.core.common.Result
 //import com.example.nebeng.feature_a_homepage.domain.mapper.toTerminalArrivalCustomer
 //import com.example.nebeng.feature_a_homepage.domain.mapper.toTerminalDepartureCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 //import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalArrivalCustomer
 //import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalDepartureCustomer
-import com.example.nebeng.feature_terminal.domain.model.TerminalSummary
 
 object PassengerRideAggregator {
 

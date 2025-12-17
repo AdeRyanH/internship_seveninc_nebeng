@@ -13,7 +13,7 @@ interface DriverLocationRideRepository {
 
     suspend fun createByPassengerRideIdDriverLocationRide(
         token: String,
-        request: CreateByPassengerRideIdDriverLocationRideRequest,
-        rideId: Int
+        rideId: Int,
+        request: CreateByPassengerRideIdDriverLocationRideRequest
     ): Flow<Result<DriverLocationRideSummary>>
 }

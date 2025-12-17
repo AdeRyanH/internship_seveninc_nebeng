@@ -4,18 +4,20 @@ import com.example.nebeng.core.utils.BookingStatus
 import com.example.nebeng.core.utils.PaymentStatus
 import com.example.nebeng.core.utils.RideStatus
 import com.example.nebeng.core.utils.VehicleType
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.CustomerCurrentCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.DriverCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerPricingCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideBookingCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerTransactionCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.CustomerCurrentCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.DriverCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.DriverLocationRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerPricingCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideBookingCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerTransactionCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.driver.nebeng_motor.DriverLocationRideDriver
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
 import com.example.nebeng.feature_customer.domain.model.CustomerSummary
 import com.example.nebeng.feature_driver.domain.model.DriverSummary
-import com.example.nebeng.feature_driver_location_good.domain.model.DriverLocationGoodSummary
+import com.example.nebeng.feature_driver_location_ride.domain.model.DriverLocationRideSummary
 import com.example.nebeng.feature_passenger_pricing.domain.model.PassengerPricingSummary
 import com.example.nebeng.feature_passenger_ride.domain.model.PassengerRideSummary
 import com.example.nebeng.feature_passenger_ride_booking.domain.model.feature_a_history_order.PassengerRideBookingSummary
@@ -136,5 +138,31 @@ fun TerminalCustomer.toLocationUi(): LocationUiModel {
         rawTerminal = this
     )
 }
-//
-//fun DriverLocationGoodSummary
+
+fun DriverLocationRideSummary.toDriverLocationRideCustomer(): DriverLocationRideCustomer {
+    return DriverLocationRideCustomer(
+        id          = id,
+        rideId      = rideId,
+        driverId    = driverId,
+        latitude    = latitude,
+        longitude   = longitude,
+        lastSeenAt  = lastSeenAt,
+        isActive    = isActive,
+        createdAt   = createdAt,
+        updatedAt   = updatedAt
+    )
+}
+
+fun DriverLocationRideSummary.toDriverLocationRideDriver(): DriverLocationRideDriver {
+    return DriverLocationRideDriver(
+        id          = id,
+        rideId      = rideId,
+        driverId    = driverId,
+        latitude    = latitude,
+        longitude   = longitude,
+        lastSeenAt  = lastSeenAt,
+        isActive    = isActive,
+        createdAt   = createdAt,
+        updatedAt   = updatedAt
+    )
+}

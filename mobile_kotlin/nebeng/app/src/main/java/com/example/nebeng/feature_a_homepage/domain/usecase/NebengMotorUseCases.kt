@@ -8,16 +8,16 @@ data class NebengMotorUseCases(
     val getAllTerminal: GetAllTerminalUseCase,
 
     // GET BY ID
-//    val getArrivalTerminal: GetArrivalTerminalUseCase,
-//    val getDepartureTerminal: GetDepartureTerminalUseCase,
     val getByIdCustomer: GetByIdCustomerUseCase,
     val getByIdPassengerRideBooking: GetByIdPassengerRideBookingUseCase,
     val getByIdPassengerTransaction: GetByIdPassengerTransactionUseCase,
     val getByIdPaymentMethod: GetByIdPaymentMethod,
     val getByIdPassengerPricing: GetByIdPassengerPricingUseCase,
     val getByIdDriver: GetByIdDriverUseCase,
+    val getByIdDriverLocationRideById: GetByIdDriverLocationRideUseCase,
 
     // CREATE
     val createPassengerRideBooking: CreatePassengerRideBookingUseCase,
-    val createPassengerTransaction: CreatePassengerTransactionUseCase
+    val createPassengerTransaction: CreatePassengerTransactionUseCase,
+    val createByPassengerRideIdDriverLocationRide: CreateByPassengerRideIdDriverLocationRideUseCase,
 )

@@ -1,4 +1,4 @@
-package com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer
+package com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor
 
 data class PaymentMethodCustomer(
     // Tabel Payment Method

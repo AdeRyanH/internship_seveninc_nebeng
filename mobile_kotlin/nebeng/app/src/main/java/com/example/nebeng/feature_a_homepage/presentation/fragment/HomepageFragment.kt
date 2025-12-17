@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.nebeng.app.ui.MainActivity
 import com.example.nebeng.app.ui.common.RoleAwareFragment
 import com.example.nebeng.feature_a_homepage.presentation.HomepageViewModel
+import com.example.nebeng.feature_a_homepage.presentation.navigation.DRIVER_NEBENG_MOTOR_ON_THE_WAY
 import com.example.nebeng.feature_a_homepage.presentation.navigation.HomepageNavHost
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.HomepageDriverScreenUi
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +42,8 @@ class HomepageFragment : RoleAwareFragment() {
             userType = "driver",
             viewModel = viewModel,
             onRouteChanged = { route ->
-//                val hide = route.startsWith("driver/nebeng_motor") || route == "driver/nebeng_motor/on_the_way"
-                val hide = route.startsWith("driver/nebeng_motor/on_the_way") || route == "driver/nebeng_motor/on_the_way"
+                val hide = route.startsWith(DRIVER_NEBENG_MOTOR_ON_THE_WAY)
+//                val hide = route.startsWith("driver/nebeng_motor/on_the_way") || route == "driver/nebeng_motor/on_the_way"
                 setBottomNavVisible(hide)
             }
         )

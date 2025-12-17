@@ -11,10 +11,11 @@ import com.example.nebeng.core.utils.BookingStatus
 import com.example.nebeng.core.utils.PaymentStatus
 import com.example.nebeng.core.utils.VehicleType
 import com.example.nebeng.feature_a_homepage.domain.mapper.*
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PassengerRideCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.PaymentMethodCustomer
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.DriverTrackingSession
 import com.example.nebeng.feature_passenger_ride_booking.data.remote.model.request.CreatePassengerRideBookingRequest
 import com.example.nebeng.feature_passenger_transaction.data.remote.model.request.CreatePassengerTransactionRequest
 import kotlinx.coroutines.delay
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.last
 import java.time.Instant
 import java.time.OffsetDateTime
 
-class NebengMotorBookingInteractor @Inject constructor(
+class NebengMotorBookingCustomerInteractor @Inject constructor(
     val useCases: NebengMotorUseCases
 ) {
     /**
@@ -560,6 +561,49 @@ class NebengMotorBookingInteractor @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * TRACKING REALTIME DRIVER OSM
+     */
+    suspend fun startDriverLocationPolling(
+        token: String,
+        rideId: Int,
+        initialState: DriverTrackingSession,
+        onUpdate: (DriverTrackingSession) -> Unit,
+        intervalMillis: Long = 5_000L
+    ) {
+        var state = initialState.copy(
+            rideId = rideId,
+            isTracking = true
+        )
+
+        onUpdate(state)
+
+        while (state.isTracking) {
+            useCases.getByIdDriverLocationRideById(token, rideId)
+                .collect { result ->
+                    when (result) {
+                        is Result.Success   -> {
+                            state = state.copy(
+                                lastLocation = result.data.toDriverLocationRideCustomer(),
+                                errorMessage = null
+                            )
+                        }
+
+                        is Result.Error     -> {
+                            state = state.copy(
+                                errorMessage = result.message
+                            )
+                            onUpdate(state)
+                        }
+
+                        else -> Unit
+                    }
+                }
+
+            delay(intervalMillis)
         }
     }
 }

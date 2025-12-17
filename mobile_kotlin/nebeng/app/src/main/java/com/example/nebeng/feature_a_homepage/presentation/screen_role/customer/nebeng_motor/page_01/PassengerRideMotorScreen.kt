@@ -56,7 +56,7 @@ import com.example.nebeng.R
 import com.example.nebeng.core.utils.PublicTerminalSubtype
 import com.example.nebeng.core.utils.TerminalType
 import com.example.nebeng.feature_a_homepage.domain.mapper.toLocationUi
-import com.example.nebeng.feature_a_homepage.domain.model.nebeng_motor.customer.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.SelectLocationBottomSheet

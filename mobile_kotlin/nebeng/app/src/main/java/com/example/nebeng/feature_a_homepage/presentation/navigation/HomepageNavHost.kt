@@ -45,6 +45,7 @@ const val CUSTOMER_NEBENG_MOTOR_ON_THE_WAY           = "customer/nebeng_motor/on
 /**
  * ROLE DRIVER (ONLY FOR SELF REALTIME OSM MONITORING)
  */
+const val DRIVER_NEBENG_MOTOR                        = "driver/nebeng_motor"
 const val DRIVER_NEBENG_MOTOR_ON_THE_WAY             = "driver/nebeng_motor/on_the_way"
 const val DRIVER_NEBENG_BARANG                       = "driver/nebeng_barang"
 

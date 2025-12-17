@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName
 data class CreateByPassengerRideIdDriverLocationRideResponse(
 
     @field:SerializedName("data")
-	val data: DataDto,
+	val data: DataDto?,
 
     @field:SerializedName("success")
 	val success: Boolean,
 
     @field:SerializedName("message")
-	val message: String
+	val message: String?
 )
 
 //data class Data(
