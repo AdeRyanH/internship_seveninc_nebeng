@@ -33,9 +33,9 @@
 
 \*Api.kt
 → *Repository.kt + *RepositoryImpl.kt
-→ ~/feature**/domain/model/*Summary.kt
-→ ~/feature*_/data/remote/mapper/_.kt
-→ LANJUT*KE_WILAYAH feature_a*
+→ ~/feature\**/domain/model/*Summary.kt
+→ ~/feature\*_/data/remote/mapper/_.kt
+→ LANJUT\*KE_WILAYAH feature_a\*
 
 **Note:**  
 Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/feature\_*/di/*Module.kt
@@ -44,20 +44,20 @@ Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/fea
 
 ### B. Lokasi di `feature_a_*`
 
-~/feature*a*_/domain/mapper/.kt
-→ ~/feature*a*_/domain/model/
-→ ~/feature*a*_/domain/usecase/UseCase.kt
-→ ~/feature*a*_/domain/usecase/UseCases.kt
-→ DEPENDENCY*INJECTION*AKHIR
-→ ~/feature_a**/domain/aggregator/_Aggregator.kt
+`~/feature_a_*/domain/mapper/.kt`
+→ `~/feature_a_*/domain/model/`
+→ `~/feature_a_*/domain/usecase/*UseCase.kt`
+→ `~/feature_a_*/domain/usecase/*UseCases.kt`
+→ `DEPENDENCY_INJECTION_AKHIR`
+→ `~/feature_a_*/domain/aggregator/*Aggregator.kt`
 atau
-~/feature*a*_/domain/interactor/_Interactor.kt
-→ ~/feature*a*_/presentation/\*ViewModel.kt
+`~/feature_a_*/domain/interactor/*Interactor.kt`
+→ `~/feature_a_*/presentation/*ViewModel.kt`
 
 **Note:**
 
-- Seluruh akses `~/feature_a_*/presentation/*ViewModel.kt` dilakukan melalui: ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/presentation/navigation/_.kt
-- Seluruh `*Screen.kt` **murni hanya mengakses variable data class**: ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/domain/model/ karena directory ini berisi **final raw data 1:1 seperti tabel backend**, dengan bantuan ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/domain/session/ atau customization lainnya.
+- Seluruh akses `~/feature_a_*/presentation/*ViewModel.kt` dilakukan melalui: `~/nebeng/app/src/main/java/com/example/nebeng/feature_a_*/presentation/navigation/*.kt`
+- Seluruh `*Screen.kt` **murni hanya mengakses variable data class**: `~/nebeng/app/src/main/java/com/example/nebeng/feature_a_*/domain/model/` karena directory ini berisi **final raw data 1:1 seperti tabel backend**, dengan bantuan `~/nebeng/app/src/main/java/com/example/nebeng/feature_a_*/domain/session/` atau customization lainnya.
 
 ---
 
@@ -141,7 +141,7 @@ atau
 
 ## ⚠️ NOTE IMPORTANT
 
-1. **Base URL wajib diubah** di: ~/mobile_kotlin/nebeng/app/src/main/java/com/example/nebeng/core/network/ApiClient.kt dan perlu menambah/mengubah ~/mobile_kotlin/nebeng/app/src/main/res/xml/network_security_config.xml
+1. **Base URL wajib diubah** di: `~/mobile_kotlin/nebeng/app/src/main/java/com/example/nebeng/core/network/ApiClient.kt` dan perlu menambah/mengubah `~/mobile_kotlin/nebeng/app/src/main/res/xml/network_security_config.xml`
 
 2. **Jangan pernah meletakkan ViewModel di file `*Screen.kt`**, karena akan menyebabkan **tidak pernah bisa menampilkan preview UI Jetpack Compose**
 
@@ -172,3 +172,12 @@ atau
 
 4. **Seluruh akses permission wajib ditambahkan di `AndroidManifest.xml`**
 5. **Perlu mencari sumber informasi acuan tambahan jika pakai API yang terdeploy karena sejauh ini hanya diletakkan di build.gradle.kts domain app atau mungkin diletakkan di file .impl lalu menambahkannya ke file .env**
+
+## 🔗 Link / Source Reference
+
+1. Android Developer Website
+2. https://kotlinlang.org/docs/home.html
+3. Dicoding website
+4. https://youtube.com/shorts/SAD8flVdILY?si=esOqEaZmF_Rq4Abk
+5. Stackoverflow
+6. Hackerrank website
