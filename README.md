@@ -32,10 +32,9 @@
 ### A. Lokasi di `feature_*`
 
 \*Api.kt
-→ Repository.kt
-→ Repository.kt + RepositoryImpl.kt
-→ ~/feature*/domain/model/Summary.kt
-→ ~/feature*/data/remote/mapper/.kt
+→ *Repository.kt + *RepositoryImpl.kt
+→ ~/feature**/domain/model/*Summary.kt
+→ ~/feature*_/data/remote/mapper/_.kt
 → LANJUT*KE_WILAYAH feature_a*
 
 **Note:**  
@@ -45,20 +44,20 @@ Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/fea
 
 ### B. Lokasi di `feature_a_*`
 
-~/feature*a*/domain/mapper/.kt
-→ ~/feature*a*/domain/model/
-→ ~/feature*a\*\*/domain/usecase/UseCase.kt
-→ ~/feature*a*/domain/usecase/UseCases.kt
-→ DEPENDENCY*INJECTION_AKHIR
-→ ~/feature_a*/domain/aggregator/Aggregator.kt
+~/feature*a*_/domain/mapper/.kt
+→ ~/feature*a*_/domain/model/
+→ ~/feature*a*_/domain/usecase/UseCase.kt
+→ ~/feature*a*_/domain/usecase/UseCases.kt
+→ DEPENDENCY*INJECTION*AKHIR
+→ ~/feature_a**/domain/aggregator/_Aggregator.kt
 atau
-~/feature*a*/domain/interactor/Interactor.kt
-→ ~/feature*a*/presentation/*ViewModel.kt
+~/feature*a*_/domain/interactor/_Interactor.kt
+→ ~/feature*a*_/presentation/\*ViewModel.kt
 
 **Note:**
 
-- Seluruh akses `~/feature_a_*/presentation/*ViewModel.kt` dilakukan melalui: ~/nebeng/app/src/main/java/com/example/nebeng/feature_a_homepage/presentation/navigation/\*.kt
-- Seluruh `*Screen.kt` **murni hanya mengakses variable data class**: ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*/domain/model/ karena directory ini berisi **final raw data 1:1 seperti tabel backend**, dengan bantuan ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*/domain/session/ atau customization lainnya.
+- Seluruh akses `~/feature_a_*/presentation/*ViewModel.kt` dilakukan melalui: ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/presentation/navigation/_.kt
+- Seluruh `*Screen.kt` **murni hanya mengakses variable data class**: ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/domain/model/ karena directory ini berisi **final raw data 1:1 seperti tabel backend**, dengan bantuan ~/nebeng/app/src/main/java/com/example/nebeng/feature*a*_/domain/session/ atau customization lainnya.
 
 ---
 
@@ -149,7 +148,7 @@ atau
 3. **Wajib memakai BASE URL pada IP Address yang sama**, karena Mobile App berbeda teknisnya dengan localhost backend pada web dev.
 
    - Laptop & mobile device harus terhubung pada WiFi yang sama (non-public seperti Indihome)
-   - Jika WiFi public (Wifi.id), mobile device harus hotspot dan laptop terhubung ke hotspot tersebut
+   - Jika WiFi public (seprti Wifi.id), mobile device harus hotspot dan laptop terhubung ke hotspot tersebut
 
    **Cara cek IP:**
 
@@ -169,4 +168,7 @@ atau
 
    Maka BASE URL backend: `http://192.168.123.50:8000/`
 
+   Note: Masih belum begitu paham soal Network, jadi perlu dicari tahu lebih lanjut selain dari acuan dokumentasi ini
+
 4. **Seluruh akses permission wajib ditambahkan di `AndroidManifest.xml`**
+5. **Perlu mencari sumber informasi acuan tambahan jika pakai API yang terdeploy karena sejauh ini hanya diletakkan di build.gradle.kts domain app atau mungkin diletakkan di file .impl lalu menambahkannya ke file .env**
