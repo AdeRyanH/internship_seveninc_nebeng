@@ -17,7 +17,7 @@ import com.example.nebeng.R
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
 import com.example.nebeng.feature_a_homepage.presentation.HomepageViewModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.HomepageCustomerScreenUi
-import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.NebengMotorBookingViewModel
+import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.NebengMotorBookingCustomerViewModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.PassengerRideMotorScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_02.PassengerRideMotorScheduleScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_03.PassengerRideMotorScheduleDetailScreen
@@ -29,6 +29,7 @@ import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.n
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_09.PassengerRideMotorOnTheWayScreen
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.HomepageDriverScreenUi
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.nebeng_motor.DriverNebengMotorOnTheWayScreen
+import com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.nebeng_motor.NebengMotorBookingDriverViewModel
 
 /**
  * ROLE CUSTOMER
@@ -72,7 +73,8 @@ fun HomepageNavHost(
 
     // 🔥 ViewModel booking NEBENG MOTOR – DIAMBIL SEKALI DI SINI
     // Scoped ke Fragment / parent composable yang memanggil HomepageNavHost
-    val bookingViewModel: NebengMotorBookingViewModel = hiltViewModel()
+    val bookingCustomerViewModel: NebengMotorBookingCustomerViewModel = hiltViewModel()
+    val bookingDriverViewModel: NebengMotorBookingDriverViewModel = hiltViewModel()
 
     // ⬇️ Listener untuk mendeteksi pergantian composable route
     LaunchedEffect(navController) {
@@ -109,9 +111,9 @@ fun HomepageNavHost(
 
             // ❌ JANGAN LAGI: val bookingViewModel: NebengMotorBookingViewModel = hiltViewModel()
             // ✅ Pakai instance yang diambil di atas (shared)
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
-            val loading = bookingViewModel.loading.collectAsStateWithLifecycle().value
-            val error = bookingViewModel.error.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
+            val loading = bookingCustomerViewModel.loading.collectAsStateWithLifecycle().value
+            val error = bookingCustomerViewModel.error.collectAsStateWithLifecycle().value
 
             // load initial ketika pertama kali masuk
             LaunchedEffect(Unit) {
@@ -134,7 +136,7 @@ fun HomepageNavHost(
                     """.trimIndent()
                 )
 
-                bookingViewModel.start(
+                bookingCustomerViewModel.start(
                     token = customer.token,
                     customerId = customer.customerId
                 )
@@ -147,9 +149,9 @@ fun HomepageNavHost(
                 terminals = session.listTerminals,
                 onBack = { navController.popBackStack() },
 
-                onSelectStartLocation = { bookingViewModel.setStartLocation(it) },
-                onSelectEndLocation = { bookingViewModel.setEndLocation(it) },
-                onSelectDate = { bookingViewModel.setDepartureDate(it) },
+                onSelectStartLocation = { bookingCustomerViewModel.setStartLocation(it) },
+                onSelectEndLocation = { bookingCustomerViewModel.setEndLocation(it) },
+                onSelectDate = { bookingCustomerViewModel.setDepartureDate(it) },
 
                 onNext = { navController.navigate(CUSTOMER_NEBENG_MOTOR_RIDE_SCHEDULE) }
             )
@@ -162,7 +164,7 @@ fun HomepageNavHost(
 
             // ❌ JANGAN LAGI: val bookingViewModel: NebengMotorBookingViewModel = hiltViewModel()
             // ✅ Pakai instance shared
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
 
             Log.d("FILTER", "📄 PAGE02 masuk. filteredRides = ${session.filteredPassengerRides.size}")
             Log.d("FILTER_UI PAGE 2", "Page02 → filteredRide size=${session.filteredPassengerRides.size}")
@@ -179,14 +181,14 @@ fun HomepageNavHost(
                     navController.navigate(CUSTOMER_NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL)
                 },
                 onSelectRide = { ride ->
-                    bookingViewModel.selectRide(ride)
+                    bookingCustomerViewModel.selectRide(ride)
                 }
             )
         }
 
         // PAGE 03
         composable(CUSTOMER_NEBENG_MOTOR_RIDE_SCHEDULE_DETAIL) {
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
 
             // ========= MEDIUM LOG PAGE 3 ===========
             Log.d("UI_PAGE3", "=== MASUK PAGE 3 ===")
@@ -206,7 +208,7 @@ fun HomepageNavHost(
 
         // PAGE 04
         composable(CUSTOMER_NEBENG_MOTOR_PAYMENT_METHOD) {
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
 
             // ===== MEDIUM LOG =====
             Log.d("UI_PAGE4", "=== MASUK PAGE 4 ===")
@@ -222,7 +224,7 @@ fun HomepageNavHost(
 
                 onSelect = { method ->
                     Log.d("UI_PAGE4", "User pilih payment: ${method.bankName}")
-                    bookingViewModel.selectPaymentMethod(method)
+                    bookingCustomerViewModel.selectPaymentMethod(method)
                 },
 
                 onNext = {
@@ -242,9 +244,9 @@ fun HomepageNavHost(
         // PAGE 05 — PAYMENT METHOD DETAIL (EXECUTION POINT)
         composable(CUSTOMER_NEBENG_MOTOR_PAYMENT_METHOD_DETAIL) {
 
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
-            val loading = bookingViewModel.loading.collectAsStateWithLifecycle().value
-            val error   = bookingViewModel.error.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
+            val loading = bookingCustomerViewModel.loading.collectAsStateWithLifecycle().value
+            val error   = bookingCustomerViewModel.error.collectAsStateWithLifecycle().value
 
             // ---------- MEDIUM LOG ----------
             Log.d("UI_PAGE5", "=== MASUK PAGE 5 ===")
@@ -258,7 +260,7 @@ fun HomepageNavHost(
 
                 onPay = {
                     Log.d("UI_PAGE5", "💥 USER CLICK PAY → confirmBooking()")
-                    bookingViewModel.confirmBooking()
+                    bookingCustomerViewModel.confirmBooking()
                 },
 
                 orderNumber = "FR-${session.selectedRide?.idPassengerRide ?: "-"}",
@@ -298,7 +300,7 @@ fun HomepageNavHost(
 
         // PAGE 06 & PAGE 07 (IT JUST SAME BUT DIFFERENT UI MODE)
         composable(CUSTOMER_NEBENG_MOTOR_PAYMENT_STATUS) {
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
 
             /**
              * ✅ START POLLING
@@ -306,7 +308,7 @@ fun HomepageNavHost(
              */
             LaunchedEffect(session.step) {
                 if (session.step == BookingStep.WAITING_PAYMENT) {
-                    bookingViewModel.startMonitorTransaction()
+                    bookingCustomerViewModel.startMonitorTransaction()
                 }
             }
 
@@ -352,7 +354,7 @@ fun HomepageNavHost(
                     navController.popBackStack()
                 },
                 onSwitchMode = { mode ->
-                    bookingViewModel.setPaymentUiMode(mode)
+                    bookingCustomerViewModel.setPaymentUiMode(mode)
                 }
             )
         }
@@ -360,10 +362,10 @@ fun HomepageNavHost(
 
         // PAGE 08
         composable(CUSTOMER_NEBENG_MOTOR_PAYMENT_SUCCESS) {
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
 
             LaunchedEffect(Unit) {
-                bookingViewModel.startObserveRideProgress()
+                bookingCustomerViewModel.startObserveRideProgress()
             }
 
             PassengerRideMotorPaymentSuccessScreen(
@@ -379,7 +381,7 @@ fun HomepageNavHost(
 
         // PAGE 09
         composable(CUSTOMER_NEBENG_MOTOR_ON_THE_WAY) {
-            val session = bookingViewModel.session.collectAsStateWithLifecycle().value
+            val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
             PassengerRideMotorOnTheWayScreen(
                 session = session,
                 onBack = { navController.popBackStack() },
@@ -421,17 +423,54 @@ fun HomepageNavHost(
         // DRIVER — NEBENG MOTOR (ON THE WAY)
         // =========================
         composable(DRIVER_NEBENG_MOTOR_ON_THE_WAY) {
+            val driverState = bookingDriverViewModel.driverState.collectAsStateWithLifecycle().value
+            val driver = uiState.currentUser ?: return@composable
+
+            Log.d(
+                "DRIVER_NAV",
+                """
+                🚗 ENTER DRIVER_NEBENG_MOTOR_ON_THE_WAY
+                ----------------------------------
+//                driverId   = ${'$'}{driver.driverId} // Belum ada driverId
+                driverId   = ${driver.userId}
+                name       = ${driver.name}
+                token      = ${driver.token.take(12)}...
+                state      = sending=${driverState.isSendingLocation}
+                ----------------------------------
+                """.trimIndent()
+            )
+
             DriverNebengMotorOnTheWayScreen(
+                driverState = driverState,
                 onBack = {
+                    Log.d("DRIVER_NAV", "⬅️ Driver back pressed")
                     navController.popBackStack()
                 },
+                onStartRide = {
+                    Log.d(
+                        "DRIVER_NAV",
+                        "▶️ START RIDE clicked → startRealtimeLocation()"
+                    )
+
+                    bookingDriverViewModel.startRealtimeLocation(
+                        token = driver.token,
+                        rideId = 1, // Nanti dari backend (UI Driver Belum selesai dibuat)
+                        getLatLng = {
+                            // TEMP dulu
+                            Pair(90.8014, 110.3647)
+                        }
+                    )
+                },
                 onFinishRide = {
-                    // sementara kosong (UI-only)
-                    // nanti bisa navigate ke halaman selesai / riwayat
+                    Log.d(
+                        "DRIVER_NAV",
+                        "⏹ FINISH RIDE clicked → stopRealtimeLocation()"
+                    )
+
+                    bookingDriverViewModel.stopRealtimeLocation()
                 }
             )
         }
-
 
         composable("verify_documents") {
             Text("Halaman Verifikasi Dokumen (coming soon)")

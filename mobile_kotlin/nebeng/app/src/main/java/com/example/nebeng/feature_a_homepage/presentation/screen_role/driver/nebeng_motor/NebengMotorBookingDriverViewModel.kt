@@ -1,5 +1,6 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.driver.nebeng_motor
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nebeng.feature_a_homepage.domain.interactor.driver.nebeng_motor.NebengMotorBookingDriverInteractor
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class NebengMotorBookingViewModel @Inject constructor(
+class NebengMotorBookingDriverViewModel @Inject constructor(
     private val interactor: NebengMotorBookingDriverInteractor
 ) : ViewModel() {
 
@@ -27,6 +28,18 @@ class NebengMotorBookingViewModel @Inject constructor(
         rideId: Int,
         getLatLng: suspend () -> Pair<Double, Double>
     ) {
+
+        Log.d(
+            "DRIVER_VM",
+            """
+            ▶️ startRealtimeLocation()
+            --------------------------
+            rideId = $rideId
+            jobActive = ${sendLocJob?.isActive}
+            --------------------------
+            """.trimIndent()
+        )
+
         sendLocJob?.cancel()
         sendLocJob = viewModelScope.launch {
             interactor.startSendingDriverLocationLoop(
@@ -34,12 +47,23 @@ class NebengMotorBookingViewModel @Inject constructor(
                 rideId          = rideId,
                 initialState    = _driverState.value,
                 getLatLng       = getLatLng,
-                onUpdate        = { _driverState.value = it }
+                onUpdate        = {
+                    Log.d(
+                        "DRIVER_VM",
+                        "📍 state update → lat=${it.lastLocation?.latitude}, lng=${it.lastLocation?.longitude}"
+                    )
+                    _driverState.value = it
+                }
             )
         }
     }
 
     fun stopRealtimeLocation() {
+        Log.d(
+            "DRIVER_VM",
+            "⏹ stopRealtimeLocation() → cancel job"
+        )
+
         sendLocJob?.cancel()
         _driverState.value = interactor.stopSending(_driverState.value)
     }

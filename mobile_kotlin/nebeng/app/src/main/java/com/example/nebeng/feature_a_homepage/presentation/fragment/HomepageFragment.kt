@@ -42,9 +42,9 @@ class HomepageFragment : RoleAwareFragment() {
             userType = "driver",
             viewModel = viewModel,
             onRouteChanged = { route ->
-                val hide = route.startsWith(DRIVER_NEBENG_MOTOR_ON_THE_WAY)
+                val hide = route.startsWith("driver/nebeng_motor/on_the_way")
 //                val hide = route.startsWith("driver/nebeng_motor/on_the_way") || route == "driver/nebeng_motor/on_the_way"
-                setBottomNavVisible(hide)
+                setBottomNavVisible(!hide)
             }
         )
     }

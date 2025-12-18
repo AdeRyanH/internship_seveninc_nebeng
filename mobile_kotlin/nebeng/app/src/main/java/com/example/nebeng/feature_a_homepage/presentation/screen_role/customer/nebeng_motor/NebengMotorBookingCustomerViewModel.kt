@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 
 @HiltViewModel
-class NebengMotorBookingViewModel @Inject constructor(
+class NebengMotorBookingCustomerViewModel @Inject constructor(
     private val interactor: NebengMotorBookingCustomerInteractor
 ) : ViewModel() {
 
