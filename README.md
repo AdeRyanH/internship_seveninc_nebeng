@@ -177,7 +177,7 @@ atau
 3. Dicoding website
 4. https://youtube.com/shorts/SAD8flVdILY?si=esOqEaZmF_Rq4Abk
 5. Stackoverflow
-6. Hackerrank website
+6. Hackernews website
 7. https://medium.com/design-bootcamp/modern-android-app-architecture-with-clean-code-principles-2025-edition-95f4c2afeadb
 8. https://proandroiddev.com/clean-architecture-for-android-mvi-1763ab78855e
 9. https://youtu.be/EF33KmyprEQ?si=JBREKQLkNRL2jhw4
