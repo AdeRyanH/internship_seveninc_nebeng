@@ -27,7 +27,7 @@
 2. Single Responsibility of Concern
 3. Backend hanya CRUD biasa & mobile **tidak mengusik customization source code backend** karena memegang konsep Single Responsibility of Concern
 4. Seluruh manipulasi data berada di file `*Interactor.kt` atau `*Aggregator.kt` dengan bantuan directory `session` pada layer `domain` di setiap directory `feature_a_*`, yang dihubungkan dengan raw data hasil mapper pada layer domain di directory `model`
-5. Directory `feature_*` digunakan untuk raw data api retrieval sedangkan `feature_a_*` digunakan untuk final UI implementation. **Note: `feature_*` bisa digunakan untuk pengujian yang terpisah sebelum diimplementasikan di `feature_a_*` termasuk untuk bagian presentation dari tiap `feature_*` akibat konsep Single Responsibility of Concern agar mudah dimaintenance**
+5. Directory `feature_*` digunakan untuk raw data api retrieval sedangkan `feature_a_*` digunakan untuk final UI implementation. **Note: `feature_*` bisa digunakan untuk pengujian yang modular secara terpisah sebelum diimplementasikan pada `feature_a_*` di bagian presentation layer dari tiap `feature_*` karena akibat dari penggunaan konsep Single Responsibility of Concern agar mudah dimaintenance**
 6. Alur pengiriman data:
 
 #### A. Lokasi di `feature_*`
