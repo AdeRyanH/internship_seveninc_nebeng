@@ -18,29 +18,6 @@ class DriverLocationRideService {
     /**
      * DRIVER UPDATE LOCATION
      */
-    // public function updateLocation(
-    //     int $rideId,
-    //     int $driverId,
-    //     float $latitude,
-    //     float $longitude
-    // ) {
-    //     // VALIDASI: ride harus milik driver
-    //     $ride = PassengerRide::where('id', $rideId)
-    //         ->where('driver_id', $driverId)
-    //         ->whereNotIn('ride_status', ['selesai', 'dibatalkan'])
-    //         ->firstOrFail();
-
-    //     return $this->repository->updateOrCreate(
-    //         ['ride_id' => $ride->id],
-    //         [
-    //             'driver_id'    => $driverId,
-    //             'latitude'     => $latitude,
-    //             'longitude'    => $longitude,
-    //             'last_seen_at' => Carbon::now(),
-    //             'is_active'    => true,
-    //         ]
-    //     );
-    // }
     public function updateLocation(
         int $rideId,
         int $driverId,

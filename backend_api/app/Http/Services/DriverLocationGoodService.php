@@ -17,29 +17,6 @@ class DriverLocationGoodService {
     /**
      * DRIVER UPDATE LOCATION
      */
-    // public function updateLocation(
-    //     int $goodId,
-    //     int $driverId,
-    //     float $latitude,
-    //     float $longitude
-    // ) {
-    //     // VALIDASI: ride harus milik driver
-    //     $good = GoodsRide::where('id', $goodId)
-    //         ->where('driver_id', $driverId)
-    //         ->whereNotIn('ride_status', ['selesai', 'dibatalkan'])
-    //         ->firstOrFail();
-
-    //     return $this->repository->updateOrCreate(
-    //         ['good_id' => $good->id],
-    //         [
-    //             'driver_id'    => $driverId,
-    //             'latitude'     => $latitude,
-    //             'longitude'    => $longitude,
-    //             'last_seen_at' => Carbon::now(),
-    //             'is_active'    => true,
-    //         ]
-    //     );
-    // }
     public function updateLocation(
         int $goodId,
         int $driverId,
