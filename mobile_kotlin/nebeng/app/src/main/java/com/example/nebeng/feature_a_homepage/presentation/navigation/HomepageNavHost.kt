@@ -7,6 +7,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -14,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.nebeng.R
+import com.example.nebeng.core.gps.DriverLocationProvider
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingStep
 import com.example.nebeng.feature_a_homepage.presentation.HomepageViewModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.HomepageCustomerScreenUi
@@ -440,6 +443,13 @@ fun HomepageNavHost(
                 """.trimIndent()
             )
 
+            // ✅ AMBIL DI SINI
+            val context = LocalContext.current
+
+            val locationProvider = remember {
+                DriverLocationProvider(context)
+            }
+
             DriverNebengMotorOnTheWayScreen(
                 driverState = driverState,
                 onBack = {
@@ -457,7 +467,8 @@ fun HomepageNavHost(
                         rideId = 1, // Nanti dari backend (UI Driver Belum selesai dibuat)
                         getLatLng = {
                             // TEMP dulu
-                            Pair(90.8014, 110.3647)
+//                            Pair(90.8014, 110.3647)
+                            locationProvider.getLastLocation()
                         }
                     )
                 },

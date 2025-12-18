@@ -118,4 +118,7 @@ dependencies {
     implementation(libs.android.sdk.v1020)
 
     implementation(libs.osmdroid.android)
+
+    // GPS
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }

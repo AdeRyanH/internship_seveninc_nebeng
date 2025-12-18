@@ -1,8 +1,11 @@
 package com.example.nebeng.app.ui
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -28,18 +31,6 @@ class MainActivity : AppCompatActivity() {
     private var hasSetupGraph = false
 
     // 🔥 Halaman yang bottom nav harus disembunyikan
-//    private val hideBottomNavRoutes = setOf(
-//        "nebeng_motor",
-//        "nebeng_motor_ride_schedule",
-//        "nebeng_motor_ride_schedule_detail",
-//        "nebeng_motor_payment_method",
-//        "nebeng_motor_payment_method_detail",
-//        "nebeng_motor_payment_status",
-//        "nebeng_motor_payment_waiting",
-//        "nebeng_motor_payment_success",
-//        "nebeng_motor_on_the_way",
-//        "passenger_motor_map"
-//    )
     private val hideBottomNavRoutes = setOf(
         "customer/nebeng_motor",
         "customer/nebeng_motor/ride_schedule",
@@ -55,6 +46,14 @@ class MainActivity : AppCompatActivity() {
         "driver/nebeng_barang"
     )
 
+    private val locationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permission ->
+            val granted = permission[Manifest.permission.ACCESS_FINE_LOCATION] == true
+            Log.d("PERMISSION", "Location granted = $granted")
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,6 +62,13 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         binding.navView.setupWithNavController(navController)
+
+        locationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
 
         // 🔥 Listener untuk menyembunyikan / menampilkan bottom nav
         navController.addOnDestinationChangedListener { _, destination, _ ->
