@@ -193,7 +193,12 @@ atau
 16. https://youtu.be/JYUw7He0SE0?si=QGNI77VlzGZz3454
 17. https://youtu.be/rQocMYKpOWk?si=eIP-8ZjZpjY6hUta
 
+---
+
 #################################################################
+#################################################################
+
+---
 
 # 📱 BACKEND API – NEBENG
 
@@ -225,6 +230,7 @@ atau
 #### A. Murni CRUD 1:1 ke tabel database
 
 > (Mobile app android kotlin menggunakan ini tanpa mengusik perubahan CRUD sedikitpun kecuali passenger_transactions dan goods_transactions untuk kebutuhan midtrans)
+> Endpoint dapat dilihat di `~/backend_api/routes/api.php`
 
 - ✅ credit_score_logs
 - ✅ customers
