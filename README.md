@@ -190,6 +190,7 @@ atau
 15. https://wiki.openstreetmap.org/wiki/Main_Page
 16. https://youtu.be/JYUw7He0SE0?si=QGNI77VlzGZz3454
 17. https://youtu.be/rQocMYKpOWk?si=eIP-8ZjZpjY6hUta
+18. **UI/UX Figma yang digunakan = https://www.figma.com/design/Ui4lYXMfCjagOVe84z7hai/NEBENG-APP-2.0?node-id=0-1&t=ACakkczQSWNCJUXs-1**
 
 ---
 
@@ -310,3 +311,4 @@ atau
 4. https://share.google/2j7Qk4oWqrYBLv45i
 5. https://docs.midtrans.com/reference/quick-start-1
 6. https://share.google/8VCgud1nhQgjVNOFZ
+7. **Desain database yang digunakan = https://dbdiagram.io/d/Nebeng-675a9daa46c15ed479247f8c**
