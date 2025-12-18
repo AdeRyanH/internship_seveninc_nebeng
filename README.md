@@ -185,3 +185,119 @@ atau
 8. https://proandroiddev.com/clean-architecture-for-android-mvi-1763ab78855e
 9. https://youtu.be/EF33KmyprEQ?si=JBREKQLkNRL2jhw4
 10. https://medium.com/@sharmapraveen91/how-to-define-a-clean-architecture-structure-for-a-large-android-app-a705b7d40cac
+11. https://www.openstreetmap.org/
+12. https://wiki.openstreetmap.org/wiki/Android
+13. https://github.com/osmdroid/osmdroid
+14. https://wiki.openstreetmap.org/wiki/Using_OpenStreetMap
+15. https://wiki.openstreetmap.org/wiki/Main_Page
+16. https://youtu.be/JYUw7He0SE0?si=QGNI77VlzGZz3454
+17. https://youtu.be/rQocMYKpOWk?si=eIP-8ZjZpjY6hUta
+
+#################################################################
+
+# 📱 BACKEND API – NEBENG
+
+### 🧰 TECH STACK
+
+> (lihat juga file `.env.example`)
+
+1. midtrans/midtrans-php
+2. PhpMyAdmin
+3. Laravel 12
+4. PHP
+5. laravel/sanctum
+6. tymon/jwt-auth
+
+---
+
+### 🏗️ ARCHITECTURE
+
+1. Default
+2. Seluruh bussiness logic ada di `~/backend_api/app/Http/Services/*.php`
+3. Backend untuk hanya CRUD biasa sesuai tabel database dari tempat magang & mobile **tidak mengusik customization source code backend**. Untuk versi website terdapat beberapa customization dari source code backend yang digunakan oleh mobile android app.
+4. Terdapat 3 command yaitu `php artisan serve --host=IP_ADDRESS_LAPTOP_ANDA --port=8000` untuk android app, `php artisan serve` untuk website, dan `php artisan schedule:work` untuk membaca status settlement dari website midtrans.
+5. Customization ada di directory `~/backend_api/routes/console.php`, `~/backend_api/config/*.php`, dan `~/backend_api/Console/Command/*.php`. Note bisa dimodifikasi pada directory lain jika punya pengetahuan yang lebih luas.
+
+---
+
+### 🚀 Endpoint
+
+#### A. Murni CRUD 1:1 ke tabel database
+
+> (Mobile app android kotlin menggunakan ini tanpa mengusik perubahan CRUD sedikitpun kecuali passenger_transactions dan goods_transactions untuk kebutuhan midtrans)
+
+- ✅ credit_score_logs
+- ✅ customers
+- ✅ districts
+- ✅ driver_commissions
+- ✅ drivers
+- ✅ driver_location_goods
+- ✅ driver_location_rides
+- ✅ driver_withdrawals
+- ✅ goods_ride_bookings
+- ✅ goods_rides
+- ✅ goods_transactions
+- ✅ passenger_pricings
+- ✅ passenger_ride_bookings
+- ✅ passenger_rides
+- ✅ passenger_transactions
+- ✅ provinces
+- ✅ ratings
+- ✅ regencies
+- ✅ terminals
+- ✅ users
+- ✅ vehicles
+
+---
+
+#### B. Customizations untuk kebutuhan Website
+
+> (Ada customization dari database murni)
+
+- ✅
+- ✅
+- ✅
+
+---
+
+### ⚠️ NOTE IMPORTANT
+
+1. **Copy-Paste file .env.example** dan ubah isinya berdasarkan kebutuhan terutama di line source code untuk midtrans dan web dev
+
+2. **Jangan pernah upload file .env**, karena isi dari file `.env` adalah informasi credential. Cara untuk tidak upload adalah dengan menambahkannya pada file `.gitignore`
+
+3. **Wajib memakai BASE URL pada IP Address yang sama**, karena Mobile App berbeda teknisnya dengan localhost backend pada web dev.
+
+   - Laptop & mobile device harus terhubung pada WiFi yang sama (non-public seperti Indihome)
+   - Jika WiFi public (seprti Wifi.id), mobile device harus hotspot dan laptop terhubung ke hotspot tersebut
+
+   **Cara cek IP:**
+
+   - Linux (Arch Linux):
+     ```
+     ip addr show
+     ```
+   - Android (Termux):
+     ```
+     ifconfig
+     ```
+
+   **Contoh:**
+
+   - Laptop IP: `192.168.123.50/24`
+   - Android IP: `192.168.123.80/24`
+
+   Maka BASE URL backend: `http://192.168.123.50:8000/`
+
+   Note: Masih belum begitu paham soal Network, jadi perlu dicari tahu lebih lanjut selain dari acuan dokumentasi ini
+
+4. **Seluruh logic/security/arsitektur** di-customization berdasarkan pengetahuan best practices.
+
+### 🔗 Link / Source Reference
+
+1. https://laravel.com/docs/12.x/installation
+2. https://youtu.be/T1TR-RGf2Pw?si=phlGKqG1G-qf7_Qe
+3. https://youtu.be/tdDARiQOmZE?si=HxaPuFn0YSNYPDSN
+4. https://share.google/2j7Qk4oWqrYBLv45i
+5. https://docs.midtrans.com/reference/quick-start-1
+6. https://share.google/8VCgud1nhQgjVNOFZ
