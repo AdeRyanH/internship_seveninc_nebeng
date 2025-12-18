@@ -52,18 +52,9 @@ fun PassengerRideMotorPaymentMethodScreen(
     onSelect: (PaymentMethodCustomer) -> Unit = {},
     onNext: () -> Unit = {}
 ) {
-//    var selectedMethod by remember { mutableStateOf<String?>(null) }
     var selectedId by remember { mutableStateOf<Int?>(null) }
 
     Log.d("UI_PAGE_4", "Loaded paymentMethods=${paymentMethods.size}")
-
-//    val methods = listOf(
-//        PassengerRideMotorPaymentMethodModel("QRIS", "Pindai QR pengemudi untuk membayar", R.drawable.qris),
-//        PassengerRideMotorPaymentMethodModel("Tunai", null, R.drawable.qris),
-//        PassengerRideMotorPaymentMethodModel("BRI Virtual Account", null, R.drawable.qris),
-//        PassengerRideMotorPaymentMethodModel("BCA Virtual Account", null, R.drawable.qris),
-//        PassengerRideMotorPaymentMethodModel("Dana", null, R.drawable.qris)
-//    )
 
     Column(
         modifier = Modifier
@@ -122,7 +113,6 @@ fun PassengerRideMotorPaymentMethodScreen(
 
         // ===== BUTTON LANJUTKAN =====
         Button(
-//            onClick = { selectedMethod?.let { onNext(it) } },
             onClick = {
                 Log.d("UI_PAGE_4", "Continue clicked → paymentId=$selectedId")
                 onNext()

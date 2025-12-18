@@ -136,7 +136,6 @@ fun PassengerRideMotorScheduleDetailScreen(
             Spacer(Modifier.height(16.dp))
 
             // =============== CARD DETAIL PERJALANAN ==================
-//        OrderDetailCard()
             OrderDetailCard(
                 dateText = dateText,
                 timeText = timeText,
@@ -158,7 +157,6 @@ fun PassengerRideMotorScheduleDetailScreen(
             Spacer(Modifier.height(12.dp))
 
             // =============== CARD PENUMPANG ==================
-//        PassengerInfoCard()
             PassengerInfoCard(
                 customerName = customer.customerName,
                 customerTelephone = customer.customerTelephone
@@ -167,7 +165,6 @@ fun PassengerRideMotorScheduleDetailScreen(
             Spacer(Modifier.height(26.dp))
 
             // =============== CARD TOTAL PEMBAYARAN ==================
-//        TotalPaymentCard()
             TotalPaymentCard(totalPrice = session.totalPrice)
 
             Spacer(Modifier.height(18.dp))

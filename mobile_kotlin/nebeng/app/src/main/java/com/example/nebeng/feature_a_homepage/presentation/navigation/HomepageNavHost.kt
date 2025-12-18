@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -340,7 +341,6 @@ fun HomepageNavHost(
                         )
                     }
 
-//                    else -> Unit
                     else -> {
                         Log.d(
                             "PAGE 6 & 7 POOLING",
@@ -385,10 +385,60 @@ fun HomepageNavHost(
         // PAGE 09
         composable(CUSTOMER_NEBENG_MOTOR_ON_THE_WAY) {
             val session = bookingCustomerViewModel.session.collectAsStateWithLifecycle().value
+            val tracking = bookingCustomerViewModel.driverTracking.collectAsStateWithLifecycle().value
+
+            Log.d(
+                "CUSTOMER_NAV",
+                """
+                    🚶 ENTER CUSTOMER_NEBENG_MOTOR_ON_THE_WAY
+                    ----------------------------------------
+                    rideId       = ${session.selectedRide?.idPassengerRide}
+                    bookingId    = ${session.booking?.idBooking}
+                    driverId     = ${session.selectedDriver?.idDriver}
+                    isTracking   = ${tracking.isTracking}
+                    lastLocation = ${tracking.lastLocation?.latitude}, 
+                                   ${tracking.lastLocation?.longitude}
+                    ----------------------------------------
+                """.trimIndent()
+            )
+
+            val rideId = session.selectedRide?.idPassengerRide
+
+            LaunchedEffect(rideId) {
+                if (rideId != null) {
+                    Log.d(
+                        "PAGE_09",
+                        "▶️ START DRIVER TRACKING rideId=$rideId"
+                    )
+                    bookingCustomerViewModel.startDriverTracking(rideId)
+                } else {
+                    Log.e(
+                        "PAGE_09",
+                        "❌ rideId NULL → cannot start tracking"
+                    )
+                }
+            }
+
+            // STOP Saat keluar
+            DisposableEffect(Unit) {
+                onDispose {
+                    Log.d("PAGE_09", "⏹ STOP DRIVER TRACKING")
+                    bookingCustomerViewModel.stopDriverTracking()
+                }
+            }
+
             PassengerRideMotorOnTheWayScreen(
                 session = session,
-                onBack = { navController.popBackStack() },
-                onCancelOrder = { navController.navigate(CUSTOMER_NEBENG_MOTOR_PAYMENT_METHOD) }
+                driverTracking = tracking,
+                onBack = {
+                    Log.d("PAGE_09", "⬅️ Customer back pressed")
+                    navController.popBackStack()
+                },
+                onCancelOrder = {
+                    Log.d("PAGE_09", "❌ Customer cancel order")
+                    bookingCustomerViewModel.stopDriverTracking()
+                    navController.navigate(CUSTOMER_NEBENG_MOTOR_PAYMENT_METHOD)
+                }
             )
         }
 
@@ -417,11 +467,6 @@ fun HomepageNavHost(
             )
         }
 
-//        composable(DRIVER_NEBENG_MOTOR_ON_THE_WAY) {
-//            // nanti DriverNebengMotorOnTheWayScreen()
-////            Text("Driver OSM Tracking (coming soon)")
-//
-//        }
         // =========================
         // DRIVER — NEBENG MOTOR (ON THE WAY)
         // =========================
@@ -432,14 +477,14 @@ fun HomepageNavHost(
             Log.d(
                 "DRIVER_NAV",
                 """
-                🚗 ENTER DRIVER_NEBENG_MOTOR_ON_THE_WAY
-                ----------------------------------
-//                driverId   = ${'$'}{driver.driverId} // Belum ada driverId
-                driverId   = ${driver.userId}
-                name       = ${driver.name}
-                token      = ${driver.token.take(12)}...
-                state      = sending=${driverState.isSendingLocation}
-                ----------------------------------
+                    🚗 ENTER DRIVER_NEBENG_MOTOR_ON_THE_WAY
+                    ----------------------------------
+    //                driverId   = ${'$'}{driver.driverId} // Belum ada driverId
+                    driverId   = ${driver.userId}
+                    name       = ${driver.name}
+                    token      = ${driver.token.take(12)}...
+                    state      = sending=${driverState.isSendingLocation}
+                    ----------------------------------
                 """.trimIndent()
             )
 
@@ -466,8 +511,6 @@ fun HomepageNavHost(
                         token = driver.token,
                         rideId = 1, // Nanti dari backend (UI Driver Belum selesai dibuat)
                         getLatLng = {
-                            // TEMP dulu
-//                            Pair(90.8014, 110.3647)
                             locationProvider.getLastLocation()
                         }
                     )

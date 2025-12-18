@@ -60,15 +60,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        binding.navView.setupWithNavController(navController)
-
+        /**
+         * ASKING GPS PERMISSION
+         * Needed add ACCESS_FINE_LOCATION & ACCESS_COARSE_LOCATION in AndroidManifest.xml
+         */
         locationPermissionLauncher.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
+
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        binding.navView.setupWithNavController(navController)
 
         // 🔥 Listener untuk menyembunyikan / menampilkan bottom nav
         navController.addOnDestinationChangedListener { _, destination, _ ->
