@@ -197,6 +197,8 @@ atau
 
 ---
 
+---
+
 # 📱 BACKEND API – NEBENG
 
 ### 🧰 TECH STACK
@@ -295,6 +297,7 @@ atau
    Note: Masih belum begitu paham soal Network, jadi perlu dicari tahu lebih lanjut selain dari acuan dokumentasi ini
 
 4. **Seluruh logic/security/arsitektur** di-customization berdasarkan pengetahuan best practices.
+5. **Seluruh endpoint berdasarkan file `~/backend_api/routes/api.php` dan isi Body-Request berdasarkan file `~/backend_api/app/Http/Services/*php`** lalu bisa testing endpoint seperti menggunakan Postman atau yang lainnya. Note: Seluruh endpoint perlu token semua kecuali saat login, signup, dan logout.
 
 ### 🔗 Link / Source Reference
 
