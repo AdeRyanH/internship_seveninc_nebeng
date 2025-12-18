@@ -115,7 +115,7 @@ atau
 - ☑️ feature_driver_location_good
 - ☑️ feature_driver_location_ride
 - ✅ feature_driver_withdrawal
-- ☑️ feature*finance *(sepertinya di sisi mobile tidak perlu)\_
+- ☑️ feature_finance (sepertinya di sisi mobile tidak perlu)
 - ✅ feature_goods_ride
 - ☑️ feature_goods_ride_booking
 - ✅ feature_goods_transaction
