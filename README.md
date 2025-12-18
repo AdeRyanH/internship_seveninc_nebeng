@@ -32,13 +32,13 @@
 #### A. Lokasi di `feature_*`
 
 \*Api.kt
-→ *Repository.kt + *RepositoryImpl.kt
-→ ~/feature\**/domain/model/*Summary.kt
-→ ~/feature\*_/data/remote/mapper/_.kt
-→ LANJUT\*KE_WILAYAH feature_a\*
+→ `*Repository.kt + *RepositoryImpl.kt`
+→ `~/feature_*/domain/model/*Summary.kt`
+→ `~/feature_*/data/remote/mapper/_.kt`
+→ `LANJUT_KE_WILAYAH feature_a_*`
 
 **Note:**  
-Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/feature\_*/di/*Module.kt
+Perlu dependency injection di: `~/nebeng/app/src/main/java/com/example/nebeng/feature_*/di/*Module.kt`
 
 #### B. Lokasi di `feature_a_*`
 
