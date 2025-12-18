@@ -3,7 +3,7 @@ import SearchBar from "../../components/SearchBar.jsx";
 import { useDrivers } from "../../hooks/useDrivers.js";
 import Table from "../../components/Table.jsx";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function Mitra() {
   const [searchText, setSearchText] = useState("");
@@ -16,26 +16,10 @@ export default function Mitra() {
   const navigate = useNavigate();
 
   const filterOptions = [
-    { label: "Terverifikasi", value: "Terverifikasi" },
-    { label: "Pengajuan", value: "Pengajuan" },
-    { label: "Terblokir", value: "Terblokir" },
+    { label: "Terverifikasi", value: "terverifikasi" },
+    { label: "Pengajuan", value: "pengajuan" },
+    { label: "Terblokir", value: "terblokir" },
   ];
-
-  const filteredDrivers = useMemo(() => {
-    return drivers.filter((row) => {
-      const nameMatch = row.full_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const emailMatch = row.user.email
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const phoneMatch = row.telephone.includes(searchText);
-
-      return nameMatch || phoneMatch || emailMatch;
-    });
-  }, [drivers, searchText]);
 
   const columns = [
     {
@@ -133,7 +117,7 @@ export default function Mitra() {
         />
       </div>
       {/* Pagination */}
-      {!isLoadingList && filteredDrivers.length > 0 && (
+      {!isLoadingList && drivers.length > 0 && (
         <div className="mt-4">
           <button
             disabled={!links.prev_page_url}

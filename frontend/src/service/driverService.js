@@ -22,12 +22,12 @@ const driverService = {
       params.append("page", page);
 
       if (search) params.append("search", search);
-      if (status) params.append("status", status);
+      if (status) params.append("status_driver", status);
 
       const res = await api.get(`/api/admin/drivers?${params.toString()}`);
       return res.data;
     } catch (error) {
-      handleError(error);
+      return handleError(error);
     }
   },
 

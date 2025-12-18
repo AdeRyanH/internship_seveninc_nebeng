@@ -27,6 +27,13 @@ class VehicleAdminService
         return $this->vehicleRepository->findById($id);
     }
 
+    // Ambil driver
+
+    public function getDriver($driverId)
+    {
+        return $this->vehicleRepository->getDriver($driverId);
+    }
+
     // List kendaraan per driver
     public function listByDriver($driverId)
     {

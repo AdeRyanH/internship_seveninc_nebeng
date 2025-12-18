@@ -51,12 +51,18 @@ class UserRepository{
         return $user->delete();
     }
 
-    public function paginate($perPage = 10, $filters = []){
+    public function paginate($perPage = 10, $filters = ['driver', 'customer'], $userTypes = null){
         $query = $this->model
             ->with(['customer', 'driver'])
             ->orderBy('created_at', 'DESC');
 
-        $query->whereIn('user_type', ['driver', 'customer']);
+        if (!empty($userTypes)) {
+            if(is_array($userTypes)){
+                $query->whereIn('user_type', $userTypes);
+            } else {
+                $query->where('user_type', $userTypes);
+            }
+        }
 
         // filter
             if($filters['status'] !== null && $filters['status'] !== "") {

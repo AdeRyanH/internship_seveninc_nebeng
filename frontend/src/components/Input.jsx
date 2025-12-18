@@ -3,9 +3,10 @@ export default function Input({
   type = "text",
   label = "",
   disabled = true,
+  className = "w-md",
 }) {
   return (
-    <div className={`w-md `}>
+    <div className={className}>
       <label
         htmlFor="input-label"
         className="block text-sm font-medium mb-2 mt-3 dark:text-white"

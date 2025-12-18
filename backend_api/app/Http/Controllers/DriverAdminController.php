@@ -23,6 +23,7 @@ class DriverAdminController extends Controller
         $perPage = $request->query('perPage', 10);
         $filters = [
             'search' => $request->query('search'),
+            'status_driver' => $request->query('status_driver'),
         ];
         $drivers = $this->driverService->listDrivers($perPage, $filters);
         $data = DriverAdminResource::collection($drivers);

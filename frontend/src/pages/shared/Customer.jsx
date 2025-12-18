@@ -17,7 +17,7 @@ export default function Customer() {
 
   const filterOptions = [
     { label: "Terverifikasi", value: 1 },
-    { label: "Terblokir", value: 0 },
+    { label: "Terblokir", value: false },
   ];
 
   const filteredCustomers = useMemo(() => {

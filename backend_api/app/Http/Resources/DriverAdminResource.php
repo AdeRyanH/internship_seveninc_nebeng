@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\DriverStatusHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ class DriverAdminResource extends JsonResource
             "total_rating" => $this->total_rating,
             "rating_count" => $this->rating_count,
             "average_rating" => $this->average_rating,
+            'status_driver' => DriverStatusHelper::getStatus($this),
 
             "id_card" => [
                 "number" => $this->id_card_number,

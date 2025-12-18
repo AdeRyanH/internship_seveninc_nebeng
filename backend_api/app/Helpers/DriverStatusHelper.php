@@ -2,39 +2,27 @@
 
 namespace App\Helpers;
 
-class DriverStatusHelper{
+class DriverStatusHelper
+{
+    public static function getStatus($driver)
+    {
+        $idCard = (bool) $driver->id_card_verified;
+        $sim    = (bool) $driver->driver_license_verified;
+        $skck   = (bool) $driver->police_clearance_verified;
 
-    public static function getStatus($driver){
-        $idCard = $driver->id_card_verified;
-        $sim = $driver->driver_licence_verified;
-        $skck = $driver->police_certificate_verified;
+        $allVerified = $idCard && $sim && $skck;
+        $anyVerified = $idCard || $sim || $skck;
 
-        $docs = [$idCard, $sim, $skck];
-
-        $countNull = collect($docs)->filter(fn($v) => is_null($v))->count();
-        $countTrue = collect($docs)->filter(fn($v) => $v === true)->count();
-        $countFalse = collect($docs)->filter(fn($v) => $v === false)->count();
-
-        if ($countNull === 3){
-            return 'pending';
-        }
-
-        if($countNull > 0){
-            return 'pengajuan';
-        }
-
-        if($countFalse === 3){
-            return 'ditolak';
-        }
-
-        if($countTrue > 0 && $countFalse > 0){
-            return 'diterima_sebagian';
-        }
-
-        if($countTrue === 3){
+        if ($allVerified) {
             return 'terverifikasi';
         }
 
-        return 'pengajuan';
+        if ($anyVerified) {
+            return 'pengajuan';
+        }
+
+        return 'terblokir';
     }
 }
+
+

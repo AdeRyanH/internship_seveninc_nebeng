@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 
 export default function DetailMitra() {
   const { id } = useParams();
-  const { getDriverById, verifyDriver, isLoadingDetail } = useDrivers();
+  const { getDriverById, verifyDriver, isLoadingDetail, isLoadingAction } =
+    useDrivers();
 
   const [mitra, setMitra] = useState(null);
   const [error, setError] = useState(null);
@@ -143,11 +144,7 @@ export default function DetailMitra() {
       data: {
         noSim: mitra.driver_license_number,
         tipe: mitra.driver_license_type,
-        expired: mitra.vehicles.registration_expired,
-        namaKendaraan: mitra.vehicles.vehicle_name,
-        warnaKendaraan: mitra.vehicles.vehicle_color,
-        jenisKendaraan: mitra.vehicles.vehicle_type,
-        staus: mitra.vehicles.vehicle_verified,
+        expired: mitra.driver_license_expired,
         reason: mitra.vehicles.rejected_reason,
         img: mitra.vehicles.vehicles_image,
       },
@@ -158,18 +155,6 @@ export default function DetailMitra() {
       data: {
         noSKCK: mitra.police_clearance_certificate_number,
         nama: mitra.police_clearance_certificate_fullname,
-        expired: mitra.police_clearance_certificate_expired,
-        status: mitra.police_clearance_verified,
-        reason: mitra.police_clearance_rejected_reason,
-        img: mitra.police_clearance_certificate_img,
-      },
-    },
-    {
-      title: "Informasi STNK",
-      type: "vehicles",
-      data: {
-        noSTNK: mitra.vehicles.registration_number,
-        tahunSTNK: mitra.vehicles.registration_year,
         expired: mitra.police_clearance_certificate_expired,
         status: mitra.police_clearance_verified,
         reason: mitra.police_clearance_rejected_reason,
@@ -206,9 +191,9 @@ export default function DetailMitra() {
           </div>
         </div>
         <h1 className="m-3 font-bold">Informasi Pribadi</h1>
-        <div className="m-3 flex justify-baseline w-full">
+        <div className="flex flex-row w-full">
           {/* Sisi Kiri */}
-          <div className="flex flex-col min-w-[300px]">
+          <div className="flex flex-col m-3">
             <Input label="ID Driver" value={mitra.id} />
             <Input label="Nama Lengkap" value={mitra.full_name} />
             <Input label="Username" value={mitra.user?.username} />
@@ -219,10 +204,10 @@ export default function DetailMitra() {
             <Input label="Rating" value={mitra.average_rating} />
           </div>
           {/* Sisi Kanan */}
-          <div className="flex flex-col m-3 font-semibold justify-center justify-items-center">
-            <div className="m-3 m">
+          <div className="flex flex-col justify-center items-center w-full m-3">
+            <div className="">
               <label htmlFor="">Foto Wajah</label>
-              <div className="rounded-2xl mt-2">
+              <div className="rounded-2xl">
                 <img
                   src={mitra.face_img || "https://placehold.co/300x200"}
                   alt="Foto Wajah"
@@ -316,14 +301,14 @@ export default function DetailMitra() {
                         handleVerify(item.type, 1);
                       }
                     }}
-                    disabled={isLoadingDetail}
+                    disabled={isLoadingAction}
                   >
                     Terima
                   </button>
                   <button
                     className="bg-red-500 text-white px-3 py-2 rounded-xl"
                     onClick={() => handleVerify(item.type, 0)}
-                    disabled={isLoadingDetail}
+                    disabled={isLoadingAction}
                   >
                     Tolak
                   </button>

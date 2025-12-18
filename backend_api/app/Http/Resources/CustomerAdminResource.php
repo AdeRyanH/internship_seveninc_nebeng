@@ -29,6 +29,7 @@ class CustomerAdminResource extends JsonResource
                 'name'               => $this->user->name,
                 'email'              => $this->user->email,
                 'username'           => $this->user->username,
+                "banned"             => (bool) $this->user->banned,
             ]
         ];
     }

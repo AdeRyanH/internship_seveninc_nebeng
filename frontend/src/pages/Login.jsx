@@ -47,7 +47,13 @@ export default function Login() {
         className="relative w-1/2 min-h-screen bg-cover bg-center bg-no-repeat flex"
         style={{ backgroundImage: `url(${bg})` }}
       >
-        <div className="absolute inset-0 bg-blue-900/97 z-8"></div>
+        <div className="absolute inset-0 bg-blue-900/97 z-8">
+          <img
+            className="w-37 mt-4 ml-4"
+            src="http://localhost:5173/logoNebeng.png"
+            alt="logo"
+          />
+        </div>
         <div className="absolute right-0 top-10 z-10">
           <svg
             width="161"

@@ -42,8 +42,8 @@ export const sideBarMenu = {
   ],
 
   superadmin: [
-    { name: "Dashboard", icon: PieChart, path: "/sp/dashboard" },
-    { name: "Layanan", icon: Columns3Cog, path: "/sp/layanan" },
+    { name: "Dashboard", icon: PieChart, path: "/sa/dashboard" },
+    { name: "Layanan", icon: Columns3Cog, path: "/sa/layanan" },
     {
       name: "Verifikasi Data",
       icon: ChartPie,

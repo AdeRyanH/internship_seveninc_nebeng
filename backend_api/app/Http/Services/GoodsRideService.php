@@ -22,6 +22,11 @@ class GoodsRideService {
         return $this->goodsRideRepository->findById($id);
     }
 
+    public function listByDriver($driverId)
+    {
+        return $this->goodsRideRepository->getByDriver($driverId);
+    }
+
     public function createGoodsRide(array $data) {
         $validator = Validator::make($data, [
             'driver_id'             => 'required|exists:drivers,id',

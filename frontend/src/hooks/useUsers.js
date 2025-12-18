@@ -3,21 +3,13 @@ import { useState, useEffect, useCallback } from "react";
 import useAuth from "./useAuth";
 import axios from "axios";
 
-export function useUsers({ search = "", status = "" } = {}) {
+export function useUsers({ search = "", status = "", role = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState();
   const [error, setError] = useState(null);
-  const [meta, setMeta] = useState({
-    current_page: 1,
-    last_page: 1,
-    per_page: 10,
-    total: 0,
-  });
-  const [links, setLinks] = useState({
-    next_page_url: null,
-    prev_page_url: null,
-  });
+  const [meta, setMeta] = useState({});
+  const [links, setLinks] = useState({});
 
   const [isLoadingList, setIsLoadingList] = useState(false);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
@@ -40,7 +32,12 @@ export function useUsers({ search = "", status = "" } = {}) {
       setError(null);
 
       try {
-        const response = await userService.getAll({ page, search, status });
+        const response = await userService.getAll({
+          page,
+          search,
+          status,
+          role,
+        });
 
         if (response.success) {
           setUsers(response.data || []);
@@ -67,7 +64,7 @@ export function useUsers({ search = "", status = "" } = {}) {
         setIsLoadingList(false);
       }
     },
-    [authLoading, user, handleError, search, status]
+    [authLoading, user, handleError, search, status, role]
   );
 
   const getUserById = useCallback(

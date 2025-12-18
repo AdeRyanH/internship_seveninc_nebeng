@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RideController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\RegencyController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\CustomerController;
@@ -22,15 +24,14 @@ use App\Http\Controllers\CustomerAdminController;
 use App\Http\Controllers\PassengerRideController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CreditScoreLogController;
+use App\Http\Controllers\MidtransWebHookController;
 use App\Http\Controllers\DriverCommissionController;
 use App\Http\Controllers\DriverWithdrawalController;
 use App\Http\Controllers\GoodsRideBookingController;
 use App\Http\Controllers\GoodsTransactionController;
-use App\Http\Controllers\MidtransWebHookController;
 use App\Http\Controllers\PassengerPricingController;
 use App\Http\Controllers\PassengerRideBookingController;
 use App\Http\Controllers\PassengerTransactionController;
-use App\Http\Controllers\RefundController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -52,6 +53,14 @@ Route::middleware('auth:api')->group(function() {
         Route::put('/{id}', [TerminalController::class, 'update']);
         Route::delete('/{id}', [TerminalController::class, 'destroy']);
     });
+
+    // [CHATIFY]
+    Route::prefix('chatify')->middleware('auth:api')->group(function () {
+    Route::get('/', [ChatController::class, 'index']);
+    Route::get('/{userId}', [ChatController::class, 'show']);
+    Route::post('/{userId}', [ChatController::class, 'send']);
+    });
+
 
     // [PROVINCE]
     Route::prefix('provinces')->group(function () {
@@ -102,13 +111,7 @@ Route::middleware('auth:api')->group(function() {
     });
 
 
-    //  [RIDE]
-    Route::prefix('ride')->group(function(){
-        Route::get('/', [RideController::class, 'index']);
-        Route::get('/driver/{driverId}', [RideController::class, 'byDriver']);
-        Route::get('/status/{status}', [RideController::class, 'byStatus']);
-        Route::get('/{type}/{id}', [RideController::class, 'show']);
-    });
+
     // ######################################################################################
     // ######################################################################################
     // ######################################################################################
@@ -336,6 +339,7 @@ Route::middleware('auth:api')->group(function() {
         Route::get('/', [VehicleAdminController::class, 'index']);
         Route::get('/{id}', [VehicleAdminController::class, 'show']);
         Route::get('/driver/{driver_id}', [VehicleAdminController::class, 'byDriver']);
+        Route::get('/getDriver/{driver_id}', [VehicleAdminController::class, 'getDriver']);
         Route::post('/', [VehicleAdminController::class, 'store']);
         Route::put('/{id}', [VehicleAdminController::class, 'update']);
         Route::patch('/{id}/verify', [VehicleAdminController::class, 'verify']);
@@ -347,6 +351,14 @@ Route::middleware('auth:api')->group(function() {
     Route::prefix('admin/refunds')->group(function () {
         Route::get('/', [RefundController::class, 'index']);
         Route::get('/{type}/{id}', [RefundController::class, 'show']);
+    });
+
+    //  [RIDE]
+    Route::prefix('rides')->group(function(){
+        Route::get('/', [RideController::class, 'index']);
+        Route::get('/driver/{driverId}', [RideController::class, 'byDriver']);
+        Route::get('/status/{status}', [RideController::class, 'byStatus']);
+        Route::get('/{type}/{id}', [RideController::class, 'show']);
     });
 
 });

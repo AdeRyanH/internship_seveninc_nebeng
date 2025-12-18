@@ -19,6 +19,8 @@ import VerifikasiDriver from "../pages/shared/VerifikasiDriver.jsx";
 import VerifikasiCustomer from "../pages/shared/VerifikasiCustomer.jsx";
 import DetailVerifikasi from "../pages/shared/DetailVerifikasi.jsx";
 import Kendaraan from "../pages/shared/Kendaraan.jsx";
+import DetailKendaraan from "../pages/shared/DetailKendaraan.jsx";
+import Layanan from "../pages/superAdmin/Layanan.jsx";
 // FINANCE
 import DashboardFinance from "../pages/finance/DashboardFinance.jsx";
 import PenacairanDana from "../pages/finance/PencairanDana.jsx";
@@ -44,6 +46,14 @@ export default function AppRoutes() {
             element={
               <ProtectedRoute requiredRole={["admin", "superadmin"]}>
                 <Kendaraan />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/kendaraan/:id"
+            element={
+              <ProtectedRoute requiredRole={["admin", "superadmin"]}>
+                <DetailKendaraan />
               </ProtectedRoute>
             }
           />
@@ -159,11 +169,21 @@ export default function AppRoutes() {
               </ProtectedRoute>
             }
           />
+
+          {/* SUPER ADMIN */}
           <Route
             path="/sa/dashboard"
             element={
               <ProtectedRoute requiredRole="superadmin">
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sa/layanan"
+            element={
+              <ProtectedRoute requiredRole="superadmin">
+                <Layanan />
               </ProtectedRoute>
             }
           />

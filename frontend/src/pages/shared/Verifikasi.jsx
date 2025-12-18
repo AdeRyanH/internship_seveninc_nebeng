@@ -3,14 +3,17 @@ import { useUsers } from "../../hooks/useUsers";
 import SearchBar from "../../components/SearchBar";
 import Table from "../../components/Table";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function User() {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const roles = useMemo(() => ["driver", "customer"], []);
+
   const { users, error, isLoadingList, meta, links, fetchUsers } = useUsers({
     search: searchText,
     status: filterStatus,
+    role: roles,
   });
   const navigate = useNavigate();
 
@@ -18,24 +21,6 @@ export default function User() {
     { label: "Terblokir", value: 1 },
     { label: "Akses", value: 0 },
   ];
-
-  const filteredUsers = useMemo(() => {
-    return users.filter((row) => {
-      const nameMatch = row.name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const emailMatch = row.email
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const roleMatch = row.user_type
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      return nameMatch || emailMatch || roleMatch;
-    });
-  }, [users, searchText]);
 
   const columns = [
     {
@@ -98,13 +83,13 @@ export default function User() {
       <div className="bg-white rounded-2xl mt-4 min-h-[78%]">
         <Table
           columns={columns}
-          data={filteredUsers}
+          data={users}
           loading={isLoadingList}
           error={error}
         />
       </div>
       {/* Pagination */}
-      {!isLoadingList && filteredUsers.length > 0 && (
+      {!isLoadingList && users.length > 0 && (
         <div className="mt-4">
           <button
             disabled={!links.prev_page_url}

@@ -62,6 +62,13 @@ class VehicleAdminController extends Controller
         return response()->json(['data' => $vehicles], 200);
     }
 
+    // GET
+    public function getDriver($driverId)
+    {
+        $driver = $this->vehicleService->getDriver($driverId);
+        return response()->json(['data' => $driver], 200);
+    }
+
     // POST /api/vehicles
     public function store(Request $request)
     {

@@ -34,7 +34,7 @@ export default function DetailCustomer() {
       await verifyCustomer(customer.id, status);
       Swal.fire(
         status === true ? "Terverifikasi" : "Diblokir",
-        `Customer berhasil ${status === true ? "diverifikasi" : "diblock"}!`,
+        `Customer berhasil ${status === true ? "diverifikasi" : "diblikir"}!`,
         "success"
       );
     } catch (error) {

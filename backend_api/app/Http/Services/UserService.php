@@ -23,9 +23,9 @@ class UserService
      * @param array $filters
      * @return mixed
      */
-    public function list($perPage = 10, $filters = [])
+    public function list($perPage = 10, $filters = [], $userTypes = null)
     {
-        return $this->repo->paginate($perPage, $filters);
+        return $this->repo->paginate($perPage, $filters, $userTypes);
     }
 
     public function get($id)

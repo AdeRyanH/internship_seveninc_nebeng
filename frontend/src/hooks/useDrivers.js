@@ -40,7 +40,7 @@ export function useDrivers({ search = "", status = "" } = {}) {
           status,
         });
         // console.log("Data response drivers: ", response);
-        if (response.success) {
+        if (response?.success) {
           setDrivers(response.data || []);
           setMeta(response.meta || {});
           setLinks(response.links || {});

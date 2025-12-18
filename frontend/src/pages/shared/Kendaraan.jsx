@@ -43,47 +43,16 @@ export default function Vehicle() {
   }, [vehicles, searchText]);
 
   const columns = [
-    {
-      label: "image",
-      key: "vehicle_img",
-    },
-    { label: "Nama Driver", render: (row) => row.driver?.full_name || "-" },
     { label: "Kendaraan", key: "vehicle_name" },
+    { label: "Nama Driver", render: (row) => row.driver?.full_name || "-" },
     { label: "Plat Nomor", key: "registration_number" },
     { label: "Warna", key: "vehicle_color" },
-    {
-      label: "Status",
-      render: (row) =>
-        row.vehicle_verified === 1 || row.vehicle_verified === true ? (
-          <span className="inline-flex items-center gap-x-1.5 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-            <svg
-              className="h-1.5 w-1.5 fill-red-500"
-              viewBox="0 0 8 8"
-              aria-hidden="true"
-            >
-              <circle cx="4" cy="4" r="3" />
-            </svg>
-            Terblokir
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-            <svg
-              className="h-1.5 w-1.5 fill-green-500"
-              viewBox="0 0 8 8"
-              aria-hidden="true"
-            >
-              <circle cx="4" cy="4" r="3" />
-            </svg>
-            Akses
-          </span>
-        ),
-    },
     {
       label: "Aksi",
       align: "center",
       render: (row) => (
         <button
-          onClick={() => navigate(`/verifikasi/${row.id}`)}
+          onClick={() => navigate(`/kendaraan/${row.id}`)}
           className="text-green-600 hover:text-blue-green dark:text-green-400 dark:hover:text-green-300 font-semibold bg-green-200 rounded-2xl px-2 py-1 text-xs"
         >
           Detail

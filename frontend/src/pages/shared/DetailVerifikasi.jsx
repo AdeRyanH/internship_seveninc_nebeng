@@ -34,7 +34,7 @@ export default function DetailUser() {
     console.log("🟦 handleVerify: trigger");
     if (!user) return;
     try {
-      await verifyUser(user.id, status);
+      await verifyUser(user?.id, status);
 
       const fresh = await getUserById(id);
       setUser(fresh.data);
@@ -90,10 +90,10 @@ export default function DetailUser() {
     );
 
   const profile =
-    user.user_type === "driver"
-      ? user.driver
-      : user.user_type === "customer"
-        ? user.customer
+    user?.user_type === "driver"
+      ? user?.driver
+      : user?.user_type === "customer"
+        ? user?.customer
         : null;
 
   return (
@@ -103,16 +103,16 @@ export default function DetailUser() {
           <div className="m-5">
             <img
               className="rounded-full"
-              src={user.profile_img || "https://placehold.co/200x200"}
+              src={user?.profile_img || "https://placehold.co/200x200"}
               alt="SIM"
             />
           </div>
           <div className="flex flex-col justify-center justify-items-center m-3">
             <h1 className="font-semibold">{user?.name}</h1>
             <p className="text-gray-600">{user?.email}</p>
-            <p className="text-gray-600">{profile.telephone ?? "-"}</p>
+            <p className="text-gray-600">{profile?.telephone ?? "-"}</p>
             <span>
-              {user.banned === true ? (
+              {user?.banned === true ? (
                 <span className="inline-flex items-center gap-x-1.5 rounded-full bg-red-800 px-2 py-1 text-xs font-medium text-white">
                   <svg
                     className="h-1.5 w-1.5 fill-red-500"
@@ -142,16 +142,16 @@ export default function DetailUser() {
         <div className="m-3 flex justify-baseline w-full">
           {/* Sisi Kiri */}
           <div className="flex flex-col min-w-lg">
-            <Input label="ID User" value={user.id} />
-            <Input label="Nama Lengkap" value={user.name} />
-            <Input label="Username" value={user.username} />
+            <Input label="ID User" value={user?.id} />
+            <Input label="Nama Lengkap" value={user?.name} />
+            <Input label="Username" value={user?.username} />
           </div>
           {/* Sisi Kanan */}
           <div className="flex flex-col">
-            <Input label="Email" value={user.email} />
+            <Input label="Email" value={user?.email} />
             <Input
               label="Tanggal Bergabung"
-              value={formatTanggal(user.created_at)}
+              value={formatTanggal(user?.created_at)}
             />
             <Input label="No.Tlp" value={profile.telephone ?? "-"} />
           </div>
@@ -200,7 +200,7 @@ export default function DetailUser() {
           </div>
         </div>
         <div className="p-3">
-          {user.banned === true ? (
+          {user?.banned === true ? (
             <button
               className="bg-green-500 text-white px-3 py-2 rounded-xl"
               onClick={async () => {

@@ -60,6 +60,12 @@ class GoodsTransactionController extends Controller
         }
     }
 
+    public function updateStatus(Request $request, $id){
+        $request->validate(['status' => 'required|string|in:Pending,Diterima,Ditolak,Credited']);
+        $transaction = $this->service->updateStatus($id, $request->status);
+        return response()->json(['message' => 'Status updated successfully', 'data' => $transaction], 200);
+    }
+
     public function destroy($id)
     {
         try {

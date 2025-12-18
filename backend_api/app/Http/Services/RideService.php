@@ -2,38 +2,61 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\GoodsRideRepository;
-use App\Http\Repositories\PassengerRideRepository;
 use InvalidArgumentException;
+use App\Http\Services\GoodsRideService;
+use App\Http\Services\PassengerRideService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RideService{
 
-    protected $passengerRideRepository;
-    protected $goodsRideRepository;
+    protected $passengerRideService;
+    protected $goodsRideService;
 
     public function __construct(
-        PassengerRideRepository $passengerRepo,
-        GoodsRideRepository $goodrepo
+        PassengerRideService $passengerService,
+        GoodsRideService $goodservice
     ) {
-        $this->passengerRideRepository = $passengerRepo;
-        $this->goodsRideRepository = $goodrepo;
+        $this->passengerRideService = $passengerService;
+        $this->goodsRideService = $goodservice;
     }
 
-    public function listAllRides() {
-            $passengerRides = $this->passengerRideRepository->getAll();
-            $goodsRides = $this->goodsRideRepository->getAll();
+    public function listAllRides($perPage = 10) {
+            $passengerRides = $this->passengerRideService->listRides()->map(function ($d) {
+                $d->ride_type = 'Pasengger';
+                return $d;
+            });
+            $goodsRides = $this->goodsRideService->listGoodsRides()->map(function($d){
+                $d->ride_type = 'Goods';
+                return $d;
+            });
 
-            return [
-                'passenger_rides' => $passengerRides,
-                'goods_rides' => $goodsRides,
-            ];
+            $merged = collect()
+                ->merge($passengerRides)
+                ->merge($goodsRides)
+                ->sortByDesc('created_at')
+                ->values();
+
+            $page = request('page', 1);
+            $total = $merged->count();
+            $paginated = new LengthAwarePaginator(
+                $merged->slice(($page - 1) * $perPage, $perPage)->values(),
+                $total,
+                $perPage,
+                $page,
+            [
+                        'path' => request()->url(),
+                        'query' => request()->query()
+                    ]
+            );
+
+            return $paginated;
     }
 
     public function getDetailRide(string $type, $id){
         if($type === 'passenger'){
-            return $this->passengerRideRepository->findById($id);
+            return $this->passengerRideService->getRide($id);
         } else if ($type === 'goods'){
-            return $this->goodsRideRepository->findById($id);
+            return $this->goodsRideService->getGoodsRide($id);
         }
 
         throw new \InvalidArgumentException('Tipe ride tidak valid');
@@ -41,15 +64,8 @@ class RideService{
 
     public function listByDriver($driverId){
         return[
-            'passenger_rides' => $this->passengerRideRepository->getByDriver($driverId),
-            'goods_rides' => $this->goodsRideRepository->getByDriver($driverId)
-        ];
-    }
-
-    public function listByStatus($status){
-        return[
-            'pasengger_rides' => $this->passengerRideRepository->getByStatus($status),
-            'goods_rides' => $this->goodsRideRepository->getByStatus($status)
+            'passenger_rides' => $this->passengerRideService->listByDriver($driverId),
+            'goods_rides' => $this->goodsRideService->listByDriver($driverId)
         ];
     }
 }

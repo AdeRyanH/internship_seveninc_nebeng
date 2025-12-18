@@ -40,6 +40,14 @@ class VehicleRepository
             ->get();
     }
 
+    public function getDriverById($driverId)
+    {
+        return $this->model
+            ->where('driver_id', $driverId)
+            ->with('driver')
+            ->first();
+    }
+
     // Tambah kendaraan baru
     public function create(array $data)
     {

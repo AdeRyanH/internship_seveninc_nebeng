@@ -55,6 +55,21 @@ return new class extends Migration
             // Jumlah kredit yang digunakan (switch dari boolean)
             $table->integer('credit_used')->default(0);
 
+            // === Kolom khusus Midtrans ===
+            // order_id yang dipakai di Midtrans (boleh sama dengan transaction_code)
+            $table->string('midtrans_order_id')->nullable();
+            $table->string('midtrans_transaction_id')->nullable(); // transaction_id dari Midtrans
+            $table->string('payment_type')->nullable();            // bank_transfer, qris, dll
+            $table->string('va_number')->nullable();               // nomor VA
+            $table->string('ewallet_deeplink')->nullable();               // ewallet
+            $table->string('qr_string')->nullable();               // Qris
+
+            // Batas waktu pembayaran (buat timer di Android)
+            $table->timestamp('payment_expired_at')->nullable();
+
+            // Simpan raw response Midtrans (untuk debugging / audit)
+            $table->json('payment_response_raw')->nullable();
+
             // Tanggal transaksi
             $table->timestamp('transaction_date')->useCurrent();
 

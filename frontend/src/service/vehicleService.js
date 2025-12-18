@@ -44,6 +44,16 @@ const vehicleService = {
     }
   },
 
+  getDriver: async (driverId) => {
+    try {
+      const res = await api.get(`/api/admin/vehicles/getDriver/${driverId}`);
+      console.log("Data driver dari service: ", res);
+      return res.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   create: async (data) => {
     try {
       const res = await api.post("/api/admin/vehicles", data);
@@ -64,12 +74,23 @@ const vehicleService = {
     }
   },
 
-  verify: async (id, status) => {
+  verify: async (id) => {
     try {
-      const res = await api.patch(`/api/admin/vehicles/${id}/verify`, {
-        status,
+      const res = await api.patch(`/api/admin/vehicles/${id}/verify`);
+      console.log("📥 Verify vehicle di service:", res.data);
+      return res.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+
+  reject: async (id, reason) => {
+    try {
+      const res = await api.patch(`/api/admin/vehicles/${id}/reject`, {
+        reason,
       });
-      console.log("📥 FE RECEIVE RESPONSE:", res.data); // <-- log respon
+      console.log("📥 Reject vehicle di service:", res.data);
       return res.data;
     } catch (error) {
       handleError(error);

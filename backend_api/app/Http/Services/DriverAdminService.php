@@ -21,12 +21,6 @@ class DriverAdminService
     {
         $drivers = $this->driverRepository->paginate($perPage, $filters);
 
-        $drivers->setCollection(
-            $drivers->getCollection()->map(function ($driver) {
-            $driver->status = DriverStatusHelper::getStatus($driver);
-            return $driver;
-        })
-    );
         return $drivers;
     }
 

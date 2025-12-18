@@ -23,7 +23,8 @@ class UserController extends Controller
             'status' => $request->query('status'),
             'search' => $request->query('search'),
         ];
-        $data = $this->service->list($perPage, $filters);
+        $userType = $request->query('role');
+        $data = $this->service->list($perPage, $filters,$userType);
         return response()->json([
             'success' => true,
             'data' => $data->items(),

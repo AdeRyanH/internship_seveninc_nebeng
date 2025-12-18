@@ -7,6 +7,7 @@ export function useVehicles({ search = "", status = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState();
+  const [selectedDriver, setSelectedDriver] = useState();
   const [error, setError] = useState(null);
   const [meta, setMeta] = useState({
     current_page: 1,
@@ -87,6 +88,23 @@ export function useVehicles({ search = "", status = "" } = {}) {
     [handleError]
   );
 
+  const getDriver = useCallback(
+    async (driverId) => {
+      setIsLoadingDetail(true);
+      setError(null);
+      try {
+        const driver = await vehicleService.getDriver(driverId);
+        setSelectedDriver(driver);
+        return driver;
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setIsLoadingDetail(false);
+      }
+    },
+    [handleError]
+  );
+
   const createVehicle = useCallback(
     async (payload) => {
       setIsLoadingAction(true);
@@ -118,11 +136,27 @@ export function useVehicles({ search = "", status = "" } = {}) {
   );
 
   const verifyVehicle = useCallback(
-    async (id, payload) => {
+    async (id) => {
       setIsLoadingAction(true);
       try {
-        const result = await vehicleService.verify(id, payload);
+        const result = await vehicleService.verify(id);
         console.log("✨ verifyVehicle result:", result); // <-- log hasil verify
+        await fetchVehicles();
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setIsLoadingAction(false);
+      }
+    },
+    [fetchVehicles, handleError]
+  );
+
+  const rejectVehicle = useCallback(
+    async (id, reason) => {
+      setIsLoadingAction(true);
+      try {
+        const result = await vehicleService.reject(id, reason);
+        console.log("✨ rejectVehicleVehicle result:", result); // <-- log hasil verify
         await fetchVehicles();
       } catch (err) {
         handleError(err);
@@ -163,11 +197,14 @@ export function useVehicles({ search = "", status = "" } = {}) {
     meta,
     links,
     selectedVehicle,
+    selectedDriver,
+    rejectVehicle,
     fetchVehicles,
     createVehicle,
     updateVehicle,
     deleteVehicle,
     verifyVehicle,
     getVehicleById,
+    getDriver,
   };
 }

@@ -26,6 +26,13 @@ class GoodsTransaction extends Model
         'credit_used',
         'transaction_date',
         'transaction_code',
+
+        'midtrans_order_id',
+        'midtrans_transaction_id',
+        'payment_type',
+        'va_number',
+        'payment_expired_at',
+        'payment_response_raw',
     ];
 
     /**

@@ -15,7 +15,7 @@ function handleError(error) {
 }
 
 const userService = {
-  getAll: async ({ page = 1, search = "", status = "" }) => {
+  getAll: async ({ page = 1, search = "", status = "", role = "" }) => {
     try {
       const params = new URLSearchParams();
 
@@ -23,6 +23,9 @@ const userService = {
 
       if (search) params.append("search", search);
       if (status) params.append("status", status);
+      if (Array.isArray(role)) {
+        role.forEach((r) => params.append("role[]", r));
+      }
 
       const res = await api.get(`/api/users?${params.toString()}`);
       // console.log("Data dari user service :", res);

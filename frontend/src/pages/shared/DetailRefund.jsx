@@ -24,7 +24,7 @@ export default function DetailPesanan() {
         console.log("type :", type);
         console.log("id :", booking_id);
         console.log(":", data);
-        setRefund(data);
+        setRefund(data.data);
       } catch (err) {
         setError(err.message);
       }
@@ -119,7 +119,9 @@ export default function DetailPesanan() {
                       <h1 className="font-semibold text-blue-600">
                         Titik Jemput
                       </h1>
-                      <h2 className="font-semibold">{refund?.kota_awal}</h2>
+                      <h2 className="font-semibold">
+                        {refund?.passenger_ride?.kota_awal}
+                      </h2>
                       <h2 className="text-sm">
                         {refund?.terminal_keberangkatan}
                       </h2>
@@ -155,13 +157,16 @@ export default function DetailPesanan() {
                 <div className="">
                   <Input
                     label="Nama Lengkap"
-                    value={refund?.passenger_ride?.driver.driver_name ?? "-"}
+                    value={refund?.passenger_ride?.driver?.full_name ?? "-"}
                   />
                   <Input
                     label="No Tlp"
                     value={refund?.passenger_ride?.driver?.telephone ?? "-"}
                   />
-                  <Input label="Kendaraan" />
+                  <Input
+                    label="Kendaraan"
+                    value={refund?.passenger_ride?.vehicle_type ?? "-"}
+                  />
                   <Input label="No Kendaraan" />
                 </div>
               </div>

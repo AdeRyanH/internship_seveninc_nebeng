@@ -97,47 +97,47 @@ class PassengerTransactionService
 
         switch ($paymentMethod->code) {
 
-    // VA — BNI, BRI, BCA, Permata
-    case 'bni':
-    case 'bri':
-    case 'bca':
-    case 'permata':
-        $payload['payment_type'] = 'bank_transfer';
-        $payload['bank_transfer'] = [
-            'bank' => $paymentMethod->code
-        ];
-        break;
+        // VA — BNI, BRI, BCA, Permata
+        case 'bni':
+        case 'bri':
+        case 'bca':
+        case 'permata':
+            $payload['payment_type'] = 'bank_transfer';
+            $payload['bank_transfer'] = [
+                'bank' => $paymentMethod->code
+            ];
+            break;
 
-    // QRIS
-    case 'qris':
-        $payload['payment_type'] = 'qris';
-        break;
+        // QRIS
+        case 'qris':
+            $payload['payment_type'] = 'qris';
+            break;
 
-     case 'gopay':
-        $payload['payment_type'] = 'gopay';
-        $payload['gopay'] = [
-            'enable_callback' => true,
-            'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
-        ];
-        break;
+        case 'gopay':
+            $payload['payment_type'] = 'gopay';
+            $payload['gopay'] = [
+                'enable_callback' => true,
+                'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
+            ];
+            break;
 
-    case 'shopeepay':
-        $payload['payment_type'] = 'shopeepay';
-        $payload['shopeepay'] = [
-            'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
-        ];
-        break;
+        case 'shopeepay':
+            $payload['payment_type'] = 'shopeepay';
+            $payload['shopeepay'] = [
+                'callback_url' => rtrim(config('app.url'), '/') . '/payment/midtrans/callback'
+            ];
+            break;
 
-    case 'ovo':
-        $payload['payment_type'] = 'ovo';
-        $payload['ovo'] = [
-            'phone_number' => $transaction->customer->telephone
-        ];
-        break;
+        case 'ovo':
+            $payload['payment_type'] = 'ovo';
+            $payload['ovo'] = [
+                'phone_number' => $transaction->customer->telephone
+            ];
+            break;
 
-    default:
-        throw new Exception("Unsupported payment method code: {$paymentMethod->code}");
-}
+        default:
+            throw new Exception("Unsupported payment method code: {$paymentMethod->code}");
+    }
 
 
         // 3️⃣ Kirim ke Midtrans
@@ -155,9 +155,7 @@ class PassengerTransactionService
 
         $responseJson = $response->json();
 
-        $transaction->update([
-            'payment_response_raw' => $response->body()
-        ]);
+        $rawMidtrans = $response->body();
 
 
         // 4️⃣ Ambil data dari respon Midtrans
@@ -212,7 +210,7 @@ class PassengerTransactionService
         }
     }
 }
-// dd($deeplink);
+ //dd($deeplink);
 
         // 5️⃣ Update ke DB
         $transaction->update([
@@ -223,7 +221,7 @@ class PassengerTransactionService
             'ewallet_deeplink'        => $deeplink,
             'qr_string'               => $qrString,
             'payment_expired_at'      => $expiredAt,
-            'payment_response_raw'    => json_encode($responseJson),
+            'payment_response_raw'    => $rawMidtrans,
             'payment_method_id'       => $paymentMethod->id,
         ]);
 
