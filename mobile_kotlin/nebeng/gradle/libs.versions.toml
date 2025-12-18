@@ -41,6 +41,7 @@ navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 activity = "1.11.0"
 osmdroidAndroid = "6.1.20"
+playServicesLocation = "21.3.0"
 retrofit = "2.9.0"
 roomCompiler = "2.8.1"
 
@@ -89,6 +90,7 @@ material3 = { module = "androidx.compose.material3:material3", version.ref = "ma
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
