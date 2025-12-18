@@ -120,7 +120,7 @@ fun UserDto.toDomain(): User {
         username = username,
         email = email,
         userType = UserType.fromString(userType),
-        banned = banned == 1,
+        banned = banned,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -160,5 +160,41 @@ fun DataItemDto.toSummary(): DriverSummary{
         totalRating = totalRating,
         averageRating = averageRating,
         ratingCount = ratingCount
+    )
+}
+
+
+fun DataDto.toSummary(): DriverSummary{
+    return DriverSummary(
+        id = id,
+        userId = userId,
+        fullName = fullName,
+        telephone = telephone,
+        fullAddress = fullAddress,
+        profileImg = profileImg,
+        faceImg = faceImg,
+        idCardImg = idCardImg,
+        faceWithIdImg = faceWithIdImg,
+        driverLicenseImg = driverLicenseImg,
+        policeClearanceCertificateImg = policeClearanceCertificateImg,
+        creditScore = creditScore,
+        balance = balance,
+        idCardVerified = idCardVerified,
+        driverLicenseVerified = driverLicenseVerified,
+        policeClearanceVerified = policeClearanceVerified,
+        idCardNumber = idCardNumber,
+        driverLicenseNumber = driverLicenseNumber,
+        driverLicenseType = driverLicenseType,
+        idCardBirthdate = idCardBirthdate,
+        driverLicenseExpired = driverLicenseExpired,
+        policeClearanceCertificateExpired = policeClearanceCertificateExpired,
+        idCardFullname = idCardFullname,
+        policeClearanceCertificateNumber = policeClearanceCertificateNumber,
+        policeClearanceCertificateFullname = policeClearanceCertificateFullname,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        totalRating = 0,
+        averageRating = 0f,
+        ratingCount = 0
     )
 }

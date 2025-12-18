@@ -1,10 +1,10 @@
 package com.example.nebeng.core.utils
 
 enum class PublicTerminalSubtype(val label: String) {
-    TERMINAL_BIS("Terminal Bis"),
-    STASIUN_KERETA("Stasiun Kereta"),
-    BANDARA("Bandara"),
-    PELABUHAN("Pelabuhan");
+    TERMINAL_BIS("terminal_bis"),
+    STASIUN_KERETA("stasiun_kereta"),
+    BANDARA("bandara"),
+    PELABUHAN("pelabuhan");
 
     companion object {
         fun fromString(value: String): PublicTerminalSubtype =

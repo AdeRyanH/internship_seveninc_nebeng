@@ -26,16 +26,107 @@ import com.example.nebeng.feature_passenger_ride.domain.model.PassengerRideSumma
 //        updatedAt = updatedAt
 //    )
 //}
+//fun DataItem.toDomain(): PassengerRide {
+//    return PassengerRide(
+//        id                      = id,
+////        driverName              = driver?.fullName ?: "",
+//        driverId                = 1,
+//        vehicleType             = vehicleType,
+////        departureTerminalName   = departureTerminal?.name ?: "",
+////        arrivalTerminalName     = arrivalTerminal?.name ?: "",
+//        departureTerminalId     = 1,
+//        arrivalTerminalId       = 1,
+//        departureTime           = departureTime,
+//        seatsAvailable          = seatsAvailable,
+//        seatsReserved           = seatsReserved,
+//        pricePerSeat            = pricePerSeat,
+//        commissionPercentage    = commissionPercentage,
+//        rideStatus              = rideStatus,
+//        createdAt               = createdAt,
+//        updatedAt               = updatedAt
+//    )
+//}
+//
+///**
+// * Mapper untuk response POST/PUT (yang pakai DTO sederhana tanpa nested object)
+// */
+//fun PassengerRideDto.toDomain(): PassengerRide {
+//    return PassengerRide(
+//        id                      = id,
+////        driverName              = "", // kosong karena DTO tidak berisi driver nested
+//        driverId                = 1,
+//        vehicleType             = vehicleType,
+////        departureTerminalName   = "", // kosong karena DTO tidak berisi terminal nested
+////        arrivalTerminalName     = "",
+//        departureTerminalId     = 1,
+//        arrivalTerminalId       = 1,
+//        departureTime           = departureTime,
+//        seatsAvailable          = seatsAvailable,
+//        seatsReserved           = seatsReserved,
+//        pricePerSeat            = pricePerSeat,
+//        commissionPercentage    = commissionPercentage,
+//        rideStatus              = rideStatus,
+//        createdAt               = createdAt,
+//        updatedAt               = updatedAt
+//    )
+//}
+//
+///**
+// * Helper function untuk GET list
+// */
+////fun List<DataItem>.toDomainList(): List<PassengerRide> =
+////    map { it.toDomain() }
+//
+//fun DataItem.toSummary(): PassengerRideSummary {
+//    return PassengerRideSummary(
+//        id                      = id,
+////        driverName              = driver?.fullName ?: "",
+//        driverId                = 1,
+//        vehicleType             = vehicleType,
+////        departureTerminalName   = departureTerminal?.name ?: "",
+////        arrivalTerminalName     = arrivalTerminal?.name ?: "",
+//        departureTerminalId     = 1,
+//        arrivalTerminalId       = 1,
+//        departureTime           = departureTime,
+//        seatsAvailable          = seatsAvailable,
+//        seatsReserved           = seatsReserved,
+//        pricePerSeat            = pricePerSeat,
+//        commissionPercentage    = commissionPercentage,
+//        rideStatus              = rideStatus,
+//        createdAt               = createdAt,
+//        updatedAt               = updatedAt
+//    )
+//}
+//
+//fun PassengerRideDto.toSummary(): PassengerRideSummary {
+//    return PassengerRideSummary(
+//        id                      = id,
+//        driverId                = 1,
+//        vehicleType             = vehicleType,
+//        departureTerminalId     = 1,
+//        arrivalTerminalId       = 1,
+//        departureTime           = departureTime,
+//        seatsAvailable          = seatsAvailable,
+//        seatsReserved           = seatsReserved,
+//        pricePerSeat            = pricePerSeat,
+//        commissionPercentage    = commissionPercentage,
+//        rideStatus              = rideStatus,
+//        createdAt               = createdAt,
+//        updatedAt               = updatedAt
+//    )
+//}
+
+// ==========================================================
 fun DataItem.toDomain(): PassengerRide {
     return PassengerRide(
         id                      = id,
 //        driverName              = driver?.fullName ?: "",
-        driverId                = 1,
+        driverId                = driver.id,
         vehicleType             = vehicleType,
 //        departureTerminalName   = departureTerminal?.name ?: "",
 //        arrivalTerminalName     = arrivalTerminal?.name ?: "",
-        departureTerminalId     = 1,
-        arrivalTerminalId       = 1,
+        departureTerminalId     = departureTerminal.id,
+        arrivalTerminalId       = arrivalTerminal.id,
         departureTime           = departureTime,
         seatsAvailable          = seatsAvailable,
         seatsReserved           = seatsReserved,
@@ -54,12 +145,12 @@ fun PassengerRideDto.toDomain(): PassengerRide {
     return PassengerRide(
         id                      = id,
 //        driverName              = "", // kosong karena DTO tidak berisi driver nested
-        driverId                = 1,
+        driverId                = driverId,
         vehicleType             = vehicleType,
 //        departureTerminalName   = "", // kosong karena DTO tidak berisi terminal nested
 //        arrivalTerminalName     = "",
-        departureTerminalId     = 1,
-        arrivalTerminalId       = 1,
+        departureTerminalId     = departureTerminalId,
+        arrivalTerminalId       = arrivalTerminalId,
         departureTime           = departureTime,
         seatsAvailable          = seatsAvailable,
         seatsReserved           = seatsReserved,
@@ -81,12 +172,12 @@ fun DataItem.toSummary(): PassengerRideSummary {
     return PassengerRideSummary(
         id                      = id,
 //        driverName              = driver?.fullName ?: "",
-        driverId                = 1,
+        driverId                = driver.id,
         vehicleType             = vehicleType,
 //        departureTerminalName   = departureTerminal?.name ?: "",
 //        arrivalTerminalName     = arrivalTerminal?.name ?: "",
-        departureTerminalId     = 1,
-        arrivalTerminalId       = 1,
+        departureTerminalId     = departureTerminal.id,
+        arrivalTerminalId       = arrivalTerminal.id,
         departureTime           = departureTime,
         seatsAvailable          = seatsAvailable,
         seatsReserved           = seatsReserved,
@@ -101,10 +192,10 @@ fun DataItem.toSummary(): PassengerRideSummary {
 fun PassengerRideDto.toSummary(): PassengerRideSummary {
     return PassengerRideSummary(
         id                      = id,
-        driverId                = 1,
+        driverId                = driverId,
         vehicleType             = vehicleType,
-        departureTerminalId     = 1,
-        arrivalTerminalId       = 1,
+        departureTerminalId     = departureTerminalId,
+        arrivalTerminalId       = arrivalTerminalId,
         departureTime           = departureTime,
         seatsAvailable          = seatsAvailable,
         seatsReserved           = seatsReserved,

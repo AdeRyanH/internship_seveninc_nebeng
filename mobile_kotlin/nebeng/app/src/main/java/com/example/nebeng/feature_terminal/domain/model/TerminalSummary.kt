@@ -15,5 +15,6 @@ data class TerminalSummary(
     val longitude: Double,
     val latitude: Double,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val regencyName: String,
 )

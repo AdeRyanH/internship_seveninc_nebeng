@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -53,14 +55,11 @@ import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.n
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorPaymentMethodDetailScreen(
-    onBack: () -> Unit = {},
-    onPay: () -> Unit = {},
-    orderNumber: String = "FR-2345678997543234",
-    paymentMethod: PassengerRideMotorPaymentMethodModel = PassengerRideMotorPaymentMethodModel(
-        name = "BRI Virtual Account",
-        icon = R.drawable.qris
-    ),
-    totalAmount: String = "Rp 50.000,00"
+    onBack: () -> Unit,
+    onPay: () -> Unit,
+    orderNumber: String,
+    paymentMethod: PassengerRideMotorPaymentMethodModel,
+    totalAmount: String
 ) {
     var showHowToPay by remember { mutableStateOf(false) }
     var termsChecked by remember { mutableStateOf(false) }
@@ -88,171 +87,179 @@ fun PassengerRideMotorPaymentMethodDetailScreen(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF0F3D82))
         )
 
-        Spacer(Modifier.height(12.dp))
-
-        // ---------- NO PEMESANAN ----------
-        Row(
+        // ================= SCROLLABLE CONTENT =================
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp) // ✅ penting agar button tidak nabrak
         ) {
-            Text("No Pemesanan:", fontWeight = FontWeight.Medium)
-            Text(orderNumber, fontWeight = FontWeight.SemiBold)
-        }
+            Spacer(Modifier.height(12.dp))
 
-        Spacer(Modifier.height(14.dp))
-
-        // ---------- CARD PAYMENT METHOD ----------
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(Color.White),
-            border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
+            // ---------- NO PEMESANAN ----------
             Row(
-                modifier = Modifier.padding(18.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(
-                    painter = painterResource(id = paymentMethod.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(42.dp)
-                )
-                Spacer(Modifier.width(14.dp))
-                Text(paymentMethod.name, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-                Spacer(Modifier.weight(1f))
-                RadioButton(selected = true, onClick = {})
+                Text("No Pemesanan:", fontWeight = FontWeight.Medium)
+                Text(orderNumber, fontWeight = FontWeight.SemiBold)
             }
-        }
 
-        Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(14.dp))
 
-        // ---------- CARD DETAIL RUTE + BIAYA ----------
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(Color.White),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
-            Column(Modifier.padding(18.dp)) {
-                RouteRow(
-                    startTitle = "Yogyakarta · Pos 1",
-                    startDetail = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
-                    endTitle = "Purwokerto · Pos 2",
-                    endDetail = "Alun-alun Purwokerto"
-                )
-                Spacer(Modifier.height(12.dp))
+            // ---------- CARD PAYMENT METHOD ----------
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.padding(18.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Biaya", fontWeight = FontWeight.Medium)
-                    Text(totalAmount, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF0F3D82))
+                    Image(
+                        painter = painterResource(id = paymentMethod.icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(42.dp)
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Text(paymentMethod.name, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                    Spacer(Modifier.weight(1f))
+                    RadioButton(selected = true, onClick = {})
                 }
             }
-        }
 
-        Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(14.dp))
 
-        // ---------- CARD LIHAT CARA PEMBAYARAN ----------
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(Color.White),
-            border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .clickable { showHowToPay = !showHowToPay }
-        ) {
-            Column(Modifier.padding(18.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.qris),
-                        contentDescription = null,
-                        tint = Color(0xFF0F3D82),
-                        modifier = Modifier
-                            .size(28.dp)
+            // ---------- CARD DETAIL RUTE + BIAYA ----------
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Column(Modifier.padding(18.dp)) {
+                    RouteRow(
+                        startTitle = "Yogyakarta · Pos 1",
+                        startDetail = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
+                        endTitle = "Purwokerto · Pos 2",
+                        endDetail = "Alun-alun Purwokerto"
                     )
-                    Spacer(Modifier.width(12.dp))
-                    Text("Lihat cara pembayaran", fontWeight = FontWeight.SemiBold)
-                    Spacer(Modifier.weight(1f))
-                    Icon(
-                        imageVector = if (showHowToPay) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = null
-                    )
-                }
-
-                if (showHowToPay) {
-                    Spacer(Modifier.height(14.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text("1. Buka BRImo / ATM / M-Banking", fontSize = 13.sp, color = Color.Gray)
-                        Text("2. Pilih Menu Pembayaran / VA", fontSize = 13.sp, color = Color.Gray)
-                        Text("3. Masukkan nomor Virtual Account", fontSize = 13.sp, color = Color.Gray)
-                        Text("4. Periksa total pembayaran", fontSize = 13.sp, color = Color.Gray)
-                        Text("5. Selesaikan pembayaran", fontSize = 13.sp, color = Color.Gray)
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Biaya", fontWeight = FontWeight.Medium)
+                        Text(totalAmount, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF0F3D82))
                     }
                 }
             }
-        }
 
-        Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(14.dp))
 
-        // ---------- CARD TOTAL PEMBAYARAN ----------
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(Color.White),
-            border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
-            Row(
+            // ---------- CARD LIHAT CARA PEMBAYARAN ----------
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
                 modifier = Modifier
-                    .padding(18.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .clickable { showHowToPay = !showHowToPay }
             ) {
-                Text("Total Pembayaran", fontWeight = FontWeight.SemiBold)
-                Text(totalAmount, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF0F3D82))
+                Column(Modifier.padding(18.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.qris),
+                            contentDescription = null,
+                            tint = Color(0xFF0F3D82),
+                            modifier = Modifier
+                                .size(28.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text("Lihat cara pembayaran", fontWeight = FontWeight.SemiBold)
+                        Spacer(Modifier.weight(1f))
+                        Icon(
+                            imageVector = if (showHowToPay) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = null
+                        )
+                    }
+
+                    if (showHowToPay) {
+                        Spacer(Modifier.height(14.dp))
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("1. Buka BRImo / ATM / M-Banking", fontSize = 13.sp, color = Color.Gray)
+                            Text("2. Pilih Menu Pembayaran / VA", fontSize = 13.sp, color = Color.Gray)
+                            Text("3. Masukkan nomor Virtual Account", fontSize = 13.sp, color = Color.Gray)
+                            Text("4. Periksa total pembayaran", fontSize = 13.sp, color = Color.Gray)
+                            Text("5. Selesaikan pembayaran", fontSize = 13.sp, color = Color.Gray)
+                        }
+                    }
+                }
             }
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
 
-        // ---------- CHECKBOX SYARAT & KETENTUAN ----------
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(checked = termsChecked, onCheckedChange = { termsChecked = it })
-            Text(
-                "Saya telah membaca dan setuju terhadap Syarat dan ketentuan pembelian tiket",
-                fontSize = 13.sp
-            )
-        }
+            // ---------- CARD TOTAL PEMBAYARAN ----------
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xFFE3E6EB)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(18.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text("Total Pembayaran", fontWeight = FontWeight.SemiBold)
+                    Text(totalAmount, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF0F3D82))
+                }
+            }
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
-        // ---------- BUTTON BAYAR ----------
-        Button(
-            onClick = onPay,
-            enabled = termsChecked,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
-                .height(52.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF0F3D82),
-                disabledContainerColor = Color(0xFF96A1C2)
-            )
-        ) {
-            Text("Lanjutkan Pembayaran", fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
+            // ---------- CHECKBOX SYARAT & KETENTUAN ----------
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(checked = termsChecked, onCheckedChange = { termsChecked = it })
+                Text(
+                    "Saya telah membaca dan setuju terhadap Syarat dan ketentuan pembelian tiket",
+                    fontSize = 13.sp
+                )
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            // ---------- BUTTON BAYAR ----------
+            Button(
+                onClick = onPay,
+                enabled = termsChecked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0F3D82),
+                    disabledContainerColor = Color(0xFF96A1C2)
+                )
+            ) {
+                Text("Lanjutkan Pembayaran", fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
+            }
         }
     }
 }

@@ -1,8 +1,12 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_02
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -17,12 +21,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import com.example.nebeng.R
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.RideStatus
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.core.utils.VehicleType
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorScheduleScreen(
+    session: BookingSession,
+    rides: List<PassengerRideCustomer>,
     onBack: () -> Unit = {},
-    onDetailClick: (Int) -> Unit = {}   // index order sementara
+    onDetailClick: (Int) -> Unit = {},   // index order sementara
+    onSelectRide: (PassengerRideCustomer) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -34,7 +51,7 @@ fun PassengerRideMotorScheduleScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = "Yogyakarta → Purwokerto",
+                    text = "${session.selectedDepartureTerminal?.regencyName} → ${session.selectedArrivalTerminal?.regencyName}",
                     color = Color(0xFF0F3D82),
                     fontWeight = FontWeight.SemiBold
                 )
@@ -59,10 +76,16 @@ fun PassengerRideMotorScheduleScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            items(5) { index ->  // dummy 5 order
+            items(rides) { ride ->
                 OrderCard(
-                    index = index,
-                    onDetailClick = onDetailClick
+                    ride = ride,
+                    startTerminal = session.selectedDepartureTerminal,
+                    endTerminal = session.selectedArrivalTerminal,
+                    onDetailClick = {
+                        Log.d("UI_PAGE3", "UI PAGE2 → User klik ride ${ride.idPassengerRide}")
+                        onSelectRide(ride)
+                        onDetailClick(ride.idPassengerRide)
+                    }
                 )
                 Spacer(Modifier.height(18.dp))
             }
@@ -70,10 +93,13 @@ fun PassengerRideMotorScheduleScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun OrderCard(
-    index: Int,
-    onDetailClick: (Int) -> Unit
+fun OrderCard(
+    ride: PassengerRideCustomer,
+    startTerminal: TerminalCustomer?,
+    endTerminal: TerminalCustomer?,
+    onDetailClick: () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(18.dp),
@@ -83,37 +109,39 @@ private fun OrderCard(
     ) {
         Column(Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
 
-            // === Tanggal & Jam ===
+            // =============== Tanggal & Jam ===============
+            val date = ride.departureTime.substring(0, 10)
+            val time = ride.departureTime.substring(11, 16)
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Minggu, 25-07-2024", fontWeight = FontWeight.SemiBold)
-                Text("09.00 - 13.00", fontWeight = FontWeight.SemiBold)
+                Text(dateFormatted(date), fontWeight = FontWeight.SemiBold)
+                Text("$time WIB", fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // === Rute (Awal — Tujuan) ===
+            // =============== RUTE ===============
             RouteRow(
-                startTitle = "Yogyakarta · Pos 1",
-                startDetail = "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133",
-                endTitle = "Purwokerto · Pos 2",
-                endDetail = "Jl. Prof. Dr. Suharso No.8, Purwokerto Lor, Kec. Purwokerto Timur"
+                startTitle = startTerminal?.name ?: "Unknown",
+                startDetail = startTerminal?.terminalFullAddress ?: "",
+                endTitle = endTerminal?.name ?: "Unknown",
+                endDetail = endTerminal?.terminalFullAddress ?: ""
             )
 
             Spacer(Modifier.height(12.dp))
 
-            // === Total Harga + Selengkapnya ===
+            // =============== HARGA ===============
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Total Biaya", fontWeight = FontWeight.Medium)
                 Text(
-                    "Rp. 120.000",
+                    "Rp ${ride.pricePerSeat}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 19.sp,
                     color = Color(0xFF0F3D82)
@@ -133,10 +161,20 @@ private fun OrderCard(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onDetailClick(index) }
+                    .clickable(onClick = onDetailClick)
                     .padding(vertical = 4.dp)
             )
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun dateFormatted(date: String): String {
+    return try {
+        val parsed = LocalDate.parse(date)
+        parsed.format(DateTimeFormatter.ofPattern("EEEE, dd-MM-yyyy"))
+    } catch (e: Exception) {
+        date
     }
 }
 
@@ -194,9 +232,75 @@ private fun RouteRow(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun PreviewPassengerRideMotorResultScreen() {
-    PassengerRideMotorScheduleScreen()
-}
+private fun PreviewPassengerRideMotorScheduleScreen() {
 
+    val dummyStartTerminal = TerminalCustomer(
+        id = 4,
+        name = "Terminal Giwangan",
+        terminalFullAddress = "Jl. Imogiri Timur, Umbulharjo, Yogyakarta",
+        terminalRegencyId = 3402,
+        terminalLongitude = 110.3899,
+        terminalLatitude = -7.8298,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
+        regencyName = "Yogyakarta"
+    )
+
+    val dummyEndTerminal = TerminalCustomer(
+        id = 5,
+        name = "Terminal Jombor",
+        terminalFullAddress = "Jl. Magelang KM 8, Sleman",
+        terminalRegencyId = 3404,
+        terminalLongitude = 110.3102,
+        terminalLatitude = -7.7309,
+        publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+        terminalType = TerminalType.PUBLIC,
+        regencyName = "Sleman"
+    )
+
+    val dummySession = BookingSession(
+        selectedDepartureTerminal = dummyStartTerminal,
+        selectedArrivalTerminal = dummyEndTerminal,
+        selectedDate = LocalDate.of(2025, 12, 2)
+    )
+
+    val dummyRides = listOf(
+        PassengerRideCustomer(
+            idPassengerRide = 3,
+            driverId = 1,
+            departureTerminalId = 4,
+            arrivalTerminalId = 5,
+            rideStatus = RideStatus.DIBATALKAN,
+            seatsReservedRide = 0,
+            seatsAvailableRide = 4,
+            departureTime = "2025-12-02T06:00:00.000000Z",
+            pricePerSeat = "16537",
+            vehicleType = VehicleType.MOTOR,
+            driverIdRide = 1
+        ),
+        PassengerRideCustomer(
+            idPassengerRide = 4,
+            driverId = 1,
+            departureTerminalId = 4,
+            arrivalTerminalId = 5,
+            rideStatus = RideStatus.DIBATALKAN,
+            seatsReservedRide = 0,
+            seatsAvailableRide = 4,
+            departureTime = "2025-12-02T08:30:00.000000Z",
+            pricePerSeat = "20000",
+            vehicleType = VehicleType.MOTOR,
+            driverIdRide = 1
+        )
+    )
+
+    PassengerRideMotorScheduleScreen(
+        session = dummySession,
+        rides = dummyRides,
+        onBack = {},
+        onDetailClick = {},
+        onSelectRide = {}
+    )
+}

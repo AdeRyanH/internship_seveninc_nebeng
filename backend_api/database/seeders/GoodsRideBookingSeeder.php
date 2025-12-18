@@ -25,7 +25,7 @@ class GoodsRideBookingSeeder extends Seeder
             return;
         }
 
-        $statuses = ['Pending', 'Diterima', 'Ditolak'];
+        $statuses = ['pending', 'diterima', 'ditolak'];
         $descriptions = [
             'Paket elektronik (laptop, charger, dan aksesoris)',
             'Bahan makanan segar dan minuman ringan',
@@ -47,7 +47,7 @@ class GoodsRideBookingSeeder extends Seeder
                 $status = $statuses[array_rand($statuses)];
 
                 // Jika ditolak → reject_status = "proses"
-                $rejectStatus = $status === 'Ditolak' ? 'proses' : null;
+                $rejectStatus = $status === 'ditolak' ? 'proses' : null;
 
                 // Generate nomor booking
                 $today = Carbon::today()->format('Ymd');
@@ -67,7 +67,7 @@ class GoodsRideBookingSeeder extends Seeder
                 ]);
 
                 // Jika booking diterima, tambahkan berat ke ride
-                if ($status === 'Diterima') {
+                if ($status === 'diterima') {
                     $ride->increment('weight_reserved', $itemWeight);
                 }
             }

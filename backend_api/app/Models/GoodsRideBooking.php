@@ -32,7 +32,7 @@ class GoodsRideBooking extends Model
     {
         $this->attributes['status'] = $value;
 
-        if ($value === 'Ditolak') {
+        if ($value === 'ditolak') {
             $this->attributes['reject_status'] = 'proses';
         }
     }
@@ -76,9 +76,9 @@ class GoodsRideBooking extends Model
      * ========================
      */
 
-    public const STATUS_PENDING = 'Pending';
-    public const STATUS_ACCEPTED = 'Diterima';
-    public const STATUS_REJECTED = 'Ditolak';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_ACCEPTED = 'diterima';
+    public const STATUS_REJECTED = 'ditolak';
 
     /**
      * ========================

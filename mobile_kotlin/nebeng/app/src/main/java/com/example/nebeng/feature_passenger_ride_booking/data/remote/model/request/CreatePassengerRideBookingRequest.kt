@@ -9,4 +9,3 @@ data class CreatePassengerRideBookingRequest(
 	@field:SerializedName("seats_reserved") val seatsReserved: Int,
 	@field:SerializedName("status") val status: String
 )
-

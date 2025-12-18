@@ -63,14 +63,14 @@ class GoodsRideBookingService
             'item_description' => 'nullable|string|max:500',
             'item_img' => 'nullable|string|max:255',
             'total_price' => 'required|numeric|min:0',
-            'status' => 'required|string|in:Pending,Diterima,Ditolak',
+            'status' => 'required|string|in:pending,diterima,ditolak',
         ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
 
-        $data['status'] = $data['status'] ?? 'Pending';
+        $data['status'] = $data['status'] ?? 'pending';
         $data['booking_code'] = $this->generateBookingNumbers('G');
 
         return $this->goodsRideBookingRepository->create($data);
@@ -84,7 +84,7 @@ class GoodsRideBookingService
             'item_description' => 'nullable|string|max:500',
             'item_img' => 'nullable|string|max:255',
             'total_price' => 'sometimes|numeric|min:0',
-            'status' => 'sometimes|required|string|in:Pending,Diterima,Ditolak',
+            'status' => 'sometimes|required|string|in:pending,diterima,ditolak',
         ]);
 
         if ($validator->fails()) {

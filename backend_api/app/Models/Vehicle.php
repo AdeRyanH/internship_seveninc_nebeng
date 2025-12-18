@@ -55,8 +55,8 @@ class Vehicle extends Model
     /**
      * Enum kendaraan (konstanta)
      */
-    public const TYPE_MOTOR = 'Motor';
-    public const TYPE_MOBIL = 'Mobil';
+    public const TYPE_MOTOR = 'motor';
+    public const TYPE_MOBIL = 'mobil';
 
     /**
      * ========================
@@ -89,6 +89,6 @@ class Vehicle extends Model
             return 'Terverifikasi';
         }
 
-        return $this->isRejected() ? 'Ditolak' : 'Menunggu Verifikasi';
+        return $this->isRejected() ? 'ditolak' : 'Menunggu Verifikasi';
     }
 }

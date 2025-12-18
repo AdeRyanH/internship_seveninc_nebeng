@@ -27,7 +27,7 @@ class GoodsTransactionSeeder extends Seeder
             return;
         }
 
-        $statuses = ['Pending', 'Diterima', 'Ditolak', 'Credited'];
+        $statuses = ['pending', 'diterima', 'ditolak', 'credited'];
 
 
         foreach ($bookings as $booking) {

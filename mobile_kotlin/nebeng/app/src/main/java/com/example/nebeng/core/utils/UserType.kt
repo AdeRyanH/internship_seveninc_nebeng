@@ -2,11 +2,13 @@ package com.example.nebeng.core.utils
 
 
 enum class UserType(val value: String) {
-    SUPER_ADMIN("super_admin"),
+    SUPER_ADMIN("superadmin"),
     ADMIN("admin"),
     FINANCE("finance"),
     CUSTOMER("customer"),
-    DRIVER("driver");
+    DRIVER("driver"),
+    TERMINAL("terminal");
+
 
     companion object {
         fun fromString(value: String): UserType =

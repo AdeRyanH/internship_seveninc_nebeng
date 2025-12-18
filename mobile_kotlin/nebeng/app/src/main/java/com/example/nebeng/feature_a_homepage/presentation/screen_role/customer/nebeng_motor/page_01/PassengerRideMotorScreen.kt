@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +53,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.feature_a_homepage.domain.mapper.toLocationUi
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.LocationUiModel
 import com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_01.bottom_sheet.SelectLocationBottomSheet
 import java.time.LocalDate
@@ -62,21 +67,32 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorScreen(
+    session: BookingSession,
+    loading: Boolean,
+    error: String?,
+    terminals: List<TerminalCustomer>,
     onBack: () -> Unit = {},
-    onStartSelect: () -> Unit = {},
-    onEndSelect: () -> Unit = {},
-    onDateSelect: () -> Unit = {},
-    onHistoryClick: (String) -> Unit = {},
+    // ⬇️ ganti: kirim LocationUiModel ke luar
+    onSelectStartLocation: (LocationUiModel) -> Unit = {},
+    onSelectEndLocation: (LocationUiModel) -> Unit = {},
+    onSelectDate: (LocalDate) -> Unit = {},
     onNext: () -> Unit = {}
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var isSelectingStart by remember { mutableStateOf(true) }
 
-    var startLocation by remember { mutableStateOf<LocationUiModel?>(null) }
-    var endLocation by remember { mutableStateOf<LocationUiModel?>(null) }
-
     var showCalendarSheet by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+
+    val startLocation = session.selectedDepartureTerminal
+    val endLocation = session.selectedArrivalTerminal
+    val selectedDate = session.selectedDate
+
+    LaunchedEffect(terminals) {
+        println("Terminal UI: ")
+        terminals.forEach {
+            println(" - ${it.name} | ${it.terminalFullAddress} | ${it.regencyName}")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -128,15 +144,22 @@ fun PassengerRideMotorScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
                     .offset(y = 40.dp),
-                onStartClick = { isSelectingStart = true; showBottomSheet = true },
-                onEndClick  = { isSelectingStart = false; showBottomSheet = true },
-//                onDateClick = onDateSelect,
-                onDateClick = { showCalendarSheet = true },
-                startDisplay = startLocation?.title ?: "Lokasi Awal",
-                startDetail = startLocation?.detail ?: "Pilih lokasi awal",
-                endDisplay = endLocation?.title ?: "Lokasi Tujuan",
-                endDetail = endLocation?.detail ?: "Pilih lokasi tujuan",
-                dateDisplay = selectedDate?.format(DateTimeFormatter.ofPattern("dd / MM / yyyy")) ?: "Tanggal Keberangkatan"
+                startRegency = session.selectedDepartureTerminal?.regencyName ?: "Kota Awal",
+                startDisplay = session.selectedDepartureTerminal?.name ?: "Lokasi Awal",
+                startDetail = session.selectedDepartureTerminal?.terminalFullAddress ?: "Pilih Lokasi Awal",
+                endRegency = session.selectedArrivalTerminal?.regencyName ?: "Kota Tujuan",
+                endDisplay = session.selectedArrivalTerminal?.name ?: "Pilih Lokasi Tujuan",
+                endDetail = session.selectedArrivalTerminal?.terminalFullAddress ?: "Pilih Lokasi Tujuan",
+                dateDisplay = session.selectedDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "Tanggal Keberangkatan",
+                onStartClick = {
+                    isSelectingStart = true
+                    showBottomSheet = true
+                },
+                onEndClick = {
+                    isSelectingStart = false
+                    showBottomSheet = true
+                },
+                onDateClick = { showCalendarSheet = true }
             )
         }
 
@@ -157,40 +180,16 @@ fun PassengerRideMotorScreen(
         }
 
         LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+            modifier = Modifier.weight(1f).fillMaxWidth()
         ) {
-            itemsIndexed(history) { index, (title, detail) ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onHistoryClick(title) }
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_location_24),
-                        contentDescription = null,
-                        tint = Color(0xFF1A47B8),
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(title, fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                        Text(detail, color = Color.Gray, fontSize = 11.sp)
-                    }
-                }
-                if (index != history.lastIndex) {
-                    Divider(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        color = Color(0xFFE0E0E0)
-                    )
-                }
+            items(10) {
+                Text(
+                    text = "Belum ada history (nanti diisi API)",
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                    fontSize = 13.sp,
+                    color = Color.Gray
+                )
             }
-            item { Spacer(Modifier.height(16.dp)) }
         }
 
         // ===== BUTTON SELANJUTNYA — FIX DI BAWAH =====
@@ -209,22 +208,36 @@ fun PassengerRideMotorScreen(
     }
 
     if (showBottomSheet) {
+        val locationUiModels = terminals.map { it.toLocationUi() }
+
         SelectLocationBottomSheet(
             title = if (isSelectingStart) "Pilih Lokasi Awal" else "Pilih Lokasi Tujuan",
-            locations = SAMPLE_LOCATIONS, // sementara static dulu
+            locations = locationUiModels,   // nanti dihubungkan ke session.listTerminals
             onSelect = { selected ->
-                if (isSelectingStart) startLocation = selected else endLocation = selected
+                if(isSelectingStart) {
+                    onSelectStartLocation(selected)
+                } else {
+                    onSelectEndLocation(selected)
+                }
+
                 showBottomSheet = false
             },
             onDismiss = { showBottomSheet = false }
         )
+
+        LaunchedEffect(terminals) {
+            println("Terminal UI: ")
+            terminals.forEach {
+                println(" - ${it.name} | ${it.terminalFullAddress} | ${it.regencyName}")
+            }
+        }
     }
 
     if (showCalendarSheet) {
         DatePicker(
             selectedDate = selectedDate,
-            onDateSelected = {
-                selectedDate = it
+            onDateSelected = { date ->
+                onSelectDate(date)
                 showCalendarSheet = false
             },
             onDismiss = { showCalendarSheet = false }
@@ -233,15 +246,16 @@ fun PassengerRideMotorScreen(
 
 }
 
-
 @Composable
 private fun PassengerRouteCard(
     modifier: Modifier = Modifier,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
     onDateClick: () -> Unit,
+    startRegency: String,
     startDisplay: String,
     startDetail: String,
+    endRegency: String,
     endDisplay: String,
     endDetail: String,
     dateDisplay: String
@@ -252,7 +266,6 @@ private fun PassengerRouteCard(
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(0.dp),
         border = BorderStroke(1.dp, Color(0xFFE6E6E6))
-//        modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(20.dp)) {
 
@@ -304,10 +317,7 @@ private fun PassengerRouteCard(
                         Column(modifier = Modifier.weight(1f)) {
 
                             // Lokasi Awal
-//                            Text("Lokasi Awal", fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
-//                            LocationBox("Pilih lokasi awal", onStartClick)
-                            // Lokasi Awal
-                            Text(startDisplay, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(text = "$startRegency * $startDisplay", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                             LocationBox(startDetail, onStartClick)
 
                             Divider(
@@ -318,10 +328,7 @@ private fun PassengerRouteCard(
                             )
 
                             // Lokasi Tujuan
-//                            Text("Lokasi Tujuan", fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
-//                            LocationBox("Pilih lokasi tujuan", onEndClick)
-                            // Lokasi Tujuan
-                            Text(endDisplay, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(text =  "$endRegency * $endDisplay", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                             LocationBox(endDetail, onEndClick)
                         }
                     }
@@ -405,22 +412,52 @@ private fun LocationBox(
     }
 }
 
-private val SAMPLE_LOCATIONS = listOf(
-    LocationUiModel("Yogyakarta · Pos 1", "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133"),
-    LocationUiModel("Yogyakarta · Pos 2", "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133"),
-    LocationUiModel("Yogyakarta · Pos 3", "Patehan, Kecamatan Kraton, Kota Yogyakarta 55133"),
-)
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewPassengerRideMotorScreen() {
-    PassengerRideMotorScreen (
-//        historyAddresses = listOf(
-//            "Yogyakarta - Pos 1",
-//            "Yogyakarta - Pos 2",
-//            "Yogyakarta - Pos 3"
-//        )
+
+    val dummyTerminals = listOf(
+        TerminalCustomer(
+            id = 1,
+            name = "Terminal Giwangan",
+            terminalFullAddress = "Jl. Imogiri Timur, Umbulharjo, Yogyakarta",
+            terminalRegencyId = 3402,
+            terminalLongitude = 110.3899,
+            terminalLatitude = -7.8298,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
+            regencyName = "Yogyakarta"
+        ),
+        TerminalCustomer(
+            id = 2,
+            name = "Terminal Jombor",
+            terminalFullAddress = "Jl. Magelang KM 8, Sleman",
+            terminalRegencyId = 3404,
+            terminalLongitude = 110.3102,
+            terminalLatitude = -7.7309,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
+            regencyName = "Sleman"
+        )
+    )
+
+    val dummySession = BookingSession(
+        listTerminals = dummyTerminals,
+        selectedDepartureTerminal = dummyTerminals[0],
+        selectedArrivalTerminal = null,
+        selectedDate = null
+    )
+
+    PassengerRideMotorScreen(
+        session = dummySession,
+        loading = false,
+        error = null,
+        terminals = dummyTerminals,
+        onBack = {},
+        onSelectStartLocation = {},
+        onSelectEndLocation = {},
+        onSelectDate = {},
+        onNext = {}
     )
 }

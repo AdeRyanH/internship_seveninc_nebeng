@@ -199,7 +199,7 @@ class CustomerRepositoryImpl @Inject constructor(
                 val customer = response.body()?.data?.toDomain()
                 if (customer != null) {
                     emit(Result.Success(customer))
-                    Log.d("CustomerRepo", "✅ patchVerifyTrue: id=$id verified")
+                    Log.d("CustomerRepo", "✅ patchVerifyTrue: id= $id verified")
                 } else emit(Result.Error("Verify response empty"))
             } else {
                 emit(Result.Error(response.errorBody()?.string() ?: "Failed to verify customer"))

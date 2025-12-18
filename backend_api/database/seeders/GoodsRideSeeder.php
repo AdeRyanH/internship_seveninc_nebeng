@@ -23,9 +23,9 @@ class GoodsRideSeeder extends Seeder
             return;
         }
 
-        $transportTypes = ['Sendiri', 'Umum'];
-        $subtypes       = ['Terminal Bis', 'Stasiun Kereta', 'Bandara', 'Pelabuhan'];
-        $statuses       = ['Pending', 'Dalam Perjalanan', 'Selesai', 'Dibatalkan'];
+        $transportTypes = ['sendiri', 'umum'];
+        $subtypes       = ['terminal_bis', 'stasiun_kereta', 'bandara', 'pelabuhan'];
+        $statuses       = ['pending', 'dalam_perjalanan', 'selesai', 'dibatalkan'];
 
         foreach ($drivers as $driver) {
             $ridesToGenerate = rand(2, 5);
@@ -43,7 +43,7 @@ class GoodsRideSeeder extends Seeder
                 $type       = $transportTypes[array_rand($transportTypes)];
 
                 // Jika "Umum", isi public_terminal_subtype, kalau "Sendiri" pilih random tapi optional
-                $subtype = $type === 'Umum'
+                $subtype = $type === 'umum'
                     ? $subtypes[array_rand($subtypes)]
                     : $subtypes[array_rand($subtypes)];
 

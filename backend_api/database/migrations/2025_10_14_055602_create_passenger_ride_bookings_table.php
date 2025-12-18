@@ -33,10 +33,10 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             // Jumlah kursi yang dipesan
-            $table->integer('seats_reserved');
+            $table->integer('seats_reserved')->nullable();
 
             // Total harga dari semua kursi
-            $table->integer('total_price');
+            $table->integer('total_price')->nullable();
 
             // Status booking (enum)
             $table->enum('status', ['pending', 'diterima', 'ditolak'])

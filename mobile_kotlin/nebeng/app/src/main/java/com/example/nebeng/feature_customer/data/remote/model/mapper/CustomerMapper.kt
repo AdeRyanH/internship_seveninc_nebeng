@@ -71,7 +71,7 @@ fun UserDto.toDomain(): User {
         username = username,
         email = email,
         userType = UserType.fromString(userType),
-        banned = banned == 1,
+        banned = banned,
         createdAt = createdAt,
         updatedAt = updatedAt
     )

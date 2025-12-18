@@ -1,9 +1,9 @@
 package com.example.nebeng.core.utils
 
 enum class BookingStatus(val value: String) {
-    PENDING("Pending"),
-    DITERIMA("Diterima"),
-    DITOLAK("Ditolak");
+    PENDING("pending"),
+    DITERIMA("diterima"),
+    DITOLAK("ditolak");
 
     companion object {
         fun fromString(value: String?): BookingStatus =

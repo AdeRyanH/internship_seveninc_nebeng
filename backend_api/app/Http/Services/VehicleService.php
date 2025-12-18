@@ -37,17 +37,17 @@ class VehicleService
     public function createVehicle(array $data)
     {
         $validator = Validator::make($data, [
-            'driver_id' => 'required|exists:drivers,id',
-            'registration_number' => 'required|string|max:255|unique:vehicles,registration_number',
-            'registration_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'registration_expired' => 'required|date',
-            'registration_img' => 'nullable|string',
-            'vehicle_name' => 'required|string|max:255',
-            'vehicle_color' => 'required|string|max:50',
-            'vehicle_type' => 'required|string|in:Motor,Mobil',
-            'vehicle_img' => 'nullable|string',
-            'vehicle_verified' => 'nullable|boolean',
-            'vehicle_rejected_reason' => 'nullable|string|max:255',
+            'driver_id'                 => 'required|exists:drivers,id',
+            'registration_number'       => 'required|string|max:255|unique:vehicles,registration_number',
+            'registration_year'         => 'required|integer|min:1900|max:' . date('Y'),
+            'registration_expired'      => 'required|date',
+            'registration_img'          => 'nullable|string',
+            'vehicle_name'              => 'required|string|max:255',
+            'vehicle_color'             => 'required|string|max:50',
+            'vehicle_type'              => 'required|string|in:motor,mobil',
+            'vehicle_img'               => 'nullable|string',
+            'vehicle_verified'          => 'nullable|boolean',
+            'vehicle_rejected_reason'   => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -64,16 +64,16 @@ class VehicleService
     public function updateVehicle($id, array $data)
     {
         $validator = Validator::make($data, [
-            'registration_number' => 'sometimes|string|max:255|unique:vehicles,registration_number,' . $id,
-            'registration_year' => 'sometimes|integer|min:1900|max:' . date('Y'),
-            'registration_expired' => 'sometimes|date',
-            'registration_img' => 'nullable|string',
-            'vehicle_name' => 'sometimes|string|max:255',
-            'vehicle_color' => 'sometimes|string|max:50',
-            'vehicle_type' => 'sometimes|string|in:Motor,Mobil',
-            'vehicle_img' => 'nullable|string',
-            'vehicle_verified' => 'sometimes|boolean',
-            'vehicle_rejected_reason' => 'nullable|string|max:255',
+            'registration_number'       => 'sometimes|string|max:255|unique:vehicles,registration_number,' . $id,
+            'registration_year'         => 'sometimes|integer|min:1900|max:' . date('Y'),
+            'registration_expired'      => 'sometimes|date',
+            'registration_img'          => 'nullable|string',
+            'vehicle_name'              => 'sometimes|string|max:255',
+            'vehicle_color'             => 'sometimes|string|max:50',
+            'vehicle_type'              => 'sometimes|string|in:motor,mobil',
+            'vehicle_img'               => 'nullable|string',
+            'vehicle_verified'          => 'sometimes|boolean',
+            'vehicle_rejected_reason'   => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {

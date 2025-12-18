@@ -31,7 +31,6 @@ fun DataDto.toDomain(): Terminal {
     )
 }
 
-
 fun DataDto.toSummary(): TerminalSummary {
     val terminalType = terminalType?.trim()?.let {
         TerminalType.fromString(it)
@@ -41,8 +40,6 @@ fun DataDto.toSummary(): TerminalSummary {
         PublicTerminalSubtype.fromString(it)
     } ?: PublicTerminalSubtype.TERMINAL_BIS
     return TerminalSummary(
-
-
         id = id ?: 0,
         name = name.orEmpty(),
         terminalType = terminalType,
@@ -54,6 +51,7 @@ fun DataDto.toSummary(): TerminalSummary {
         longitude = longitude ?: 0.0,
         latitude = latitude ?: 0.0,
         createdAt = createdAt.orEmpty(),
-        updatedAt = updatedAt.orEmpty()
+        updatedAt = updatedAt.orEmpty(),
+        regencyName = regency?.name.orEmpty()
     )
 }

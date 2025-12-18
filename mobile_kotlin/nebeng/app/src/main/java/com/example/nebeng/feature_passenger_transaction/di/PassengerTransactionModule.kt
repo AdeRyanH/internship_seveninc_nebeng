@@ -2,10 +2,13 @@ package com.example.nebeng.feature_passenger_transaction.di
 
 import com.example.nebeng.feature_passenger_transaction.data.remote.api.PassengerTransactionApi
 import com.example.nebeng.feature_passenger_transaction.data.remote.api.updated.PassengerTransactionUpdatedApi
+import com.example.nebeng.feature_passenger_transaction.data.remote.api.updatedv2.PassengerTransactionUpdatedV2Api
 import com.example.nebeng.feature_passenger_transaction.data.repository.PassengerTransactionRepository
 import com.example.nebeng.feature_passenger_transaction.data.repository.PassengerTransactionRepositoryImpl
 import com.example.nebeng.feature_passenger_transaction.data.repository.updated.PassengerTransactionUpdatedRepository
 import com.example.nebeng.feature_passenger_transaction.data.repository.updated.PassengerTransactionUpdatedRepositoryImpl
+import com.example.nebeng.feature_passenger_transaction.data.repository.updatedv2.PassengerTransactionUpdatedV2Repository
+import com.example.nebeng.feature_passenger_transaction.data.repository.updatedv2.PassengerTransactionUpdatedV2RepositoryImpl
 import com.example.nebeng.feature_passenger_transaction.domain.usecase.CreatePassengerTransactionUseCase
 import com.example.nebeng.feature_passenger_transaction.domain.usecase.DeletePassengerTransactionUseCase
 import com.example.nebeng.feature_passenger_transaction.domain.usecase.PassengerTransactionUseCases
@@ -24,6 +27,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object PassengerTransactionModule {
+    @Provides
+    @Singleton
+    fun providePassengerTransactionUpdatedV2Api(
+        retrofit: Retrofit
+    ): PassengerTransactionUpdatedV2Api = retrofit.create(PassengerTransactionUpdatedV2Api::class.java)
+
+    @Provides
+    @Singleton
+    fun providePassengerTransactionUpdatedV2Repository(
+        api: PassengerTransactionUpdatedV2Api
+    ): PassengerTransactionUpdatedV2Repository = PassengerTransactionUpdatedV2RepositoryImpl(api)
+
     @Provides
     @Singleton
     fun providePassengerTransactionUpdatedApi(

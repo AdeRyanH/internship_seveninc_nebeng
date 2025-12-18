@@ -78,13 +78,13 @@ class PassengerRide extends Model
         'departure_time' => 'datetime',
     ];
 
-    public const STATUS_PENDING = 'Pending';
-    public const STATUS_TRAVELING = 'Dalam Perjalanan';
-    public const STATUS_DONE = 'Selesai';
-    public const STATUS_CANCELED = 'Dibatalkan';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_TRAVELING = 'dalam_perjalanan';
+    public const STATUS_DONE = 'selesai';
+    public const STATUS_CANCELED = 'dibatalkan';
 
-    public const VEHICLE_MOTOR = 'Motor';
-    public const VEHICLE_MOBIL = 'Mobil';
+    public const VEHICLE_MOTOR = 'motor';
+    public const VEHICLE_MOBIL = 'mobil';
 
     /**
      * ========================

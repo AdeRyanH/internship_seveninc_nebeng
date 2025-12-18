@@ -57,12 +57,19 @@ class PassengerRideBookingService
     // Tambah booking baru
     public function createBooking(array $data)
     {
+        // $validator = Validator::make($data, [
+        //     'passenger_ride_id' => 'required|exists:passenger_rides,id',
+        //     'customer_id'       => 'required|exists:customers,id',
+        //     'seats_reserved'    => 'required|integer|min:1',
+        //     'total_price'       => 'required|integer|min:0',
+        //     'status'            => 'nullable|string|in:Pending,Diterima,Ditolak',
+        // ]);
         $validator = Validator::make($data, [
             'passenger_ride_id' => 'required|exists:passenger_rides,id',
-            'customer_id'       => 'required|exists:customers,id',
-            'seats_reserved'    => 'required|integer|min:1',
-            'total_price'       => 'required|integer|min:0',
-            'status'            => 'nullable|string|in:Pending,Diterima,Ditolak',
+            'customer_id'       => 'nullable|exists:customers,id',
+            'seats_reserved'    => 'nullable|integer|min:1',
+            'total_price'       => 'nullable|integer|min:0',
+            'status'            => 'nullable|string|in:pending,diterima,ditolak',
         ]);
 
         if ($validator->fails()) {
@@ -70,7 +77,7 @@ class PassengerRideBookingService
         }
 
         // Default status jika tidak diset
-        $data['status'] = $data['status'] ?? 'Pending';
+        $data['status'] = $data['status'] ?? 'pending';
         $data['booking_code'] = $this->generateBookingNumbers('P');
         return $this->bookingRepository->create($data);
     }
@@ -81,7 +88,7 @@ class PassengerRideBookingService
         $validator = Validator::make($data, [
             'seats_reserved'    => 'sometimes|integer|min:1',
             'total_price'       => 'sometimes|integer|min:0',
-            'status'            => 'sometimes|string|in:Pending,Diterima,Ditolak',
+            'status'            => 'sometimes|string|in:pending,diterima,ditolak',
         ]);
 
         if ($validator->fails()) {
@@ -100,7 +107,7 @@ class PassengerRideBookingService
     // Update status booking (misalnya diterima / ditolak)
     public function updateStatus($id, string $status)
     {
-        $validStatuses = ['Pending', 'Diterima', 'Ditolak'];
+        $validStatuses = ['pending', 'diterima', 'ditolak'];
         if (!in_array($status, $validStatuses)) {
             throw ValidationException::withMessages([
                 'status' => 'Invalid booking status value.',

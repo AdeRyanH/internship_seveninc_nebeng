@@ -8,7 +8,9 @@ data class DataDto(
     @field:SerializedName("name") val name: String,
     @field:SerializedName("created_at") val createdAt: String,
     @field:SerializedName("id") val id: Int,
-    @field:SerializedName("banned") val banned: Int,
+//    @field:SerializedName("banned") val banned: Int,
+//    @field:SerializedName("banned") val banned: Any?,
+    @field:SerializedName("banned") val banned: Boolean,
     @field:SerializedName("email") val email: String,
     @field:SerializedName("username") val username: String
 )

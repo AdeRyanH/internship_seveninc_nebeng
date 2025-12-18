@@ -49,8 +49,8 @@ return new class extends Migration
             // $table->integer('credit_used')->default(0);
 
             // ENUM disamakan dengan Model & Service: huruf awal kapital
-            $table->enum('payment_status', ['Pending', 'Diterima', 'Ditolak', 'Credited'])
-                  ->default('Pending');
+            $table->enum('payment_status', ['pending', 'diterima', 'ditolak', 'credited'])
+                  ->default('pending');
 
             $table->integer('credit_used')->default(0);
 
@@ -72,7 +72,6 @@ return new class extends Migration
             // Waktu transaksi tercatat di sistem
             $table->timestamp('transaction_date')->useCurrent();
 
-            // $table->timestamp('transaction_date')->useCurrent();
             $table->timestamps();
         });
     }

@@ -48,7 +48,7 @@ class DriverWithdrawalService
             'bank_name' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:50',
-            'status' => 'nullable|string|in:Pending,Diterima,Ditolak',
+            'status' => 'nullable|string|in:pending,diterima,ditolak',
             'rejected_reason' => 'nullable|string|max:255',
         ]);
 
@@ -57,7 +57,7 @@ class DriverWithdrawalService
         }
 
         // Default status = Pending
-        $data['status'] = $data['status'] ?? 'Pending';
+        $data['status'] = $data['status'] ?? 'pending';
 
         return $this->driverWithdrawalRepository->create($data);
     }
@@ -70,7 +70,7 @@ class DriverWithdrawalService
             'bank_name' => 'sometimes|string|max:255',
             'account_name' => 'sometimes|string|max:255',
             'account_number' => 'sometimes|string|max:50',
-            'status' => 'sometimes|string|in:Pending,Diterima,Ditolak',
+            'status' => 'sometimes|string|in:pending,diterima,ditolak',
             'rejected_reason' => 'nullable|string|max:255',
         ]);
 

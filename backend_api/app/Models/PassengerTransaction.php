@@ -91,10 +91,10 @@ class PassengerTransaction extends Model
     /**
      * Status pembayaran yang mungkin (sesuai ENUM di migration)
      */
-    public const STATUS_PENDING   = 'Pending';
-    public const STATUS_DITERIMA  = 'Diterima';
-    public const STATUS_DITOLAK   = 'Ditolak';
-    public const STATUS_CREDITED  = 'Credited';
+    public const STATUS_PENDING   = 'pending';
+    public const STATUS_DITERIMA  = 'diterima';
+    public const STATUS_DITOLAK   = 'ditolak';
+    public const STATUS_CREDITED  = 'credited';
 
     /**
      * Helper untuk memeriksa status

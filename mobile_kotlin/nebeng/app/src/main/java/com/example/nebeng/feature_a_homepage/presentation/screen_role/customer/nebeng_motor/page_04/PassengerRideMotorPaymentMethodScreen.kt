@@ -1,5 +1,6 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_04
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,22 +42,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorPaymentMethodScreen(
+    paymentMethods: List<PaymentMethodCustomer>,
     onBack: () -> Unit = {},
-    onNext: (String) -> Unit = {}      // mengirim metode pembayaran terpilih
+    onSelect: (PaymentMethodCustomer) -> Unit = {},
+    onNext: () -> Unit = {}
 ) {
-    var selectedMethod by remember { mutableStateOf<String?>(null) }
+//    var selectedMethod by remember { mutableStateOf<String?>(null) }
+    var selectedId by remember { mutableStateOf<Int?>(null) }
 
-    val methods = listOf(
-        PassengerRideMotorPaymentMethodModel("QRIS", "Pindai QR pengemudi untuk membayar", R.drawable.qris),
-        PassengerRideMotorPaymentMethodModel("Tunai", null, R.drawable.qris),
-        PassengerRideMotorPaymentMethodModel("BRI Virtual Account", null, R.drawable.qris),
-        PassengerRideMotorPaymentMethodModel("BCA Virtual Account", null, R.drawable.qris),
-        PassengerRideMotorPaymentMethodModel("Dana", null, R.drawable.qris)
-    )
+    Log.d("UI_PAGE_4", "Loaded paymentMethods=${paymentMethods.size}")
+
+//    val methods = listOf(
+//        PassengerRideMotorPaymentMethodModel("QRIS", "Pindai QR pengemudi untuk membayar", R.drawable.qris),
+//        PassengerRideMotorPaymentMethodModel("Tunai", null, R.drawable.qris),
+//        PassengerRideMotorPaymentMethodModel("BRI Virtual Account", null, R.drawable.qris),
+//        PassengerRideMotorPaymentMethodModel("BCA Virtual Account", null, R.drawable.qris),
+//        PassengerRideMotorPaymentMethodModel("Dana", null, R.drawable.qris)
+//    )
 
     Column(
         modifier = Modifier
@@ -95,12 +102,16 @@ fun PassengerRideMotorPaymentMethodScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
         ) {
-            items(methods) { method ->
+            items(paymentMethods) { method ->
 
                 PaymentMethodItem(
                     method = method,
-                    selected = selectedMethod == method.name,
-                    onSelect = { selectedMethod = method.name }
+                    selected = selectedId == method.idPaymentMethod,
+                    onSelect = {
+                        Log.d("UI_PAGE_4", "Selected payment id=${method.idPaymentMethod} name=${method.bankName}")
+                        selectedId = method.idPaymentMethod
+                        onSelect(method)
+                    }
                 )
 
                 Spacer(Modifier.height(12.dp))
@@ -111,8 +122,12 @@ fun PassengerRideMotorPaymentMethodScreen(
 
         // ===== BUTTON LANJUTKAN =====
         Button(
-            onClick = { selectedMethod?.let { onNext(it) } },
-            enabled = selectedMethod != null,
+//            onClick = { selectedMethod?.let { onNext(it) } },
+            onClick = {
+                Log.d("UI_PAGE_4", "Continue clicked → paymentId=$selectedId")
+                onNext()
+            },
+            enabled = selectedId != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -124,7 +139,7 @@ fun PassengerRideMotorPaymentMethodScreen(
             )
         ) {
             Text(
-                "Lanjutkan",
+                text = "Lanjutkan",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -134,7 +149,7 @@ fun PassengerRideMotorPaymentMethodScreen(
 
 @Composable
 private fun PaymentMethodItem(
-    method: PassengerRideMotorPaymentMethodModel,
+    method: PaymentMethodCustomer,
     selected: Boolean,
     onSelect: () -> Unit
 ) {
@@ -152,16 +167,16 @@ private fun PaymentMethodItem(
         ) {
 
             Image(
-                painter = painterResource(id = method.icon),
-                contentDescription = method.name,
+                painter = painterResource(R.drawable.qris),
+                contentDescription = method.bankName,
                 modifier = Modifier.size(44.dp)
             )
 
             Spacer(Modifier.width(14.dp))
 
             Column(Modifier.weight(1f)) {
-                Text(method.name, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                method.subtitle?.let {
+                Text(method.bankName, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                method.accountName.let {
                     Spacer(Modifier.height(2.dp))
                     Text(it, fontSize = 12.sp, color = Color.Gray)
                 }
@@ -178,5 +193,32 @@ private fun PaymentMethodItem(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewPaymentMethodScreen() {
-    PassengerRideMotorPaymentMethodScreen()
+
+    val dummyMethods = listOf(
+        PaymentMethodCustomer(
+            idPaymentMethod = 1,
+            bankName = "BCA",
+            accountName = "PT Nebeng Indonesia",
+            accountNumber = "1234567890"
+        ),
+        PaymentMethodCustomer(
+            idPaymentMethod = 2,
+            bankName = "BRI",
+            accountName = "PT Nebeng Indonesia",
+            accountNumber = "0987654321"
+        ),
+        PaymentMethodCustomer(
+            idPaymentMethod = 3,
+            bankName = "Mandiri",
+            accountName = "PT Nebeng Indonesia",
+            accountNumber = "111222333"
+        )
+    )
+
+    PassengerRideMotorPaymentMethodScreen(
+        paymentMethods = dummyMethods,
+        onBack = {},
+        onSelect = {},
+        onNext = {}
+    )
 }

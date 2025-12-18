@@ -4,11 +4,12 @@ import com.example.nebeng.feature_passenger_ride.data.repository.PassengerRideRe
 import com.example.nebeng.feature_passenger_ride.domain.model.PassengerRide
 import javax.inject.Inject
 import com.example.nebeng.core.common.Result
+import kotlinx.coroutines.flow.Flow
 
 class ReadPassengerRideByStatusUseCase @Inject constructor(
     private val repository: PassengerRideRepository
 ) {
-    suspend operator fun invoke(token: String, status: String): Result<List<PassengerRide>> {
+    suspend operator fun invoke(token: String, status: String): Flow<Result<List<PassengerRide>>> {
         return repository.getPassengerRidesByStatus(token, status)
     }
 }

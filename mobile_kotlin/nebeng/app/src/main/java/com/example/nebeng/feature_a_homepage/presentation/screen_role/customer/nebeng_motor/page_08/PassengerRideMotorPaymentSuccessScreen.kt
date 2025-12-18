@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,13 +39,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nebeng.R
+import com.example.nebeng.core.utils.BookingStatus
+import com.example.nebeng.core.utils.PaymentStatus
+import com.example.nebeng.core.utils.PublicTerminalSubtype
+import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerRideBookingCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PassengerTransactionCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.PaymentMethodCustomer
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassengerRideMotorPaymentSuccessScreen(
+    session: BookingSession,
     onBack: () -> Unit = {},
     onNext: () -> Unit = {}
 ) {
+    val transaction = session.transaction ?: return
+    val booking = session.booking ?: return
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,60 +91,74 @@ fun PassengerRideMotorPaymentSuccessScreen(
             )
         )
 
-        Spacer(Modifier.height(18.dp))
-
-        // 🎉 PAYMENT SUCCESS ICON + TITLE
+        // ✅ SCROLLABLE CONTENT
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_star), // ikon ilustrasi
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.size(78.dp)
-            )
-            Spacer(Modifier.height(10.dp))
-            Text(
-                "Pembayaran Berhasil",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }
-
-        Spacer(Modifier.height(22.dp))
-
-        // 📌 CARD DETAIL PEMBAYARAN
-        PaymentSummaryCard()
-
-        Spacer(Modifier.height(18.dp))
-
-        // 🧭 CARD ROUTE RIDE
-        RideInfoCard()
-
-        Spacer(Modifier.weight(1f))
-
-        // 🔵 BUTTON LANJUT — BAWAH FIX
-        Button(
-            onClick = onNext,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 20.dp)
-                .height(52.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F3D82))
+                .weight(1f)               // ⬅️ ambil sisa layar
+                .verticalScroll( rememberScrollState())
         ) {
-            Text(
-                "Lanjut",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
+            Spacer(Modifier.height(18.dp))
+
+            // 🎉 PAYMENT SUCCESS ICON + TITLE
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_star), // ikon ilustrasi
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(78.dp)
+                )
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    "Pembayaran Berhasil",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+
+            Spacer(Modifier.height(22.dp))
+
+            // 📌 CARD DETAIL PEMBAYARAN
+            PaymentSummaryCard(session = session)
+
+            Spacer(Modifier.height(18.dp))
+
+            // 🧭 CARD ROUTE RIDE
+            RideInfoCard(
+                session = session,
+                bookingCode = booking.bookingCode
             )
+
+            Spacer(Modifier.weight(1f))
+
+            // 🔵 BUTTON LANJUT — BAWAH FIX
+            Button(
+                onClick = onNext,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F3D82))
+            ) {
+                Text(
+                    "Lanjut",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun PaymentSummaryCard() {
+private fun PaymentSummaryCard(
+    session: BookingSession
+) {
+    val transaction = session.transaction ?: return
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,15 +172,15 @@ private fun PaymentSummaryCard() {
             Text("Rincian Pembayaran", fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(18.dp))
 
-            PaymentRow("Tipe Pembayaran", "QRIS")
-            PaymentRow("Tanggal", "10/02/2009")
-            PaymentRow("No Transaksi", "INV/20250104/123456789")
+            PaymentRow("Tipe Pembayaran", session.selectedPaymentMethod?.bankName ?: "-")
+            PaymentRow("Tanggal", transaction.transactionDate)
+            PaymentRow("No Transaksi", transaction.midtransOrderId)
 
             Spacer(Modifier.height(12.dp))
             Divider()
             Spacer(Modifier.height(12.dp))
 
-            PaymentRow("Biaya Per Penebeng", "Rp 50.000,00")
+            PaymentRow("Biaya Per Penebeng", transaction.totalAmount.toString())
             PaymentRow("Biaya Admin", "Rp 15.000,00")
 
             Spacer(Modifier.height(12.dp))
@@ -158,7 +189,7 @@ private fun PaymentSummaryCard() {
 
             PaymentRow(
                 label = "Total",
-                value = "Rp 65.000,00",
+                value = formatRupiah(transaction.totalAmount),
                 valueColor = Color(0xFF0FA958),
                 bold = true
             )
@@ -187,7 +218,10 @@ private fun PaymentRow(
 }
 
 @Composable
-private fun RideInfoCard() {
+private fun RideInfoCard(
+    session: BookingSession,
+    bookingCode: String?
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -200,7 +234,10 @@ private fun RideInfoCard() {
             Text("04 Januari 2025 | 13.45 - 18.45", fontWeight = FontWeight.Medium)
             Spacer(Modifier.height(18.dp))
 
-            RouteRow()
+            RouteRow(
+                departure = session.selectedDepartureTerminal,
+                arrival = session.selectedArrivalTerminal
+            )
 
             Spacer(Modifier.height(18.dp))
 
@@ -212,14 +249,17 @@ private fun RideInfoCard() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text("No Pemesanan:", fontWeight = FontWeight.Medium)
-                Text("FR-2345678997543234", fontWeight = FontWeight.Bold)
+                Text(bookingCode ?: "-", fontWeight = FontWeight.Bold)
             }
         }
     }
 }
 
 @Composable
-private fun RouteRow() {
+private fun RouteRow(
+    departure: TerminalCustomer?,
+    arrival: TerminalCustomer?
+) {
     Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
         Column(
             modifier = Modifier
@@ -242,17 +282,106 @@ private fun RouteRow() {
         Spacer(Modifier.width(10.dp))
 
         Column {
-            Text("Yogyakarta", fontWeight = FontWeight.Bold)
-            Text("Patehan, Kecamatan Kraton, Kota Yogyakarta, Daerah Istimewa", fontSize = 13.sp, color = Color.Gray)
+            Text(departure?.name ?: "-", fontWeight = FontWeight.Bold)
+            Text(departure?.terminalFullAddress.orEmpty(), fontSize = 13.sp, color = Color.Gray)
             Spacer(Modifier.height(10.dp))
-            Text("Purwokerto", fontWeight = FontWeight.Bold)
-            Text("Alun-alun Purwokerto", fontSize = 13.sp, color = Color.Gray)
+            Text(arrival?.name ?: "-", fontWeight = FontWeight.Bold)
+            Text(arrival?.terminalFullAddress.orEmpty(), fontSize = 13.sp, color = Color.Gray)
         }
     }
 }
 
+fun formatRupiah(amount: Int): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+    return formatter.format(amount)
+}
+
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewPassengerRideMotorPaymentSuccessScreen() {
-    PassengerRideMotorPaymentSuccessScreen()
+
+    val previewSession = BookingSession(
+
+        // =========================
+        // PAYMENT METHOD (USER CHOICE)
+        // =========================
+        selectedPaymentMethod = PaymentMethodCustomer(
+            idPaymentMethod = 1,
+            bankName = "QRIS",
+            accountName = "PT Nebeng Indonesia",
+            accountNumber = "0000000000"
+        ),
+
+        // =========================
+        // TRANSACTION (BACKEND FINAL)
+        // =========================
+        transaction = PassengerTransactionCustomer(
+            idPassengerTransaction = 1,
+            transactionDate = "2025-01-04T13:45:00",
+            transactionCode = "TRX-001",
+            midtransTransactionId = "MID-123456",
+            paymentStatus = PaymentStatus.DITERIMA,
+            createdAt = "2025-01-04T13:45:00",
+            paymentProofImg = null,
+            creditUsed = 0,
+            paymentMethodId = 1,
+            paymentType = "qris",
+            updatedAt = "2025-01-04T13:45:00",
+            totalAmount = 65000,
+            midtransOrderId = "INV/20250104/123456789",
+            paymentExpiredAt = "2025-01-04T18:45:00",
+            passengerRideBookingId = 1,
+            vaNumber = "",
+            customerId = 1
+        ),
+
+        // =========================
+        // BOOKING (RECEIPT)
+        // =========================
+        booking = PassengerRideBookingCustomer(
+            idBooking = 1,
+            passengerRideId = 1,
+            customerId = 1,
+            createdAtBooking = "2025-01-04T13:30:00",
+            bookingCode = "FR-2345678997543234",
+            totalPrice = 65000,
+            bookingStatus = BookingStatus.DITERIMA,
+            seatsReservedBooking = 1
+        ),
+
+        // =========================
+        // TERMINALS
+        // =========================
+        selectedDepartureTerminal = TerminalCustomer(
+            id = 1,
+            name = "Yogyakarta",
+            terminalFullAddress = "Patehan, Kecamatan Kraton, Kota Yogyakarta",
+            terminalRegencyId = 3401,
+            terminalLongitude = 110.3647,
+            terminalLatitude = -7.8014,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
+            regencyName = "Kota Yogyakarta"
+        ),
+
+        selectedArrivalTerminal = TerminalCustomer(
+            id = 2,
+            name = "Purwokerto",
+            terminalFullAddress = "Alun-alun Purwokerto",
+            terminalRegencyId = 3302,
+            terminalLongitude = 109.2396,
+            terminalLatitude = -7.4266,
+            publicTerminalSubtype = PublicTerminalSubtype.TERMINAL_BIS,
+            terminalType = TerminalType.PUBLIC,
+            regencyName = "Kab. Banyumas"
+        )
+    )
+
+    PassengerRideMotorPaymentSuccessScreen(
+        session = previewSession,
+        onBack = {},
+        onNext = {}
+    )
 }
+

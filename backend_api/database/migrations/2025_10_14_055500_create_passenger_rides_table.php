@@ -24,7 +24,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             // Jenis kendaraan: Motor / Mobil
-            $table->enum('vehicle_type', ['Motor', 'Mobil']);
+            $table->enum('vehicle_type', ['motor', 'mobil']);
 
             // Relasi terminal keberangkatan dan tujuan
             $table->foreignId('departure_terminal_id')
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->integer('commission_percentage')->default(0);
 
             // ENUM status perjalanan
-            $table->enum('ride_status', ['pending', 'dalam perjalanan', 'selesai', 'dibatalkan'])
+            $table->enum('ride_status', ['pending', 'dalam_perjalanan', 'selesai', 'dibatalkan'])
                   ->default('pending');
 
             $table->timestamps();

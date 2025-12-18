@@ -11,6 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.example.nebeng.core.common.Result
 import com.example.nebeng.feature_driver.data.remote.model.mapper.toDomain
+import com.example.nebeng.feature_driver.data.remote.model.mapper.toSummary
 import com.example.nebeng.feature_driver.domain.model.DriverSummary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn

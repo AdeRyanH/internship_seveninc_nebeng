@@ -33,7 +33,7 @@ class VehicleSeeder extends Seeder
             'Hitam', 'Putih', 'Merah', 'Biru', 'Silver', 'Abu-Abu', 'Kuning'
         ];
 
-        $vehicleTypes = ['Motor', 'Mobil'];
+        $vehicleTypes = ['motor', 'mobil'];
 
         $data = [];
         $now = Carbon::now();
