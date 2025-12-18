@@ -40,8 +40,6 @@
 **Note:**  
 Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/feature\_*/di/*Module.kt
 
----
-
 #### B. Lokasi di `feature_a_*`
 
 `~/feature_a_*/domain/mapper/.kt`
@@ -74,8 +72,6 @@ atau
 - ☑️ Chat
 - ☑️ Profile
 
----
-
 #### B. Driver
 
 - ✅ Nebeng Motor  
@@ -86,8 +82,6 @@ atau
 - ☑️ History
 - ☑️ Chat
 - ☑️ Profile
-
----
 
 #### C. Terminal
 
