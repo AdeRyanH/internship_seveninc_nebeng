@@ -167,6 +167,8 @@ atau
 4. **Seluruh akses permission wajib ditambahkan di `AndroidManifest.xml`**
 5. **Perlu mencari sumber informasi acuan tambahan jika pakai API yang terdeploy karena sejauh ini hanya diletakkan di build.gradle.kts domain app atau mungkin diletakkan di file .impl lalu menambahkannya ke file .env**
 
+---
+
 ### 🔗 Link / Source Reference
 
 1. Android Developer Website
@@ -247,8 +249,6 @@ atau
 - ✅ users
 - ✅ vehicles
 
----
-
 #### B. Customizations untuk kebutuhan Website
 
 > (Ada customization dari database murni)
@@ -292,6 +292,8 @@ atau
 
 4. **Seluruh logic/security/arsitektur** di-customization berdasarkan pengetahuan best practices.
 5. **Seluruh endpoint berdasarkan file `~/backend_api/routes/api.php` dan isi Body-Request berdasarkan file `~/backend_api/app/Http/Services/*php`** lalu bisa testing endpoint seperti menggunakan Postman atau yang lainnya. Note: Seluruh endpoint perlu token semua kecuali saat login, signup, dan logout.
+
+---
 
 ### 🔗 Link / Source Reference
 
