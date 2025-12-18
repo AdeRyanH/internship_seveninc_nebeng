@@ -168,6 +168,7 @@ atau
 
 4. **Seluruh akses permission wajib ditambahkan di `AndroidManifest.xml`**
 5. **Perlu mencari sumber informasi acuan tambahan jika pakai API yang terdeploy karena sejauh ini hanya diletakkan di build.gradle.kts domain app atau mungkin diletakkan di file .impl lalu menambahkannya ke file .env**
+6. **Pembayaran menggunakan bantuan Midtrans Simulator https://share.google/YoZQkddtSFWCAGOoh** agar bisa auto-navigation sebelum realtime driver location
 
 ---
 
