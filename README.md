@@ -141,6 +141,7 @@ atau
 
 3. **Wajib memakai BASE URL pada IP Address yang sama**, karena Mobile App berbeda teknisnya dengan localhost backend pada web dev.
 
+   - Alasan utama (hipotesis) karena sepertinya jika menggunakan 2 device terpisah maka IP Address pada dasarnya tidak akan pernah sama
    - Laptop & mobile device harus terhubung pada WiFi yang sama (non-public seperti Indihome)
    - Jika WiFi public (seprti Wifi.id), mobile device harus hotspot dan laptop terhubung ke hotspot tersebut
 
