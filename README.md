@@ -1,6 +1,6 @@
 # 📱 MOBILE APPLICATION – NEBENG
 
-## 🧰 TECH STACK
+### 🧰 TECH STACK
 
 > (Dapat dilihat langsung pada file `build.gradle.kts` di domain `app`)
 
@@ -21,7 +21,7 @@
 
 ---
 
-## 🏗️ ARCHITECTURE
+### 🏗️ ARCHITECTURE
 
 1. Clean Architecture (MVI mirip MVVM)
 2. Single Responsibility of Concern
@@ -29,7 +29,7 @@
 4. Seluruh manipulasi data berada di file `*Interactor.kt` atau `*Aggregator.kt` dengan bantuan directory `session` pada layer `domain` di setiap directory `feature_a_*`, yang dihubungkan dengan raw data hasil mapper pada layer domain di directory `model`
 5. Alur pengiriman data:
 
-### A. Lokasi di `feature_*`
+#### A. Lokasi di `feature_*`
 
 \*Api.kt
 → *Repository.kt + *RepositoryImpl.kt
@@ -42,7 +42,7 @@ Perlu dependency injection di: ~/nebeng/app/src/main/java/com/example/nebeng/fea
 
 ---
 
-### B. Lokasi di `feature_a_*`
+#### B. Lokasi di `feature_a_*`
 
 `~/feature_a_*/domain/mapper/.kt`
 → `~/feature_a_*/domain/model/`
@@ -61,9 +61,9 @@ atau
 
 ---
 
-## 🚀 FITUR (BERDASARKAN ROLE AKUN)
+### 🚀 FITUR (BERDASARKAN ROLE AKUN)
 
-### A. Customer
+#### A. Customer
 
 - ✅ Nebeng Motor Customer  
   _(Blueprint fondasi dari seluruh fitur di menu Homepage bagi role customer & driver — kecuali tahap fitur rating)_
@@ -76,7 +76,7 @@ atau
 
 ---
 
-### B. Driver
+#### B. Driver
 
 - ✅ Nebeng Motor  
   _(Khusus di bagian realtime GPS untuk mengirim current location)_
@@ -89,30 +89,30 @@ atau
 
 ---
 
-### C. Terminal
+#### C. Terminal
 
 - Masih belum dibuat
 
 ---
 
-## 🧪 UNIT TESTING (On-Going)
+### 🧪 UNIT TESTING (On-Going)
 
-### 1. Main Foundation Application
+#### 1. Main Foundation Application
 
 - ☑️ app
 
-### 2. Core System
+#### 2. Core System
 
 - ☑️ core
 
-### 3. User Interface Utama
+#### 3. User Interface Utama
 
 - ☑️ feature_a_authentication
 - ☑️ feature_a_chat
 - ☑️ feature_a_history_order
 - ☑️ feature_a_homepage
 
-### 4. API Data Retrieval
+#### 4. API Data Retrieval (On-Going)
 
 - ✅ feature_credit_score_log
 - ✅ feature_customer
@@ -139,7 +139,7 @@ atau
 
 ---
 
-## ⚠️ NOTE IMPORTANT
+### ⚠️ NOTE IMPORTANT
 
 1. **Base URL wajib diubah** di: `~/mobile_kotlin/nebeng/app/src/main/java/com/example/nebeng/core/network/ApiClient.kt` dan perlu menambah/mengubah `~/mobile_kotlin/nebeng/app/src/main/res/xml/network_security_config.xml`
 
@@ -173,7 +173,7 @@ atau
 4. **Seluruh akses permission wajib ditambahkan di `AndroidManifest.xml`**
 5. **Perlu mencari sumber informasi acuan tambahan jika pakai API yang terdeploy karena sejauh ini hanya diletakkan di build.gradle.kts domain app atau mungkin diletakkan di file .impl lalu menambahkannya ke file .env**
 
-## 🔗 Link / Source Reference
+### 🔗 Link / Source Reference
 
 1. Android Developer Website
 2. https://kotlinlang.org/docs/home.html
