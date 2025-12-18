@@ -280,6 +280,10 @@ atau
      ```
      ifconfig
      ```
+   - Windows / Mac / Platform lain:
+     ```
+     Menyesuaikan
+     ```
 
    **Contoh:**
 
