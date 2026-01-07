@@ -264,54 +264,85 @@ export default function Login() {
                 </h2>
               </div>
 
-              <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+              <div className="relative input-group mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form
                   onSubmit={handleLogin}
                   method="POST"
                   className="space-y-6"
                 >
                   <div>
-                    <label
-                      htmlFor="userIdentifier"
-                      className="block text-sm/6 font-medium text-black"
-                    >
-                      Email / Username
-                    </label>
-                    <div className="mt-2">
+                    <div className="relative mt-4">
                       <input
                         id="userIdentifier"
                         name="userIdentifier"
                         value={userIdentifier}
                         onChange={(e) => setUserIdentifier(e.target.value)}
+                        placeholder=" "
                         type="text"
                         required
                         autoComplete="username"
-                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-black outline-1 -outline-offset-1 outline-gray-500 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                        className="peer w-full rounded-md border border-gray-300
+      px-3 pt-5 pb-2 text-sm text-black
+      focus:border-indigo-500 focus:outline-none"
                       />
+                      <label
+                        htmlFor="userIdentifier"
+                        className="absolute left-3 top-3 text-gray-500 text-sm
+      transition-all duration-200
+      bg-white px-1
+
+      peer-placeholder-shown:top-3
+      peer-placeholder-shown:text-sm
+
+      peer-focus:-top-2
+      peer-focus:text-xs
+      peer-focus:text-indigo-500
+
+      peer-not-placeholder-shown:-top-2
+      peer-not-placeholder-shown:text-xs"
+                      >
+                        Email / Username
+                      </label>
                     </div>
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <label
-                        htmlFor="password"
-                        className="block text-sm/6 font-medium text-black"
-                      >
-                        Password
-                      </label>
-                    </div>
-                    <div className="mt-2">
-                      <input
-                        id="password"
-                        name="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        required
-                        autoComplete="current-password"
-                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-black outline-1 -outline-offset-1 outline-gray-500 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                      />
-                    </div>
+                  <div className="relative mt-4">
+                    <input
+                      id="password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      type="password"
+                      required
+                      placeholder=" "
+                      autoComplete="current-password"
+                      className="
+      peer w-full rounded-md border border-gray-300
+      px-3 pt-5 pb-2 text-sm text-black
+      focus:border-indigo-500 focus:outline-none
+    "
+                    />
+
+                    <label
+                      htmlFor="password"
+                      className="
+      absolute left-3 top-3 text-gray-500 text-sm
+      transition-all duration-200
+      bg-white px-1
+
+      peer-placeholder-shown:top-3
+      peer-placeholder-shown:text-sm
+
+      peer-focus:-top-2
+      peer-focus:text-xs
+      peer-focus:text-indigo-500
+
+      peer-not-placeholder-shown:-top-2
+      peer-not-placeholder-shown:text-xs
+    "
+                    >
+                      Password
+                    </label>
                   </div>
 
                   <div>

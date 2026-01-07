@@ -8,3 +8,25 @@
   -ms-overflow-style: none; /* IE & Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.input-group {
+  position: relative;
+}
+
+.input-box {
+  background: transparent;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-box:focus ~ label,
+.input-box:not(:placeholder-shown) ~ label {
+  top: -20px;
+  font-size: .9rem;
+  color: blueviolet;
+}
+
+.input-box:focus {
+  border-width: 2px;
+  border-bottom-color: blueviolet;
+}
