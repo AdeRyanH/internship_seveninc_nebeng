@@ -1,5 +1,6 @@
 package com.example.nebeng.feature_a_homepage.presentation.screen_role.customer.nebeng_motor.page_09
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,8 +48,11 @@ import androidx.core.content.ContextCompat
 import com.example.nebeng.R
 import com.example.nebeng.core.utils.PublicTerminalSubtype
 import com.example.nebeng.core.utils.TerminalType
+import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.DriverLocationRideCustomer
 import com.example.nebeng.feature_a_homepage.domain.model.customer.nebeng_motor.TerminalCustomer
 import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.BookingSession
+import com.example.nebeng.feature_a_homepage.domain.session.customer.nebeng_motor.DriverTrackingSession
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -57,6 +61,7 @@ import org.osmdroid.views.overlay.Marker
 @Composable
 fun PassengerRideMotorOnTheWayScreen(
     session: BookingSession,
+    driverTracking: DriverTrackingSession,
     onBack: () -> Unit = {},
     onCancelOrder: () -> Unit = {}
 ) {
@@ -89,7 +94,9 @@ fun PassengerRideMotorOnTheWayScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             NebengMotorMap(
                 departure = session.selectedDepartureTerminal,
-                arrival = session.selectedArrivalTerminal
+                arrival = session.selectedArrivalTerminal,
+//                driverTracking = driverTracking
+                driverLocation = driverTracking.lastLocation
             )
         }
     }
@@ -98,65 +105,73 @@ fun PassengerRideMotorOnTheWayScreen(
 @Composable
 private fun NebengMotorMap(
     departure: TerminalCustomer?,
-    arrival: TerminalCustomer?
+    arrival: TerminalCustomer?,
+    driverLocation: DriverLocationRideCustomer?
 ) {
     AndroidView(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 56.dp),
+        modifier = Modifier.fillMaxSize(),
         factory = { context ->
             MapView(context).apply {
-                setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
+                setTileSource(TileSourceFactory.MAPNIK)
                 controller.setZoom(15.0)
-
-                if (departure != null) {
-                    val depPoint = GeoPoint(
-                        departure.terminalLatitude,
-                        departure.terminalLongitude
-                    )
-
-                    controller.setCenter(depPoint)
-
-                    overlays.add(
-                        Marker(this).apply {
-                            position = depPoint
-                            icon = ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_pin_point
-                            )
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        }
-                    )
-                }
-
-                if (arrival != null) {
-                    val arrPoint = GeoPoint(
-                        arrival.terminalLatitude,
-                        arrival.terminalLongitude
-                    )
-
-                    overlays.add(
-                        Marker(this).apply {
-                            position = arrPoint
-                            icon = ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_pin_point
-                            )
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        }
-                    )
-                }
-
-                invalidate()
             }
+        },
+        update = { mapView ->
+            Log.d("PAGE_09_MAP", "🔄 Map update triggered")
+
+            mapView.overlays.clear()
+
+            // 1️⃣ Departure
+            departure?.let {
+                Log.d("PAGE_09_MAP", "📍 Departure marker")
+                mapView.overlays.add(
+                    Marker(mapView).apply {
+                        position = GeoPoint(it.terminalLatitude, it.terminalLongitude)
+                        icon = ContextCompat.getDrawable(mapView.context, R.drawable.ic_pin_point_red_24)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    }
+                )
+            }
+
+            // 2️⃣ Arrival
+            arrival?.let {
+                Log.d("PAGE_09_MAP", "📍 Arrival marker")
+                mapView.overlays.add(
+                    Marker(mapView).apply {
+                        position = GeoPoint(it.terminalLatitude, it.terminalLongitude)
+                        icon = ContextCompat.getDrawable(mapView.context, R.drawable.ic_pin_point_red_24)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    }
+                )
+            }
+
+            // 3️⃣ Driver (INI YANG SEBELUMNYA TIDAK JALAN)
+            driverLocation?.let {
+                Log.d(
+                    "PAGE_09_MAP",
+                    "🚗 Driver marker lat=${it.latitude}, lng=${it.longitude}"
+                )
+
+                val point = GeoPoint(it.latitude, it.longitude)
+
+                mapView.overlays.add(
+                    Marker(mapView).apply {
+                        position = point
+                        icon = ContextCompat.getDrawable(mapView.context, R.drawable.ic_pin_point_red_24)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    }
+                )
+
+                mapView.controller.animateTo(point)
+            }
+
+            mapView.invalidate()
         }
     )
 }
 
-
 @Composable
 private fun RouteDetailsBottomSheet(
-//    onCancelOrder: () -> Unit
     session: BookingSession,
     onCancelOrder: () -> Unit
 ) {
@@ -400,9 +415,3 @@ private fun PreviewRouteRowCard() {
         }
     }
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//private fun PreviewRouteDetailsScreen() {
-//    PassengerRideMotorOnTheWayScreen()
-//}

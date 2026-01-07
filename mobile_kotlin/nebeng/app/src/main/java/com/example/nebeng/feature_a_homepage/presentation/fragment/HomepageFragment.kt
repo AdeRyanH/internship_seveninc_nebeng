@@ -26,7 +26,6 @@ class HomepageFragment : RoleAwareFragment() {
             userType = "customer",
             viewModel = viewModel,
             onRouteChanged = { route ->
-//                val hide = route.startsWith("nebeng_motor") || route == "passenger_motor_map"
                 val hide = route.startsWith("customer/nebeng_motor") || route == "passenger_motor_map"
                 setBottomNavVisible(!hide)
             }
@@ -36,14 +35,11 @@ class HomepageFragment : RoleAwareFragment() {
     @RequiresApi(Build.VERSION_CODES.S)
     @Composable
     override fun DriverUI() {
-//        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-//        HomepageDriverScreenUi(uiState)
         HomepageNavHost(
             userType = "driver",
             viewModel = viewModel,
             onRouteChanged = { route ->
                 val hide = route.startsWith("driver/nebeng_motor/on_the_way")
-//                val hide = route.startsWith("driver/nebeng_motor/on_the_way") || route == "driver/nebeng_motor/on_the_way"
                 setBottomNavVisible(!hide)
             }
         )

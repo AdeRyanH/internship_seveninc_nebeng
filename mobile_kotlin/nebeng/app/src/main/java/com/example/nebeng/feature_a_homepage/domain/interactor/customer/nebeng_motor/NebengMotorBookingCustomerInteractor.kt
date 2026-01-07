@@ -579,20 +579,60 @@ class NebengMotorBookingCustomerInteractor @Inject constructor(
             isTracking = true
         )
 
+        Log.d(
+            "PAGE_09_INTERACTOR",
+            """
+                🔁 START DRIVER LOCATION POLLING
+                --------------------------------
+                rideId   = $rideId
+                interval = ${intervalMillis}ms
+                --------------------------------
+            """.trimIndent()
+        )
+
+        Log.d(
+            "PAGE_09_INTERACTOR",
+            "🔁 START POLLING driver location rideId=$rideId"
+        )
+
         onUpdate(state)
 
         while (state.isTracking) {
+            Log.d(
+                "PAGE_09_INTERACTOR",
+                "📡 POLL driver location rideId=$rideId"
+            )
+
             useCases.getByIdDriverLocationRideById(token, rideId)
                 .collect { result ->
                     when (result) {
                         is Result.Success   -> {
-                            state = state.copy(
-                                lastLocation = result.data.toDriverLocationRideCustomer(),
-                                errorMessage = null
+                            val location = result.data.toDriverLocationRideCustomer()
+
+                            Log.d(
+                                "PAGE_09_INTERACTOR",
+                                "✅ Location received lat=${location.latitude}, lng=${location.longitude}"
                             )
+
+                            Log.d(
+                                "PAGE_09_INTERACTOR",
+                                "✅ Location fetched lat=${result.data.latitude} lng=${result.data.longitude}"
+                            )
+
+                            state = state.copy(
+                                lastLocation = location,
+                                isTracking = true
+                            )
+
+                            onUpdate(state) // ✅ SEKARANG VALID
                         }
 
                         is Result.Error     -> {
+                            Log.e(
+                                "PAGE_09_INTERACTOR",
+                                "❌ API error = ${result.message}"
+                            )
+
                             state = state.copy(
                                 errorMessage = result.message
                             )
@@ -605,5 +645,7 @@ class NebengMotorBookingCustomerInteractor @Inject constructor(
 
             delay(intervalMillis)
         }
+
+        Log.d("PAGE_09_INTERACTOR", "🛑 STOP DRIVER LOCATION POLLING")
     }
 }

@@ -319,6 +319,23 @@ class NebengMotorBookingCustomerViewModel @Inject constructor(
      * REALTIME TRACKING DRIVER LOCATION OSM
      */
     fun startDriverTracking(rideId: Int) {
+        Log.d(
+            "PAGE_09_VM",
+            """
+                ▶️ startDriverTracking()
+                ------------------------
+                rideId        = $rideId
+                tokenReady    = ${token.isNotBlank()}
+                jobActive     = ${trackingJob?.isActive}
+                ------------------------
+            """.trimIndent()
+        )
+
+        Log.d(
+            "PAGE_09_VM",
+            "▶️ startDriverTracking rideId=$rideId jobActive=${trackingJob?.isActive}"
+        )
+
         trackingJob?.cancel()
 
         trackingJob = viewModelScope.launch {
@@ -326,7 +343,17 @@ class NebengMotorBookingCustomerViewModel @Inject constructor(
                 token = token,
                 rideId = rideId,
                 initialState = _driverTracking.value,
-                onUpdate = {_driverTracking.value = it}
+                onUpdate = {
+                    Log.d(
+                        "PAGE_09_VM",
+                        "📍 tracking update → lat=${it.lastLocation?.latitude}, lng=${it.lastLocation?.longitude}"
+                    )
+                    Log.d(
+                        "PAGE_09_VM",
+                        "📍 Driver location update lat=${it.lastLocation?.latitude} lng=${it.lastLocation?.longitude}"
+                    )
+                    _driverTracking.value = it
+                }
             )
         }
     }
@@ -335,6 +362,11 @@ class NebengMotorBookingCustomerViewModel @Inject constructor(
      * STOP REALTIME TRACKING DRIVER LOCATION OSM
      */
     fun stopDriverTracking() {
+        Log.d(
+            "PAGE_09_VM",
+            "⏹ stopDriverTracking()"
+        )
+
         trackingJob?.cancel()
         trackingJob = null
 
