@@ -1,8 +1,9 @@
 import orderService from "../service/orderService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useAuth from "./useAuth";
+import { debounce } from "lodash";
 
-export function useOrders({ search ="", status ="" } = {}) {
+export function useOrders({ search = "", status = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState([]);
@@ -57,6 +58,25 @@ export function useOrders({ search ="", status ="" } = {}) {
     [authLoading, user, search, status]
   );
 
+  // Debounce pencarian
+  const debouncedFetchOrders = useMemo(
+    () =>
+      debounce(() => {
+        fetchOrders(1);
+      }, 400),
+    [fetchOrders]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      debouncedFetchOrders();
+    }
+
+    return () => {
+      debouncedFetchOrders.cancel();
+    };
+  }, [search, status, authLoading, user, debouncedFetchOrders]);
+
   const getOrderById = useCallback(async (type, id) => {
     setIsLoadingDetail(true);
     setError(null);
@@ -72,12 +92,6 @@ export function useOrders({ search ="", status ="" } = {}) {
     }
   }, []);
 
-  useEffect(() => {
-    if (!authLoading && user) {
-      fetchOrders();
-    }
-  }, [fetchOrders, authLoading, user]);
-
   return {
     orders,
     error,
@@ -88,8 +102,5 @@ export function useOrders({ search ="", status ="" } = {}) {
     selectedOrder,
     fetchOrders,
     getOrderById,
-    // createOrder,
-    // updateOrder,
-    // deleteOrder,
   };
 }

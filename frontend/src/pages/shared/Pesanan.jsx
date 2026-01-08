@@ -21,24 +21,6 @@ export default function Pesanan() {
     { label: "Ditolak", value: "ditolak" },
   ];
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((row) => {
-      const codeOrderMatch = row.booking_code
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const customerMatch = row.customer_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const driverMatch = row.driver_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      return codeOrderMatch || customerMatch || driverMatch;
-    });
-  }, [orders, searchText]);
-
   const formatTanggal = useCallback(
     (tanggal) => (tanggal ? dayjs(tanggal).format("DD MMMM YYYY") : "-"),
     []
@@ -149,13 +131,13 @@ export default function Pesanan() {
       <div className="bg-white rounded-2xl mt-4 min-h-7/9">
         <MemoTable
           columns={columns}
-          data={filteredOrders}
+          data={orders}
           loading={isLoadingList}
           error={error}
         />
       </div>
       {/* Pagination */}
-      {!isLoadingList && filteredOrders.length > 0 && (
+      {!isLoadingList && orders.length > 0 && (
         <div className="mt-4">
           <button
             disabled={!links.prev_page_url}
