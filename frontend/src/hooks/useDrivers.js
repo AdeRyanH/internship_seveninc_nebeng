@@ -1,7 +1,8 @@
 import driverService from "../service/driverService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useAuth from "./useAuth";
 import { Search } from "lucide-react";
+import { debounce } from "lodash";
 
 export function useDrivers({ search = "", status = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
@@ -65,6 +66,25 @@ export function useDrivers({ search = "", status = "" } = {}) {
     },
     [authLoading, user, search, status]
   );
+
+  // Debounce pencarian
+  const debouncedFetchDrivers = useMemo(
+    () =>
+      debounce(() => {
+        fetchDrivers(1);
+      }, 400),
+    [fetchDrivers]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      debouncedFetchDrivers();
+    }
+
+    return () => {
+      debouncedFetchDrivers.cancel();
+    };
+  }, [search, status, authLoading, user, debouncedFetchDrivers]);
 
   const getDriverById = useCallback(async (id) => {
     setIsLoadingDetail(true);
@@ -131,12 +151,6 @@ export function useDrivers({ search = "", status = "" } = {}) {
       setIsLoadingAction(false);
     }
   };
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      fetchDrivers();
-    }
-  }, [fetchDrivers, authLoading, user]);
 
   return {
     drivers,

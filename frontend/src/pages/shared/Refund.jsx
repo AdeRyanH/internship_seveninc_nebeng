@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { useRefunds } from "../../hooks/useRefund";
 import Table from "../../components/Table";
-import { useMemo, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import SearchBar from "../../components/SearchBar";
 
 export default function Refund() {
@@ -26,28 +26,6 @@ export default function Refund() {
     (tanggal) => (tanggal ? dayjs(tanggal).format("DD MMMM YYYY") : "-"),
     []
   );
-
-  const filteredRefunds = useMemo(() => {
-    return refunds.filter((row) => {
-      const codeOrderMatch = row.booking_code
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const customerMatch = row.customer.full_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const driverMatch = row.passenger_ride.driver.full_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const transactionMatch = row.passenger_transaction.transaction_code
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      return codeOrderMatch || customerMatch || driverMatch || transactionMatch;
-    });
-  }, [refunds, searchText]);
 
   const renderAction = useCallback(
     (row) => (
@@ -144,13 +122,13 @@ export default function Refund() {
       <div className="bg-white rounded-2xl w-full min-h-screen p-3">
         <Table
           columns={columns}
-          data={filteredRefunds}
+          data={refunds}
           loading={isLoadingList}
           error={error}
         ></Table>
       </div>
       {/* Pagination */}
-      {!isLoadingList && filteredRefunds.length > 0 && (
+      {!isLoadingList && refunds.length > 0 && (
         <div className="mt-4">
           <button
             disabled={!links.prev_page_url}

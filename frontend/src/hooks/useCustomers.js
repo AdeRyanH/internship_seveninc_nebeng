@@ -1,9 +1,10 @@
 import customerService from "../service/customerService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useAuth from "./useAuth";
 import axios from "axios";
+import { debounce } from "lodash";
 
-export function useCustomers({search ="", status = ""} ={}) {
+export function useCustomers({ search = "", status = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState();
@@ -40,7 +41,7 @@ export function useCustomers({search ="", status = ""} ={}) {
       setError(null);
 
       try {
-        const response = await customerService.getAll({page , search, status});
+        const response = await customerService.getAll({ page, search, status });
 
         if (response.success) {
           setCustomers(response.data || []);
@@ -69,6 +70,25 @@ export function useCustomers({search ="", status = ""} ={}) {
     },
     [authLoading, user, handleError, search, status]
   );
+
+  // Debounce pencarian
+  const debouncedFetchCustomers = useMemo(
+    () =>
+      debounce(() => {
+        fetchCustomers(1);
+      }, 400),
+    [fetchCustomers]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      debouncedFetchCustomers();
+    }
+
+    return () => {
+      debouncedFetchCustomers.cancel();
+    };
+  }, [search, status, authLoading, user, debouncedFetchCustomers]);
 
   const getCustomerById = useCallback(
     async (id) => {
@@ -146,12 +166,6 @@ export function useCustomers({search ="", status = ""} ={}) {
     },
     [handleError]
   );
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      fetchCustomers();
-    }
-  }, [fetchCustomers, authLoading, user]);
 
   return {
     customers,

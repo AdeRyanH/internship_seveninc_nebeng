@@ -1,6 +1,7 @@
 import refundService from "../service/RefundService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useAuth from "./useAuth";
+import { debounce } from "lodash";
 
 export function useRefunds({ search = "", status = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
@@ -55,6 +56,25 @@ export function useRefunds({ search = "", status = "" } = {}) {
     [authLoading, user, search, status]
   );
 
+  // Debounce pencarian
+  const debouncedFetchRefunds = useMemo(
+    () =>
+      debounce(() => {
+        fetchRefunds(1);
+      }, 400),
+    [fetchRefunds]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      debouncedFetchRefunds();
+    }
+
+    return () => {
+      debouncedFetchRefunds.cancel();
+    };
+  }, [search, status, authLoading, user, debouncedFetchRefunds]);
+
   const fetchRefundById = useCallback(async (type, bookingId) => {
     if (!type || !bookingId) return;
     setIsLoadingDetail(true);
@@ -70,12 +90,6 @@ export function useRefunds({ search = "", status = "" } = {}) {
       setIsLoadingDetail(false);
     }
   }, []);
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      fetchRefunds();
-    }
-  }, [fetchRefunds, authLoading, user]);
 
   return {
     refunds,

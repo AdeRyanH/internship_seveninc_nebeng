@@ -1,7 +1,8 @@
 import userService from "../service/userService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useAuth from "./useAuth";
 import axios from "axios";
+import { debounce } from "lodash";
 
 export function useUsers({ search = "", status = "", role = "" } = {}) {
   const { user, loading: authLoading } = useAuth();
@@ -66,6 +67,25 @@ export function useUsers({ search = "", status = "", role = "" } = {}) {
     },
     [authLoading, user, handleError, search, status, role]
   );
+
+  // Debounce pencarian
+  const debouncedFetchUsers = useMemo(
+    () =>
+      debounce(() => {
+        fetchUsers(1);
+      }, 400),
+    [fetchUsers]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      debouncedFetchUsers();
+    }
+
+    return () => {
+      debouncedFetchUsers.cancel();
+    };
+  }, [search, status, authLoading, user, debouncedFetchUsers]);
 
   const getUserById = useCallback(
     async (id) => {

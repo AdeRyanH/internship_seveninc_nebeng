@@ -3,7 +3,7 @@ import { useCustomers } from "../../hooks/useCustomers";
 import SearchBar from "../../components/SearchBar";
 import Table from "../../components/Table";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function Customer() {
   const [searchText, setSearchText] = useState("");
@@ -19,22 +19,6 @@ export default function Customer() {
     { label: "Terverifikasi", value: 1 },
     { label: "Terblokir", value: false },
   ];
-
-  const filteredCustomers = useMemo(() => {
-    return customers.filter((row) => {
-      const nameMatch = row.full_name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const emailMatch = row.user.email
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-
-      const phoneMatch = row.telephone.includes(searchText);
-
-      return nameMatch || emailMatch || phoneMatch;
-    });
-  }, [customers, searchText]);
 
   const columns = [
     {
@@ -97,13 +81,13 @@ export default function Customer() {
       <div className="bg-white rounded-2xl mt-4 min-h-[78%]">
         <Table
           columns={columns}
-          data={filteredCustomers}
+          data={customers}
           loading={isLoadingList}
           error={error}
         />
       </div>
       {/* Pagination */}
-      {!isLoadingList && filteredCustomers.length > 0 && (
+      {!isLoadingList && customers.length > 0 && (
         <div className="mt-4">
           <button
             disabled={!links.prev_page_url}
